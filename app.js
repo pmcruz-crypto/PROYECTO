@@ -10,13 +10,16 @@ const AppState = {
     geminiApiKey: ''
   },
   session: {
-    active: false,
+    active: true,
     timerSeconds: 865, // 14 min 25 seg de muestra
     timerInterval: null,
+    rapport: 86,
     messages: [],
     notes: '',
     checkedCriteria: new Set()
-  }
+  },
+  recognition: null,
+  isRecording: false
 };
 
 // Inicialización de la aplicación al cargar el DOM
@@ -43,8 +46,17 @@ document.addEventListener('DOMContentLoaded', () => {
   // Inicializar filtros del catálogo
   initCatalogFilters();
 
-  // Inicializar temporizador de muestra
-  updateTimerDisplay();
+  // Inicializar eventos de chat y teclado
+  initChatEvents();
+
+  // Inicializar temporizador en vivo
+  initSessionTimer();
+
+  // Inicializar reconocimiento por voz
+  initSpeechRecognition();
+
+  // Inicializar autoguardado de notas clínicas
+  initNotesAutosave();
 });
 
 // Función de navegación entre vistas
@@ -532,4 +544,284 @@ function clearInput() {
     input.value = '';
     input.focus();
   }
+}
+
+// Inicializar eventos del chat interactivo
+function initChatEvents() {
+  const input = document.getElementById('clinicianInput');
+  const sendBtn = document.getElementById('sendBtn');
+
+  if (input) {
+    input.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        sendIntervention();
+      }
+    });
+  }
+
+  if (sendBtn) {
+    sendBtn.onclick = () => sendIntervention();
+  }
+}
+
+// Transmitir intervención del estudiante al paciente simulado
+async function sendIntervention() {
+  const input = document.getElementById('clinicianInput');
+  const feed = document.getElementById('transcriptFeed');
+  const sendBtn = document.getElementById('sendBtn');
+  if (!input || !feed) return;
+
+  const text = input.value.trim();
+  if (!text) {
+    input.focus();
+    return;
+  }
+
+  const patient = AppState.activeCase || CLINICAL_CASES[0];
+  const now = new Date();
+  const timeStr = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+
+  // Desactivar temporalmente botón y limpiar campo
+  input.value = '';
+  input.disabled = true;
+  if (sendBtn) sendBtn.disabled = true;
+
+  // Analizar intervención del estudiante
+  const analysis = ClinicalSimulator.analyzeTraineeQuestion(text);
+
+  // 1. Renderizar turno del terapeuta
+  const traineeBubble = document.createElement('div');
+  traineeBubble.className = "flex flex-col items-end gap-1 pl-space-md md:pl-space-lg animate-in fade-in duration-200";
+  traineeBubble.innerHTML = `
+    <div class="flex items-center gap-space-xs">
+      <span class="font-label-sm text-[11px] text-on-surface-variant">${timeStr}</span>
+      <span class="font-label-sm text-xs font-semibold text-primary">Paula Cruz (Terapeuta)</span>
+    </div>
+    <div class="bg-surface-container-high text-on-surface p-space-md rounded-xl rounded-tr-none shadow-sm max-w-xl text-left">
+      <p class="font-body-md text-sm md:text-body-md leading-relaxed">${escapeHtml(text)}</p>
+      <div class="mt-space-xs pt-space-xs flex items-center justify-between text-on-surface-variant border-t border-surface-variant/40">
+        <span class="font-label-sm text-[11px] flex items-center gap-1 ${analysis.isLeading ? 'text-error font-semibold' : 'text-secondary font-medium'}">
+          <span class="material-symbols-outlined text-[13px]">${analysis.isLeading ? 'report' : 'psychology'}</span>
+          ${analysis.interventionType}
+        </span>
+        <span class="font-label-sm text-[11px] font-semibold ${analysis.rapportDelta >= 0 ? 'text-secondary' : 'text-error'}">
+          Rapport ${analysis.rapportDelta >= 0 ? '+' : ''}${analysis.rapportDelta}%
+        </span>
+      </div>
+    </div>
+  `;
+  feed.appendChild(traineeBubble);
+  feed.scrollTop = feed.scrollHeight;
+
+  // 2. Mostrar indicador de que el paciente está procesando
+  const typingIndicator = document.createElement('div');
+  typingIndicator.id = "patientTypingIndicator";
+  typingIndicator.className = "flex flex-col items-start gap-1 pr-space-md animate-in fade-in duration-150";
+  typingIndicator.innerHTML = `
+    <div class="flex items-center gap-space-xs">
+      <span class="font-label-sm text-xs font-semibold text-primary">${patient.name}</span>
+      <span class="font-label-sm text-[11px] text-secondary flex items-center gap-1">
+        <span class="w-1.5 h-1.5 rounded-full bg-secondary animate-pulse"></span>
+        formulando respuesta...
+      </span>
+    </div>
+    <div class="bg-surface-container-low text-on-surface-variant px-space-md py-space-sm rounded-xl rounded-tl-none text-xs flex items-center gap-2">
+      <span class="w-1.5 h-1.5 rounded-full bg-primary animate-bounce" style="animation-delay: 0ms"></span>
+      <span class="w-1.5 h-1.5 rounded-full bg-primary animate-bounce" style="animation-delay: 150ms"></span>
+      <span class="w-1.5 h-1.5 rounded-full bg-primary animate-bounce" style="animation-delay: 300ms"></span>
+    </div>
+  `;
+  feed.appendChild(typingIndicator);
+  feed.scrollTop = feed.scrollHeight;
+
+  // 3. Generar respuesta (Modo Gemini si tiene clave o Modo Inteligente Autónomo)
+  let responseData;
+  try {
+    if (AppState.aiSettings.mode === 'gemini' && AppState.aiSettings.geminiApiKey) {
+      responseData = await ClinicalSimulator.generateGeminiResponse(patient, text, AppState.session.messages, AppState.aiSettings.geminiApiKey);
+    } else {
+      // Breve pausa para realismo de respuesta clínica
+      await new Promise(r => setTimeout(r, 700));
+      responseData = ClinicalSimulator.generateAutonomousResponse(patient, text, AppState.session.messages.length);
+    }
+  } catch (err) {
+    console.warn("Fallo en Gemini, recurriendo a simulación autónoma:", err);
+    await new Promise(r => setTimeout(r, 500));
+    responseData = ClinicalSimulator.generateAutonomousResponse(patient, text, AppState.session.messages.length);
+  }
+
+  // Quitar indicador de escritura
+  const indicatorEl = document.getElementById("patientTypingIndicator");
+  if (indicatorEl) indicatorEl.remove();
+
+  // 4. Renderizar respuesta del paciente virtual
+  const patientBubble = document.createElement('div');
+  patientBubble.className = "flex flex-col items-start gap-1 pr-space-md md:pr-space-lg animate-in fade-in duration-200";
+  patientBubble.innerHTML = `
+    <div class="flex items-center gap-space-xs">
+      <span class="font-label-sm text-xs font-semibold text-primary">${patient.name} (IA)</span>
+      <span class="font-label-sm text-[11px] text-on-surface-variant">${timeStr}</span>
+      <button onclick="playPatientVoice(this)" data-speech="${escapeHtml(responseData.reply)}" class="ml-1 text-secondary hover:text-primary transition-colors cursor-pointer" title="Escuchar respuesta por voz">
+        <span class="material-symbols-outlined text-[15px]">volume_up</span>
+      </button>
+    </div>
+    <div class="bg-surface-container-low text-on-surface p-space-md rounded-xl rounded-tl-none shadow-sm max-w-xl border-l-4 border-l-secondary">
+      <p class="font-body-md text-sm md:text-body-md leading-relaxed">${escapeHtml(responseData.reply)}</p>
+      <div class="mt-space-xs pt-space-xs flex items-center gap-space-xs flex-wrap">
+        <span class="px-space-xs py-0.5 rounded font-label-sm text-[10px] bg-surface-container-highest text-on-surface">${patient.diagnosticCode.split('·')[0].trim()}</span>
+        <span class="px-space-xs py-0.5 rounded font-label-sm text-[10px] ${analysis.isLeading ? 'bg-error-container text-on-error-container font-semibold' : 'bg-surface-container text-on-surface-variant'}">
+          ${responseData.signs ? responseData.signs.split(';')[0] : 'Expresión observada'}
+        </span>
+      </div>
+    </div>
+  `;
+  feed.appendChild(patientBubble);
+  feed.scrollTop = feed.scrollHeight;
+
+  // Actualizar comunicación no verbal en la sala
+  if (responseData.signs) {
+    const signsEl = document.getElementById('consultationRoomSigns');
+    if (signsEl) {
+      signsEl.innerHTML = `<span class="font-semibold text-primary">Signos observados:</span> ${escapeHtml(responseData.signs)}`;
+    }
+  }
+
+  // Actualizar Alianza Terapéutica & Rapport
+  updateRapportScore(analysis.rapportDelta);
+
+  // Guardar en el historial de sesión para el Debriefing
+  AppState.session.messages.push({
+    sender: 'trainee',
+    text: text,
+    time: timeStr,
+    analysis: analysis
+  });
+  AppState.session.messages.push({
+    sender: 'patient',
+    text: responseData.reply,
+    time: timeStr,
+    signs: responseData.signs
+  });
+
+  // Habilitar de nuevo los campos
+  input.disabled = false;
+  if (sendBtn) sendBtn.disabled = false;
+  input.focus();
+}
+
+// Actualizar porcentaje y barra de Rapport
+function updateRapportScore(delta) {
+  AppState.session.rapport = Math.min(100, Math.max(20, AppState.session.rapport + delta));
+  const textEl = document.getElementById('rapportPercentText');
+  const barEl = document.getElementById('rapportProgressBar');
+
+  let label = "Fuerte";
+  if (AppState.session.rapport >= 85) label = "Sintonía Óptima";
+  else if (AppState.session.rapport >= 70) label = "Fuerte / Receptivo";
+  else if (AppState.session.rapport >= 50) label = "Moderada";
+  else label = "Tensa / Cautelosa";
+
+  if (textEl) textEl.textContent = `${AppState.session.rapport}% · ${label}`;
+  if (barEl) {
+    barEl.style.width = `${AppState.session.rapport}%`;
+    if (AppState.session.rapport < 50) {
+      barEl.className = "h-full bg-error rounded-full transition-all duration-500 ease-out";
+    } else {
+      barEl.className = "h-full bg-secondary rounded-full transition-all duration-500 ease-out";
+    }
+  }
+}
+
+// Reproducir voz del paciente
+function playPatientVoice(btn) {
+  const text = btn.getAttribute('data-speech');
+  if (text && typeof ClinicalSimulator !== 'undefined') {
+    ClinicalSimulator.speak(text);
+  }
+}
+
+// Inicializar temporizador de la sesión
+function initSessionTimer() {
+  if (AppState.session.timerInterval) clearInterval(AppState.session.timerInterval);
+  AppState.session.timerInterval = setInterval(() => {
+    AppState.session.timerSeconds++;
+    updateTimerDisplay();
+  }, 1000);
+}
+
+// Reconocimiento de voz para dictar preguntas
+function initSpeechRecognition() {
+  const micBtn = document.getElementById('micBtn');
+  if (!micBtn) return;
+
+  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SpeechRecognition) {
+    micBtn.title = "Reconocimiento de voz no soportado en este navegador";
+    return;
+  }
+
+  const rec = new SpeechRecognition();
+  rec.lang = 'es-ES';
+  rec.continuous = false;
+  rec.interimResults = false;
+
+  rec.onstart = () => {
+    AppState.isRecording = true;
+    micBtn.classList.add('bg-error/20', 'text-error');
+  };
+
+  rec.onresult = (event) => {
+    const transcript = event.results[0][0].transcript;
+    const input = document.getElementById('clinicianInput');
+    if (input) {
+      input.value = (input.value + ' ' + transcript).trim();
+      input.focus();
+    }
+  };
+
+  rec.onerror = (e) => {
+    console.warn("Speech recognition error:", e);
+    AppState.isRecording = false;
+    micBtn.classList.remove('bg-error/20', 'text-error');
+  };
+
+  rec.onend = () => {
+    AppState.isRecording = false;
+    micBtn.classList.remove('bg-error/20', 'text-error');
+  };
+
+  AppState.recognition = rec;
+  micBtn.onclick = toggleSpeechRecognition;
+}
+
+function toggleSpeechRecognition() {
+  if (!AppState.recognition) return;
+  if (AppState.isRecording) {
+    AppState.recognition.stop();
+  } else {
+    AppState.recognition.start();
+  }
+}
+
+// Autoguardado de notas clínicas en localStorage
+function initNotesAutosave() {
+  const notesTextarea = document.querySelector('#tabContentNotes textarea');
+  if (!notesTextarea) return;
+
+  const saved = localStorage.getItem('psicosim_notes_' + AppState.activeCaseId);
+  if (saved) {
+    notesTextarea.value = saved;
+  }
+
+  notesTextarea.addEventListener('input', () => {
+    localStorage.setItem('psicosim_notes_' + AppState.activeCaseId, notesTextarea.value);
+  });
+}
+
+// Utilidad para escapar texto HTML
+function escapeHtml(string) {
+  const div = document.createElement('div');
+  div.innerText = string;
+  return div.innerHTML;
 }
