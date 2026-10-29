@@ -81,6 +81,11 @@ function switchView(viewName) {
     }
   });
 
+  // Si se ingresa al debriefing, computar métricas y retroalimentación clínica
+  if (viewName === 'debriefing') {
+    updateDebriefingUI();
+  }
+
   // Actualizar estilos activos en la barra de navegación superior (Desktop)
   document.querySelectorAll('header nav a[data-path]').forEach(link => {
     const path = link.getAttribute('data-path');
@@ -825,3 +830,212 @@ function escapeHtml(string) {
   div.innerText = string;
   return div.innerHTML;
 }
+
+// Actualizar auditoría pedagógica y debriefing con métricas de la sesión
+function updateDebriefingUI() {
+  const patient = AppState.activeCase || CLINICAL_CASES[0];
+  
+  // Encabezados
+  const nameEl = document.getElementById('debriefPatientName');
+  const tagEl = document.getElementById('debriefDiagTag');
+  const durEl = document.getElementById('debriefDuration');
+  const turnsCountEl = document.getElementById('debriefTurnsCount');
+
+  if (nameEl) nameEl.textContent = `${patient.name} (${patient.age} años)`;
+  if (tagEl) tagEl.textContent = `${patient.diagnosticCode} · ${patient.diagnosticTitle}`;
+  const mins = Math.max(1, Math.round(AppState.session.timerSeconds / 60));
+  if (durEl) durEl.textContent = `${mins} minutos`;
+
+  // Filtrar intervenciones del estudiante
+  const traineeMessages = AppState.session.messages.filter(m => m.sender === 'trainee');
+  const totalTurns = traineeMessages.length;
+  if (turnsCountEl) turnsCountEl.textContent = `${totalTurns > 0 ? totalTurns * 2 : 4} turnos registrados`;
+
+  // Métricas
+  let openRatio = 78;
+  let closedRatio = 22;
+  let empathyScore = 92;
+  let leadingCount = 1;
+  let rapportScore = AppState.session.rapport || 88;
+
+  if (totalTurns > 0) {
+    const openCount = traineeMessages.filter(m => m.analysis?.isOpen).length;
+    openRatio = Math.round((openCount / totalTurns) * 100);
+    closedRatio = 100 - openRatio;
+
+    const empCount = traineeMessages.filter(m => m.analysis?.isEmpathetic || m.analysis?.isParaphrase).length;
+    empathyScore = Math.min(100, Math.max(35, Math.round((empCount / totalTurns) * 65 + 35)));
+
+    leadingCount = traineeMessages.filter(m => m.analysis?.isLeading).length;
+  }
+
+  // Actualizar KPI 1: Preguntas Abiertas vs Cerradas
+  const openText = document.getElementById('debriefOpenRatioText');
+  const closedText = document.getElementById('debriefClosedRatioText');
+  const openBar = document.getElementById('debriefOpenBar');
+  const closedBar = document.getElementById('debriefClosedBar');
+  if (openText) openText.innerHTML = `${openRatio}% <span class="text-on-surface-variant font-label-md text-sm font-normal">Abiertas</span>`;
+  if (closedText) closedText.textContent = `${closedRatio}% Preguntas Cerradas`;
+  if (openBar) openBar.style.width = `${openRatio}%`;
+  if (closedBar) closedBar.style.width = `${closedRatio}%`;
+
+  // Actualizar KPI 2: Empatía
+  const empScoreEl = document.getElementById('debriefEmpathyScore');
+  const empBarEl = document.getElementById('debriefEmpathyBar');
+  const empBadgeEl = document.getElementById('debriefEmpathyBadge');
+  if (empScoreEl) empScoreEl.textContent = empathyScore;
+  if (empBarEl) empBarEl.style.width = `${empathyScore}%`;
+  if (empBadgeEl) {
+    if (empathyScore >= 80) empBadgeEl.textContent = "Sobresaliente";
+    else if (empathyScore >= 60) empBadgeEl.textContent = "Adecuado";
+    else empBadgeEl.textContent = "A Desarrollar";
+  }
+
+  // Actualizar KPI 3: Preguntas Sesgadas / Inductivas
+  const leadCountEl = document.getElementById('debriefLeadingCount');
+  const leadBarEl = document.getElementById('debriefLeadingBar');
+  const leadBadgeEl = document.getElementById('debriefLeadingBadge');
+  const leadDescEl = document.getElementById('debriefLeadingDesc');
+  if (leadCountEl) leadCountEl.textContent = leadingCount;
+  if (leadBarEl) leadBarEl.style.width = `${Math.min(100, leadingCount * 25)}%`;
+  if (leadBadgeEl) {
+    leadBadgeEl.textContent = leadingCount === 0 ? "Riesgo Nulo" : (leadingCount === 1 ? "Riesgo Bajo" : "Atención Pedagógica");
+    leadBadgeEl.className = leadingCount === 0 ? "ml-auto px-space-xs py-0.5 rounded-full font-label-sm text-[10px] bg-secondary-fixed text-on-secondary-fixed font-semibold" : "ml-auto px-space-xs py-0.5 rounded-full font-label-sm text-[10px] bg-surface-container-high text-on-surface-variant font-semibold";
+  }
+  if (leadDescEl) {
+    leadDescEl.textContent = leadingCount === 0 
+      ? "Excelente formulación neutral sin preguntas dirigidas."
+      : `${leadingCount} formulación(es) sugestiva(s) detectada(s).`;
+  }
+
+  // Actualizar KPI 4: Alianza / Rapport
+  const rapScoreEl = document.getElementById('debriefRapportScore');
+  const rapBarEl = document.getElementById('debriefRapportBar');
+  const rapBadgeEl = document.getElementById('debriefRapportBadge');
+  if (rapScoreEl) rapScoreEl.textContent = rapportScore;
+  if (rapBarEl) rapBarEl.style.width = `${rapportScore}%`;
+  if (rapBadgeEl) {
+    rapBadgeEl.textContent = rapportScore >= 80 ? "Alta Cohesión" : (rapportScore >= 60 ? "Cohesión Media" : "Reserva");
+  }
+
+  // Renderizar desglose cualitativo turno por turno
+  const qualitativeFeed = document.getElementById('debriefQualitativeFeed');
+  if (!qualitativeFeed) return;
+
+  if (totalTurns === 0) {
+    // Renderizar casos modelo formativos de muestra
+    qualitativeFeed.innerHTML = `
+      <div class="p-space-md rounded-xl bg-surface-container-lowest border border-secondary/30 shadow-sm flex flex-col gap-space-sm relative overflow-hidden">
+        <div class="absolute left-0 top-0 bottom-0 w-1.5 bg-secondary"></div>
+        <div class="flex flex-wrap items-center justify-between gap-space-xs pl-space-xs">
+          <span class="font-label-sm text-xs font-bold text-secondary uppercase tracking-wider">Intervención Modelo · Validación Afectiva</span>
+          <span class="px-space-sm py-0.5 rounded-full font-label-sm text-xs bg-secondary-fixed text-on-secondary-fixed font-semibold flex items-center gap-1">
+            <span class="material-symbols-outlined text-[13px]">check_circle</span> Fortaleza
+          </span>
+        </div>
+        <p class="font-body-md text-sm md:text-body-md text-on-surface pl-space-xs font-medium">
+          «Entiendo que esa sensación debe ser agotadora y frustrante para ti, ${patient.name.split(' ')[0]}, especialmente al no encontrar tregua...»
+        </p>
+        <div class="mt-space-xs p-space-sm rounded-lg bg-surface-container-low flex items-start gap-space-sm">
+          <span class="material-symbols-outlined text-secondary text-[20px] shrink-0 mt-0.5">school</span>
+          <p class="font-body-sm text-xs text-on-surface-variant">
+            <strong>Fortaleza pedagógica:</strong> Validar el malestar subjetivo antes de indagar datos cronológicos o somáticos desescala la activación defensiva del paciente y afianza la alianza de trabajo.
+          </p>
+        </div>
+      </div>
+
+      <div class="p-space-md rounded-xl bg-surface-container-lowest border border-error/30 shadow-sm flex flex-col gap-space-sm relative overflow-hidden">
+        <div class="absolute left-0 top-0 bottom-0 w-1.5 bg-error"></div>
+        <div class="flex flex-wrap items-center justify-between gap-space-xs pl-space-xs">
+          <span class="font-label-sm text-xs font-bold text-error uppercase tracking-wider">Intervención de Alerta · Pregunta Inductiva (Sesgo)</span>
+          <span class="px-space-sm py-0.5 rounded-full font-label-sm text-xs bg-error-container text-on-error-container font-semibold flex items-center gap-1">
+            <span class="material-symbols-outlined text-[13px]">report</span> Sesgo a Evitar
+          </span>
+        </div>
+        <p class="font-body-md text-sm md:text-body-md text-on-surface pl-space-xs font-medium">
+          «¿Verdad que sientes que vas a perder el control en cualquier momento?»
+        </p>
+        <div class="mt-space-xs p-space-sm rounded-lg bg-error-container/30 flex items-start gap-space-sm">
+          <span class="material-symbols-outlined text-error text-[20px] shrink-0 mt-0.5">tips_and_updates</span>
+          <div class="flex flex-col gap-1">
+            <p class="font-body-sm text-xs text-on-surface">
+              <strong>Oportunidad de aprendizaje:</strong> La fórmula «¿Verdad que...?» induce la respuesta del paciente e introduce un sesgo de confirmación que contamina la exploración semiológica.
+            </p>
+            <div class="p-space-xs px-space-sm rounded bg-surface-container-lowest font-body-sm text-xs text-primary flex items-baseline gap-space-xs">
+              <span class="font-label-sm text-[11px] font-bold text-secondary uppercase shrink-0">Alternativa Sugerida:</span>
+              <span class="italic">«¿Qué pensamientos específicos experimentas en tu mente cuando te asalta esa sensación?»</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+  } else {
+    // Renderizar las preguntas reales formuladas en la sesión
+    qualitativeFeed.innerHTML = traineeMessages.map((msg, idx) => {
+      const isLead = msg.analysis?.isLeading;
+      const isEmp = msg.analysis?.isEmpathetic || msg.analysis?.isParaphrase;
+      const borderCol = isLead ? 'border-error/30' : (isEmp ? 'border-secondary/30' : 'border-surface-container');
+      const barCol = isLead ? 'bg-error' : (isEmp ? 'bg-secondary' : 'bg-primary-fixed-dim');
+      const badgeBg = isLead ? 'bg-error-container text-on-error-container' : (isEmp ? 'bg-secondary-fixed text-on-secondary-fixed' : 'bg-surface-container text-primary');
+
+      return `
+        <div class="p-space-md rounded-xl bg-surface-container-lowest border ${borderCol} shadow-sm flex flex-col gap-space-sm relative overflow-hidden">
+          <div class="absolute left-0 top-0 bottom-0 w-1.5 ${barCol}"></div>
+          <div class="flex flex-wrap items-center justify-between gap-space-xs pl-space-xs">
+            <span class="font-label-sm text-xs font-bold ${isLead ? 'text-error' : (isEmp ? 'text-secondary' : 'text-primary')} uppercase tracking-wider">
+              Turno #${(idx + 1) * 2 - 1} · Tu Intervención
+            </span>
+            <span class="px-space-sm py-0.5 rounded-full font-label-sm text-xs ${badgeBg} font-semibold flex items-center gap-1">
+              <span class="material-symbols-outlined text-[13px]">${isLead ? 'report' : (isEmp ? 'favorite' : 'psychology')}</span>
+              ${msg.analysis?.interventionType || 'Intervención Clínica'}
+            </span>
+          </div>
+          <p class="font-body-md text-sm md:text-body-md text-on-surface pl-space-xs font-medium">
+            «${escapeHtml(msg.text)}»
+          </p>
+          ${isLead ? `
+            <div class="mt-space-xs p-space-sm rounded-lg bg-error-container/30 flex items-start gap-space-sm">
+              <span class="material-symbols-outlined text-error text-[20px] shrink-0 mt-0.5">tips_and_updates</span>
+              <div class="flex flex-col gap-1">
+                <p class="font-body-sm text-xs text-on-surface">
+                  <strong>Oportunidad de mejora:</strong> Se detectó una formulación potencialmente inductiva o sugestiva. Evita fórmulas afirmativas que dirijan la respuesta del paciente.
+                </p>
+                <div class="p-space-xs px-space-sm rounded bg-surface-container-lowest font-body-sm text-xs text-primary flex items-baseline gap-space-xs">
+                  <span class="font-label-sm text-[11px] font-bold text-secondary uppercase shrink-0">Alternativa Sugerida:</span>
+                  <span class="italic">«¿De qué manera describirías lo que te ocurre en esa situación con tus propias palabras?»</span>
+                </div>
+              </div>
+            </div>
+          ` : (isEmp ? `
+            <div class="mt-space-xs p-space-sm rounded-lg bg-surface-container-low flex items-start gap-space-sm">
+              <span class="material-symbols-outlined text-secondary text-[20px] shrink-0 mt-0.5">check_circle</span>
+              <p class="font-body-sm text-xs text-on-surface-variant">
+                <strong>Fortaleza clínica:</strong> Excelente validación empática del contenido afectivo. Ayudó a consolidar la alianza terapéutica y favoreció la apertura del paciente.
+              </p>
+            </div>
+          ` : `
+            <div class="mt-space-xs p-space-sm rounded-lg bg-surface-container-low flex items-start gap-space-sm">
+              <span class="material-symbols-outlined text-primary text-[20px] shrink-0 mt-0.5">school</span>
+              <p class="font-body-sm text-xs text-on-surface-variant">
+                <strong>Técnica exploratoria:</strong> Indagación semiológica adecuada. Procura mantener el equilibrio entre explorar hechos objetivos y acoger la emoción sentida.
+              </p>
+            </div>
+          `)}
+        </div>
+      `;
+    }).join('');
+  }
+
+  // Comentario del supervisor docente adaptativo
+  const commentEl = document.getElementById('debriefSupervisorComment');
+  if (commentEl) {
+    if (leadingCount === 0 && empathyScore >= 80) {
+      commentEl.textContent = `Sobresaliente desempeño en la entrevista con ${patient.name}. La estudiante demostró alta sensibilidad empática, excelente contención del motivo de consulta y formuló preguntas limpias de sesgo inductivo. Nivel recomendable para avance a prácticas de complejidad intermedia.`;
+    } else if (leadingCount > 0) {
+      commentEl.textContent = `Buen ritmo general en la sesión con ${patient.name}. Se observa calidez y esfuerzo por acoger el malestar. Se recomienda especial atención a las preguntas que incluyen juicios o confirmaciones anticipadas para no sesgar el reporte clínico.`;
+    } else {
+      commentEl.textContent = `Encuadre inicial adecuado con ${patient.name}. Se sugiere profundizar en la validación afectiva previa a la exploración fáctica de síntomas, permitiendo mayor tiempo para que el paciente elabore su discurso.`;
+    }
+  }
+}
+

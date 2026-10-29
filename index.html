@@ -1010,17 +1010,17 @@
             <h1 class="font-headline-lg text-2xl md:text-headline-lg text-primary tracking-tight mt-space-xs">
               Informe de Desempeño Clínico y Debriefing Pedagógico
             </h1>
-            <p class="font-body-md text-body-md text-on-surface-variant">
-              Paciente simulada: <span class="font-semibold text-on-surface" id="debriefPatientName">Elena Morales (32 años)</span> · Duración: <span class="font-semibold text-on-surface">22 minutos</span> · 18 turnos registrados
+            <p class="font-body-md text-body-md text-on-surface-variant" id="debriefSessionStats">
+              Paciente simulada: <span class="font-semibold text-on-surface" id="debriefPatientName">Elena Morales (32 años)</span> · Duración: <span class="font-semibold text-on-surface" id="debriefDuration">14 minutos</span> · <span id="debriefTurnsCount">4 turnos registrados</span>
             </p>
           </div>
 
           <div class="flex flex-wrap items-center gap-space-sm shrink-0">
-            <button class="inline-flex items-center gap-space-xs px-space-md py-space-sm rounded-lg bg-surface-container text-on-surface hover:bg-surface-variant transition-colors font-label-md text-label-md" onclick="switchView('consulta')" type="button">
+            <button class="inline-flex items-center gap-space-xs px-space-md py-space-sm rounded-lg bg-surface-container text-on-surface hover:bg-surface-variant transition-colors font-label-md text-label-md cursor-pointer" onclick="switchView('consulta')" type="button">
               <span class="material-symbols-outlined text-[18px]">replay</span>
               <span>Reanudar Consulta</span>
             </button>
-            <button class="inline-flex items-center gap-space-xs px-space-lg py-space-sm rounded-lg bg-primary text-on-primary hover:bg-primary-container transition-all font-label-md text-label-md shadow-sm font-semibold" onclick="window.print()" type="button">
+            <button class="inline-flex items-center gap-space-xs px-space-lg py-space-sm rounded-lg bg-primary text-on-primary hover:bg-primary-container transition-all font-label-md text-label-md shadow-sm font-semibold cursor-pointer" onclick="window.print()" type="button">
               <span class="material-symbols-outlined text-[18px] text-secondary-fixed">download</span>
               <span>Exportar Informe</span>
             </button>
@@ -1038,16 +1038,16 @@
                 <span class="material-symbols-outlined text-[20px] text-secondary">tune</span>
               </div>
               <div class="mt-space-sm">
-                <div class="font-headline-md text-2xl text-primary font-bold">78% <span class="text-on-surface-variant font-label-md text-sm font-normal">Abiertas</span></div>
-                <div class="font-label-sm text-xs text-secondary font-medium mt-0.5">22% Preguntas Cerradas</div>
+                <div class="font-headline-md text-2xl text-primary font-bold" id="debriefOpenRatioText">78% <span class="text-on-surface-variant font-label-md text-sm font-normal">Abiertas</span></div>
+                <div class="font-label-sm text-xs text-secondary font-medium mt-0.5" id="debriefClosedRatioText">22% Preguntas Cerradas</div>
               </div>
             </div>
             <div class="mt-space-md pt-space-xs">
               <div class="w-full h-2 rounded-full bg-surface-container flex overflow-hidden">
-                <div class="bg-secondary h-full rounded-l-full" style="width: 78%;"></div>
-                <div class="bg-primary-fixed-dim h-full rounded-r-full" style="width: 22%;"></div>
+                <div class="bg-secondary h-full rounded-l-full" id="debriefOpenBar" style="width: 78%;"></div>
+                <div class="bg-primary-fixed-dim h-full rounded-r-full" id="debriefClosedBar" style="width: 22%;"></div>
               </div>
-              <p class="font-body-sm text-xs text-on-surface-variant mt-space-xs">
+              <p class="font-body-sm text-xs text-on-surface-variant mt-space-xs" id="debriefOpenRatioDesc">
                 Equilibrio óptimo para la fase de encuadre exploratorio.
               </p>
             </div>
@@ -1061,16 +1061,16 @@
                 <span class="material-symbols-outlined text-[20px] text-secondary">favorite</span>
               </div>
               <div class="mt-space-sm flex items-baseline gap-space-xs">
-                <span class="font-headline-md text-2xl text-primary font-bold">92</span>
+                <span class="font-headline-md text-2xl text-primary font-bold" id="debriefEmpathyScore">92</span>
                 <span class="font-label-sm text-sm text-on-surface-variant">/ 100</span>
-                <span class="ml-auto px-space-xs py-0.5 rounded-full font-label-sm text-[10px] bg-secondary-fixed text-on-secondary-fixed font-semibold">Sobresaliente</span>
+                <span class="ml-auto px-space-xs py-0.5 rounded-full font-label-sm text-[10px] bg-secondary-fixed text-on-secondary-fixed font-semibold" id="debriefEmpathyBadge">Sobresaliente</span>
               </div>
             </div>
             <div class="mt-space-md pt-space-xs">
               <div class="w-full h-2 rounded-full bg-surface-container overflow-hidden">
-                <div class="bg-secondary h-full rounded-full transition-all duration-500" style="width: 92%;"></div>
+                <div class="bg-secondary h-full rounded-full transition-all duration-500" id="debriefEmpathyBar" style="width: 92%;"></div>
               </div>
-              <p class="font-body-sm text-xs text-on-surface-variant mt-space-xs">
+              <p class="font-body-sm text-xs text-on-surface-variant mt-space-xs" id="debriefEmpathyDesc">
                 Excelente contención afectiva y reflejo de emociones.
               </p>
             </div>
@@ -1084,17 +1084,17 @@
                 <span class="material-symbols-outlined text-[20px] text-error">warning</span>
               </div>
               <div class="mt-space-sm flex items-baseline gap-space-xs">
-                <span class="font-headline-md text-2xl text-primary font-bold">1</span>
+                <span class="font-headline-md text-2xl text-primary font-bold" id="debriefLeadingCount">1</span>
                 <span class="font-label-sm text-sm text-on-surface-variant">incidencia</span>
-                <span class="ml-auto px-space-xs py-0.5 rounded-full font-label-sm text-[10px] bg-surface-container-high text-on-surface-variant font-semibold">Riesgo Bajo</span>
+                <span class="ml-auto px-space-xs py-0.5 rounded-full font-label-sm text-[10px] bg-surface-container-high text-on-surface-variant font-semibold" id="debriefLeadingBadge">Riesgo Bajo</span>
               </div>
             </div>
             <div class="mt-space-md pt-space-xs">
               <div class="w-full h-2 rounded-full bg-surface-container overflow-hidden">
-                <div class="bg-error h-full rounded-full" style="width: 14%;"></div>
+                <div class="bg-error h-full rounded-full" id="debriefLeadingBar" style="width: 14%;"></div>
               </div>
-              <p class="font-body-sm text-xs text-on-surface-variant mt-space-xs">
-                1 formulación sugestiva detectada en turno #11.
+              <p class="font-body-sm text-xs text-on-surface-variant mt-space-xs" id="debriefLeadingDesc">
+                1 formulación sugestiva detectada.
               </p>
             </div>
           </div>
@@ -1107,17 +1107,17 @@
                 <span class="material-symbols-outlined text-[20px] text-secondary">handshake</span>
               </div>
               <div class="mt-space-sm flex items-baseline gap-space-xs">
-                <span class="font-headline-md text-2xl text-primary font-bold">88</span>
+                <span class="font-headline-md text-2xl text-primary font-bold" id="debriefRapportScore">88</span>
                 <span class="font-label-sm text-sm text-on-surface-variant">/ 100</span>
-                <span class="ml-auto px-space-xs py-0.5 rounded-full font-label-sm text-[10px] bg-secondary-fixed text-on-secondary-fixed font-semibold">Alta Cohesión</span>
+                <span class="ml-auto px-space-xs py-0.5 rounded-full font-label-sm text-[10px] bg-secondary-fixed text-on-secondary-fixed font-semibold" id="debriefRapportBadge">Alta Cohesión</span>
               </div>
             </div>
             <div class="mt-space-md pt-space-xs">
               <div class="w-full h-2 rounded-full bg-surface-container overflow-hidden">
-                <div class="bg-secondary h-full rounded-full transition-all duration-500" style="width: 88%;"></div>
+                <div class="bg-secondary h-full rounded-full transition-all duration-500" id="debriefRapportBar" style="width: 88%;"></div>
               </div>
-              <p class="font-body-sm text-xs text-on-surface-variant mt-space-xs">
-                El paciente redujo tensión defensiva en la segunda mitad.
+              <p class="font-body-sm text-xs text-on-surface-variant mt-space-xs" id="debriefRapportDesc">
+                Sintonía empática y receptividad conservada.
               </p>
             </div>
           </div>
@@ -1136,62 +1136,14 @@
                     <h2 class="font-headline-md text-headline-md text-primary font-bold tracking-tight">Análisis Cualitativo de la Conversación</h2>
                   </div>
                   <p class="font-body-sm text-body-sm text-on-surface-variant mt-1">
-                    Desglose formativo de turnos clínicos.
+                    Desglose pedagógico de las preguntas realizadas y oportunidades de mejora.
                   </p>
                 </div>
               </div>
 
-              <!-- Breakdown Feed -->
-              <div class="flex flex-col gap-space-md mt-space-md">
-                
-                <!-- Turn Positivo -->
-                <div class="p-space-md rounded-xl bg-surface-container-lowest border border-secondary/30 shadow-sm flex flex-col gap-space-sm relative overflow-hidden">
-                  <div class="absolute left-0 top-0 bottom-0 w-1.5 bg-secondary"></div>
-                  <div class="flex flex-wrap items-center justify-between gap-space-xs pl-space-xs">
-                    <span class="font-label-sm text-xs font-bold text-secondary uppercase tracking-wider">Turno #05 · Tu Intervención</span>
-                    <span class="px-space-sm py-0.5 rounded-full font-label-sm text-xs bg-secondary-fixed text-on-secondary-fixed font-semibold flex items-center gap-1">
-                      <span class="material-symbols-outlined text-[13px]">check_circle</span>
-                      Validación Afectiva
-                    </span>
-                  </div>
-                  <p class="font-body-md text-sm md:text-body-md text-on-surface pl-space-xs font-medium">
-                    «Entiendo que esa sensación debe ser agotadora y frustrante para ti, Elena, especialmente al no encontrar tregua ni en los momentos familiares...»
-                  </p>
-                  <div class="mt-space-xs p-space-sm rounded-lg bg-surface-container-low flex items-start gap-space-sm">
-                    <span class="material-symbols-outlined text-secondary text-[20px] shrink-0 mt-0.5">school</span>
-                    <p class="font-body-sm text-xs text-on-surface-variant">
-                      <strong>Fortaleza clínica:</strong> Excelente validación del malestar subjetivo antes de indagar cronología o datos fácticos. Desescaló la tensión simpática del paciente y consolidó la alianza de trabajo.
-                    </p>
-                  </div>
-                </div>
-
-                <!-- Turn con Oportunidad de Mejora (Pregunta Inductiva / Sesgada) -->
-                <div class="p-space-md rounded-xl bg-surface-container-lowest border border-error/30 shadow-sm flex flex-col gap-space-sm relative overflow-hidden">
-                  <div class="absolute left-0 top-0 bottom-0 w-1.5 bg-error"></div>
-                  <div class="flex flex-wrap items-center justify-between gap-space-xs pl-space-xs">
-                    <span class="font-label-sm text-xs font-bold text-error uppercase tracking-wider">Turno #11 · Tu Intervención (A mejorar)</span>
-                    <span class="px-space-sm py-0.5 rounded-full font-label-sm text-xs bg-error-container text-on-error-container font-semibold flex items-center gap-1">
-                      <span class="material-symbols-outlined text-[13px]">report</span>
-                      Pregunta Inductiva (Sesgo)
-                    </span>
-                  </div>
-                  <p class="font-body-md text-sm md:text-body-md text-on-surface pl-space-xs font-medium">
-                    «¿Verdad que sientes que vas a perder el control en el trabajo?»
-                  </p>
-                  <div class="mt-space-xs p-space-sm rounded-lg bg-error-container/30 flex items-start gap-space-sm">
-                    <span class="material-symbols-outlined text-error text-[20px] shrink-0 mt-0.5">tips_and_updates</span>
-                    <div class="flex flex-col gap-1">
-                      <p class="font-body-sm text-xs text-on-surface">
-                        <strong>Oportunidad pedagógica:</strong> La fórmula <em>«¿Verdad que...?»</em> induce la respuesta del paciente e introduce un juicio anticipatorio que limita el relato espontáneo.
-                      </p>
-                      <div class="p-space-xs px-space-sm rounded bg-surface-container-lowest font-body-sm text-xs text-primary flex items-baseline gap-space-xs">
-                        <span class="font-label-sm text-[11px] font-bold text-secondary uppercase shrink-0">Alternativa Sugerida:</span>
-                        <span class="italic">«¿Qué pensamientos concretos pasan por tu cabeza en ese momento cuando estás en el trabajo?»</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
+              <!-- Breakdown Feed Container -->
+              <div class="flex flex-col gap-space-md mt-space-md" id="debriefQualitativeFeed">
+                <!-- Se poblará dinámicamente -->
               </div>
             </div>
           </div>
@@ -1203,8 +1155,8 @@
                 <span class="material-symbols-outlined text-[20px] text-primary">rate_review</span>
                 <span class="font-headline-sm text-headline-sm text-primary font-bold">Comentario del Docente Supervisor</span>
               </div>
-              <p class="font-body-sm text-xs md:text-sm text-on-surface-variant leading-relaxed">
-                Buen desempeño general en la técnica de acogida. La estudiante demuestra calidez empática y respeto por los tiempos del paciente. Se sugiere entrenar la formulación de preguntas circulares y evitar el uso de fórmulas afirmativas encubiertas.
+              <p class="font-body-sm text-xs md:text-sm text-on-surface-variant leading-relaxed" id="debriefSupervisorComment">
+                Buen desempeño general en la técnica de acogida. La estudiante demuestra calidez empática y respeto por los tiempos del paciente. Se sugiere continuar entrenando la indagación de emociones profundas sin inducir respuestas.
               </p>
             </div>
           </div>
