@@ -1,0 +1,1475 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport"/>
+  <title>PsicoSim IA · Simulador Clínico de Pacientes</title>
+  <meta name="description" content="Simulador de pacientes con IA para prácticas clínicas y entrenamiento de estudiantes de Psicología."/>
+  
+  <!-- Google Fonts & Material Symbols -->
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin=""/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&amp;family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+
+  <!-- Tailwind CSS CDN & Config -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "surface": "#f8f9ff",
+            "surface-dim": "#cbdbf5",
+            "surface-bright": "#f8f9ff",
+            "surface-container-lowest": "#ffffff",
+            "surface-container-low": "#eff4ff",
+            "surface-container": "#e5eeff",
+            "surface-container-high": "#dce9ff",
+            "surface-container-highest": "#d3e4fe",
+            "on-surface": "#0b1c30",
+            "on-surface-variant": "#45474c",
+            "inverse-surface": "#213145",
+            "inverse-on-surface": "#eaf1ff",
+            "outline": "#75777d",
+            "outline-variant": "#c5c6cd",
+            "surface-tint": "#545f73",
+            "primary": "#091426",
+            "on-primary": "#ffffff",
+            "primary-container": "#1e293b",
+            "on-primary-container": "#8590a6",
+            "inverse-primary": "#bcc7de",
+            "secondary": "#006c4a",
+            "on-secondary": "#ffffff",
+            "secondary-container": "#82f5c1",
+            "on-secondary-container": "#00714e",
+            "tertiary": "#001334",
+            "on-tertiary": "#ffffff",
+            "tertiary-container": "#00275b",
+            "on-tertiary-container": "#4c8dff",
+            "error": "#ba1a1a",
+            "on-error": "#ffffff",
+            "error-container": "#ffdad6",
+            "on-error-container": "#93000a",
+            "primary-fixed": "#d8e3fb",
+            "primary-fixed-dim": "#bcc7de",
+            "on-primary-fixed": "#111c2d",
+            "on-primary-fixed-variant": "#3c475a",
+            "secondary-fixed": "#85f8c4",
+            "secondary-fixed-dim": "#68dba9",
+            "on-secondary-fixed": "#002114",
+            "on-secondary-fixed-variant": "#005137",
+            "background": "#f8f9ff",
+            "on-background": "#0b1c30"
+          },
+          borderRadius: {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
+          spacing: {
+            "gutter-sm": "1rem",
+            "margin-mobile": "1rem",
+            "space-xs": "0.25rem",
+            "gutter": "1.5rem",
+            "space-lg": "1.5rem",
+            "margin": "2rem",
+            "space-md": "1rem",
+            "space-sm": "0.5rem",
+            "space-xl": "2.5rem"
+          },
+          fontFamily: {
+            "headline-lg": ["Newsreader", "serif"],
+            "headline-md": ["Newsreader", "serif"],
+            "headline-sm": ["Plus Jakarta Sans", "sans-serif"],
+            "headline-xl": ["Newsreader", "serif"],
+            "body-lg": ["Plus Jakarta Sans", "sans-serif"],
+            "body-md": ["Plus Jakarta Sans", "sans-serif"],
+            "body-sm": ["Plus Jakarta Sans", "sans-serif"],
+            "label-lg": ["Inter", "sans-serif"],
+            "label-md": ["Inter", "sans-serif"],
+            "label-sm": ["Inter", "sans-serif"]
+          }
+        }
+      }
+    };
+  </script>
+  <style>
+    @layer base {
+      html, body { margin: 0; padding: 0; }
+      body { overscroll-behavior-y: none; }
+    }
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 9999px; }
+    ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+  </style>
+</head>
+
+<body class="bg-background font-body-md text-on-surface antialiased min-h-screen flex flex-col">
+
+  <!-- ================= TOP HEADER (DESKTOP & MOBILE) ================= -->
+  <header class="fixed top-0 w-full h-16 z-50 bg-surface/90 backdrop-blur-md shadow-[0_1px_8px_rgba(0,0,0,0.04)]">
+    <div class="w-full h-16 px-4 md:px-gutter flex items-center justify-between gap-space-sm">
+      
+      <!-- Brand & Faculty Context -->
+      <div class="flex items-center gap-space-md">
+        <div class="flex items-center gap-space-sm cursor-pointer" onclick="switchView('catalogo')">
+          <div class="w-9 h-9 rounded-xl bg-primary flex items-center justify-center text-white shadow-sm">
+            <span class="material-symbols-outlined text-[22px] text-secondary-container">psychology</span>
+          </div>
+          <div class="flex flex-col">
+            <span class="font-headline-sm text-base md:text-headline-sm text-primary font-bold tracking-tight">PsicoSim IA</span>
+            <span class="font-label-sm text-[11px] text-on-surface-variant leading-none">Simulador Clínico</span>
+          </div>
+        </div>
+
+        <div class="hidden xl:flex items-center gap-space-xs px-space-sm py-space-xs rounded-full bg-surface-container-low text-on-primary-fixed-variant">
+          <span class="material-symbols-outlined text-[15px] text-secondary">verified</span>
+          <span class="font-label-sm text-label-sm">Facultad de Psicología · Prácticas Supervisadas</span>
+        </div>
+      </div>
+
+      <!-- Desktop Navigation Tabs -->
+      <nav class="hidden lg:flex items-center p-space-xs bg-surface-container-low rounded-xl gap-space-xs">
+        <a class="px-space-md py-space-xs rounded-lg transition-all bg-surface-container text-primary font-semibold shadow-[0_1px_4px_rgba(0,0,0,0.04)]" data-path="catalogo" href="#catalogo" onclick="switchView('catalogo'); return false;">Catálogo de Casos</a>
+        <a class="px-space-md py-space-xs rounded-lg font-label-lg text-label-lg text-on-surface-variant hover:text-on-surface transition-all" data-path="consulta" href="#consulta" onclick="switchView('consulta'); return false;">Despacho de Consulta</a>
+        <a class="px-space-md py-space-xs rounded-lg font-label-lg text-label-lg text-on-surface-variant hover:text-on-surface transition-all" data-path="debriefing" href="#debriefing" onclick="switchView('debriefing'); return false;">Debriefing &amp; Análisis</a>
+        <a class="px-space-md py-space-xs rounded-lg font-label-lg text-label-lg text-on-surface-variant hover:text-on-surface transition-all" data-path="progreso" href="#progreso" onclick="switchView('progreso'); return false;">Mi Progreso</a>
+      </nav>
+
+      <!-- Action Buttons & User Profile -->
+      <div class="flex items-center gap-space-sm md:gap-space-md">
+        
+        <!-- Interview Guide Button -->
+        <button class="inline-flex items-center gap-1 md:gap-space-xs px-2.5 md:px-space-md py-1.5 rounded-lg bg-surface-container-high text-on-surface hover:bg-surface-variant transition-colors font-label-md text-xs md:text-label-md" onclick="openInterviewGuideModal()" type="button" title="Guía formativa para la entrevista clínica">
+          <span class="material-symbols-outlined text-[17px] text-secondary">menu_book</span>
+          <span class="hidden sm:inline">Guía de Entrevista</span>
+        </button>
+
+        <!-- AI Engine Configuration Modal Button -->
+        <button class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-secondary-container/40 text-on-secondary-container hover:bg-secondary-container/60 transition-colors font-label-md text-xs md:text-label-md" onclick="openAISettingsModal()" type="button" title="Configurar Motor IA">
+          <span class="material-symbols-outlined text-[17px] text-secondary">smart_toy</span>
+          <span class="hidden sm:inline">Motor IA</span>
+        </button>
+
+        <!-- User Profile Pill -->
+        <div class="flex items-center gap-space-xs md:gap-space-sm pl-1 border-l border-surface-container">
+          <div class="w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center font-bold text-xs ring-2 ring-surface-container">
+            PC
+          </div>
+          <div class="hidden md:flex flex-col text-left">
+            <span class="font-label-md text-label-md text-on-surface leading-tight font-semibold">Paula Cruz</span>
+            <span class="font-label-sm text-[11px] text-on-surface-variant">En formación</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </header>
+
+  <!-- ================= DESKTOP SIDEBAR (ASIDE) ================= -->
+  <aside class="fixed left-0 top-16 bottom-0 w-64 bg-surface-container-lowest z-40 hidden md:flex flex-col p-space-md shadow-[0_1px_8px_rgba(0,0,0,0.02)]">
+    
+    <!-- Active Patient Card Widget -->
+    <div class="pb-space-sm mb-space-sm">
+      <div class="px-space-sm py-space-xs rounded-lg bg-surface-container-low cursor-pointer hover:bg-surface-container transition-colors" onclick="switchView('consulta')">
+        <span class="font-label-sm text-[11px] text-on-surface-variant block uppercase tracking-wide">Paciente Activo</span>
+        <div class="flex items-center justify-between mt-space-xs">
+          <span class="font-label-lg text-label-lg text-primary font-semibold" id="sidebarPatientName">Elena Morales (32a)</span>
+          <span class="px-space-sm py-0.5 rounded-full font-label-sm text-[11px] bg-error-container text-on-error-container font-semibold" id="sidebarPatientDiag">TAG / F41.1</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Navigation List -->
+    <nav class="flex-1 flex flex-col gap-space-xs">
+      <a class="flex items-center gap-space-sm px-space-md py-space-sm rounded-lg transition-colors bg-surface-container text-primary font-semibold shadow-xs" data-path="catalogo" href="#catalogo" onclick="switchView('catalogo'); return false;">
+        <span class="material-symbols-outlined text-[20px]">folder_shared</span>
+        <span>Casos Asignados</span>
+      </a>
+      <a class="flex items-center gap-space-sm px-space-md py-space-sm rounded-lg font-label-md text-label-md text-on-surface-variant hover:bg-surface-container-low hover:text-on-surface transition-colors" data-path="consulta" href="#consulta" onclick="switchView('consulta'); return false;">
+        <span class="material-symbols-outlined text-[20px]">record_voice_over</span>
+        <span>Sala de Simulación</span>
+      </a>
+      <a class="flex items-center gap-space-sm px-space-md py-space-sm rounded-lg font-label-md text-label-md text-on-surface-variant hover:bg-surface-container-low hover:text-on-surface transition-colors" data-path="debriefing" href="#debriefing" onclick="switchView('debriefing'); return false;">
+        <span class="material-symbols-outlined text-[20px]">psychology_alt</span>
+        <span>Auditoría de Sesión</span>
+      </a>
+      <a class="flex items-center gap-space-sm px-space-md py-space-sm rounded-lg font-label-md text-label-md text-on-surface-variant hover:bg-surface-container-low hover:text-on-surface transition-colors" data-path="progreso" href="#progreso" onclick="switchView('progreso'); return false;">
+        <span class="material-symbols-outlined text-[20px]">stacked_line_chart</span>
+        <span>Métricas &amp; Rapport</span>
+      </a>
+
+      <div class="my-space-sm pt-space-xs border-t border-surface-container-low">
+        <span class="font-label-sm text-[11px] text-on-surface-variant px-space-sm uppercase tracking-wide">Soporte Formativo</span>
+      </div>
+
+      <a class="flex items-center gap-space-sm px-space-md py-space-sm rounded-lg font-label-md text-label-md text-on-surface-variant hover:bg-surface-container-low hover:text-on-surface transition-colors" href="javascript:void(0)" onclick="openInterviewGuideModal()">
+        <span class="material-symbols-outlined text-[20px]">clinical_notes</span>
+        <span>Criterios DSM-5</span>
+      </a>
+      <a class="flex items-center gap-space-sm px-space-md py-space-sm rounded-lg font-label-md text-label-md text-on-surface-variant hover:bg-surface-container-low hover:text-on-surface transition-colors" href="javascript:void(0)" onclick="openInterviewGuideModal()">
+        <span class="material-symbols-outlined text-[20px]">school</span>
+        <span>Técnicas de Entrevista</span>
+      </a>
+    </nav>
+
+    <!-- Simulator Status Footer -->
+    <div class="pt-space-sm mt-auto">
+      <div class="p-space-sm rounded-lg bg-surface-container-low text-on-surface-variant flex items-center justify-between">
+        <div class="flex items-center gap-space-xs">
+          <span class="w-2 h-2 rounded-full bg-secondary-container"></span>
+          <span class="font-label-sm text-label-sm">Simulador Conectado</span>
+        </div>
+        <span class="font-label-sm text-label-sm text-secondary font-semibold" id="aiEngineBadge">v2.4 IA</span>
+      </div>
+    </div>
+
+  </aside>
+
+  <!-- ================= MOBILE BOTTOM NAVIGATION (MOBILE ONLY) ================= -->
+  <nav class="md:hidden fixed bottom-0 left-0 right-0 h-16 bg-surface/95 backdrop-blur-md border-t border-surface-container z-50 flex items-center justify-around px-2 shadow-lg" id="mobileBottomNav">
+    <button class="flex flex-col items-center justify-center flex-1 py-1 text-primary font-bold transition-all" data-path="catalogo" onclick="switchView('catalogo')">
+      <span class="material-symbols-outlined text-[22px] nav-icon text-secondary scale-110">folder_shared</span>
+      <span class="text-[11px] font-label-sm nav-label text-primary font-bold">Casos</span>
+    </button>
+    <button class="flex flex-col items-center justify-center flex-1 py-1 text-on-surface-variant hover:text-on-surface transition-all" data-path="consulta" onclick="switchView('consulta')">
+      <span class="material-symbols-outlined text-[22px] nav-icon">record_voice_over</span>
+      <span class="text-[11px] font-label-sm nav-label">Consulta</span>
+    </button>
+    <button class="flex flex-col items-center justify-center flex-1 py-1 text-on-surface-variant hover:text-on-surface transition-all" data-path="debriefing" onclick="switchView('debriefing')">
+      <span class="material-symbols-outlined text-[22px] nav-icon">psychology_alt</span>
+      <span class="text-[11px] font-label-sm nav-label">Feedback</span>
+    </button>
+    <button class="flex flex-col items-center justify-center flex-1 py-1 text-on-surface-variant hover:text-on-surface transition-all" data-path="progreso" onclick="switchView('progreso')">
+      <span class="material-symbols-outlined text-[22px] nav-icon">stacked_line_chart</span>
+      <span class="text-[11px] font-label-sm nav-label">Progreso</span>
+    </button>
+  </nav>
+
+  <!-- ================= MAIN APPLICATION CONTENT ================= -->
+  <div class="md:pl-64 flex-1 flex flex-col">
+    <main class="w-full flex-1 pt-16 px-4 md:px-gutter py-space-md md:py-space-lg pb-24 md:pb-space-lg bg-surface">
+
+      <!-- ======================================================== -->
+      <!-- VIEW 1: CATÁLOGO DE CASOS CLÍNICOS                       -->
+      <!-- ======================================================== -->
+      <section class="flex flex-col w-full" id="view-catalogo">
+        
+        <!-- Educational Notice Banner -->
+        <div class="flex flex-wrap items-center justify-between gap-space-sm bg-surface-container-low px-space-md py-space-sm rounded-xl mb-space-md shadow-sm">
+          <div class="flex items-center gap-space-sm">
+            <span class="material-symbols-outlined text-secondary text-[22px]">verified_user</span>
+            <div class="flex flex-col">
+              <span class="font-label-md text-label-md text-on-surface font-semibold">Entorno Clínico Protegido · Prácticas Curriculares</span>
+              <span class="font-label-sm text-label-sm text-on-surface-variant">Pacientes sintéticos validados bajo directrices DSM-5-TR para entrenamiento de entrevista clínica.</span>
+            </div>
+          </div>
+          <div class="flex items-center gap-space-xs">
+            <span class="inline-flex items-center px-space-sm py-0.5 rounded-full bg-secondary-container text-on-secondary-container font-label-sm text-label-sm font-semibold">
+              <span class="w-1.5 h-1.5 rounded-full bg-secondary mr-1.5 animate-pulse"></span>
+              Simulador IA Activo
+            </span>
+          </div>
+        </div>
+
+        <!-- Academic Header Bento -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-space-md mb-space-lg">
+          <div class="lg:col-span-8 bg-surface-container-lowest p-space-lg rounded-xl shadow-sm flex flex-col justify-between relative overflow-hidden">
+            <div>
+              <div class="flex items-center gap-space-xs mb-space-xs">
+                <span class="material-symbols-outlined text-secondary text-[18px]">school</span>
+                <span class="font-label-sm text-label-sm text-secondary uppercase tracking-wider font-semibold">Unidad de Simulación Clínico-Psicológica</span>
+              </div>
+              <h1 class="font-headline-lg text-2xl md:text-headline-lg text-primary tracking-tight mb-space-xs">
+                Casos Clínicos para Entrenamiento Supervisado
+              </h1>
+              <p class="font-body-md text-body-md text-on-surface-variant max-w-2xl">
+                Selecciona una anamnesis de simulación para calibrar la alianza terapéutica, formulación de preguntas empáticas y detección de síntomas en tiempo real.
+              </p>
+            </div>
+            <!-- Quick metas bar -->
+            <div class="mt-space-md pt-space-md flex flex-wrap items-center gap-space-md md:gap-space-lg bg-surface-container-low/60 -mx-space-lg -mb-space-lg px-space-lg py-space-sm">
+              <div class="flex items-center gap-space-xs">
+                <span class="material-symbols-outlined text-secondary text-[18px]">psychology</span>
+                <span class="font-label-sm text-label-sm text-on-surface-variant"><strong class="text-on-surface font-semibold">4 Casos</strong> Curados</span>
+              </div>
+              <div class="flex items-center gap-space-xs">
+                <span class="material-symbols-outlined text-secondary text-[18px]">timer</span>
+                <span class="font-label-sm text-label-sm text-on-surface-variant"><strong class="text-on-surface font-semibold">45 min</strong> por sesión</span>
+              </div>
+              <div class="flex items-center gap-space-xs">
+                <span class="material-symbols-outlined text-secondary text-[18px]">analytics</span>
+                <span class="font-label-sm text-label-sm text-on-surface-variant">Debriefing pedagógico</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Cohort / Student Progress Widget -->
+          <div class="lg:col-span-4 flex flex-col gap-space-md">
+            <div class="bg-surface-container-lowest p-space-md rounded-xl shadow-sm flex flex-col justify-between flex-1">
+              <div class="flex items-center justify-between mb-space-xs">
+                <span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Tu Cumplimiento Clínico</span>
+                <span class="px-space-sm py-0.5 rounded-full bg-surface-container font-label-sm text-label-sm text-primary font-semibold">3 / 4 Casos</span>
+              </div>
+              <div class="flex items-baseline gap-space-xs mb-space-xs">
+                <span class="font-headline-md text-2xl text-primary font-bold">75%</span>
+                <span class="font-label-sm text-label-sm text-on-surface-variant">completado este ciclo</span>
+              </div>
+              <div class="w-full bg-surface-container-low h-2 rounded-full overflow-hidden mb-space-sm">
+                <div class="bg-secondary h-full rounded-full transition-all duration-500" style="width: 75%"></div>
+              </div>
+              <div class="flex items-center justify-between text-on-surface-variant font-label-sm text-label-sm pt-space-xs">
+                <span class="flex items-center gap-1">
+                  <span class="w-2 h-2 rounded-full bg-secondary"></span> 3 Evaluados
+                </span>
+                <span class="text-secondary font-semibold">Rapport prom: 88%</span>
+              </div>
+            </div>
+            
+            <!-- Tutor Directive Box -->
+            <div class="bg-primary-container text-on-primary p-space-md rounded-xl shadow-sm">
+              <div class="flex items-start gap-space-sm">
+                <span class="material-symbols-outlined text-secondary-container text-[24px]">contact_support</span>
+                <div class="flex-1">
+                  <span class="font-label-sm text-[11px] text-secondary-container uppercase tracking-wider font-semibold">Orientación de Cátedra</span>
+                  <p class="font-body-sm text-body-sm text-on-primary mt-space-xs leading-snug">
+                    «Prioriza preguntas abiertas en los primeros 10 minutos y cuida no inducir la respuesta del paciente.»
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Search & Filter Hub -->
+        <div class="bg-surface-container-lowest p-space-md rounded-xl shadow-sm mb-space-lg">
+          <div class="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-space-md mb-space-md">
+            <div class="relative flex-1">
+              <span class="material-symbols-outlined absolute left-space-md top-1/2 -translate-y-1/2 text-on-surface-variant text-[20px]">search</span>
+              <input class="w-full pl-10 pr-space-md py-space-sm bg-surface-container-low text-on-surface font-body-md text-body-md rounded-lg focus:outline-none focus:bg-surface-container transition-all placeholder:text-on-surface-variant" id="caseSearchInput" placeholder="Buscar por síntoma (ej: insomnio, rumiación, temblor), nombre o código DSM..." type="text"/>
+            </div>
+            <div class="flex items-center justify-between md:justify-end gap-space-xs">
+              <button class="px-space-md py-space-sm rounded-lg bg-surface-container-low hover:bg-surface-container text-on-surface-variant font-label-md text-label-md transition-colors flex items-center gap-1" id="resetFiltersBtn" type="button">
+                <span class="material-symbols-outlined text-[16px]">restart_alt</span>
+                <span>Limpiar</span>
+              </button>
+              <span class="font-label-sm text-label-sm text-on-surface-variant px-space-xs">
+                Mostrando <strong class="text-primary font-semibold" id="visibleCount">4</strong> casos
+              </span>
+            </div>
+          </div>
+
+          <!-- Multi-chip filter selectors -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-space-md pt-space-sm bg-surface-container-low/40 p-space-sm rounded-lg">
+            <div class="flex flex-col gap-space-xs">
+              <label class="font-label-sm text-[11px] text-on-surface-variant uppercase tracking-wider flex items-center gap-1">
+                <span class="material-symbols-outlined text-[14px]">category</span>
+                <span>Categoría Diagnóstica</span>
+              </label>
+              <div class="flex flex-wrap gap-1" id="filterCategory">
+                <button class="filter-chip active px-space-sm py-1 rounded-full font-label-sm text-label-sm bg-primary text-on-primary transition-all" data-val="all" type="button">Todos</button>
+                <button class="filter-chip px-space-sm py-1 rounded-full font-label-sm text-label-sm bg-surface-container-lowest text-on-surface-variant hover:bg-surface-container transition-all" data-val="ansiedad" type="button">Ansiedad</button>
+                <button class="filter-chip px-space-sm py-1 rounded-full font-label-sm text-label-sm bg-surface-container-lowest text-on-surface-variant hover:bg-surface-container transition-all" data-val="animo" type="button">Estado de Ánimo</button>
+                <button class="filter-chip px-space-sm py-1 rounded-full font-label-sm text-label-sm bg-surface-container-lowest text-on-surface-variant hover:bg-surface-container transition-all" data-val="toc" type="button">TOC</button>
+                <button class="filter-chip px-space-sm py-1 rounded-full font-label-sm text-label-sm bg-surface-container-lowest text-on-surface-variant hover:bg-surface-container transition-all" data-val="fobias" type="button">Fobia Social</button>
+              </div>
+            </div>
+
+            <div class="flex flex-col gap-space-xs">
+              <label class="font-label-sm text-[11px] text-on-surface-variant uppercase tracking-wider flex items-center gap-1">
+                <span class="material-symbols-outlined text-[14px]">stairs</span>
+                <span>Nivel de Dificultad</span>
+              </label>
+              <div class="flex flex-wrap gap-1" id="filterDifficulty">
+                <button class="filter-chip active px-space-sm py-1 rounded-full font-label-sm text-label-sm bg-primary text-on-primary transition-all" data-val="all" type="button">Todos</button>
+                <button class="filter-chip px-space-sm py-1 rounded-full font-label-sm text-label-sm bg-surface-container-lowest text-on-surface-variant hover:bg-surface-container transition-all" data-val="principiante" type="button">Principiante</button>
+                <button class="filter-chip px-space-sm py-1 rounded-full font-label-sm text-label-sm bg-surface-container-lowest text-on-surface-variant hover:bg-surface-container transition-all" data-val="intermedio" type="button">Intermedio</button>
+                <button class="filter-chip px-space-sm py-1 rounded-full font-label-sm text-label-sm bg-surface-container-lowest text-on-surface-variant hover:bg-surface-container transition-all" data-val="avanzado" type="button">Avanzado</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Clinical Cases Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-space-md" id="casesContainer">
+          
+          <!-- CASO 1: Elena Morales (TAG) -->
+          <article class="case-card flex flex-col justify-between bg-surface-container-lowest rounded-xl p-space-md shadow-sm hover:shadow-md transition-all duration-200" data-category="ansiedad" data-difficulty="intermedio" data-competency="exploracion silencio" data-text="elena morales 32 anos opresion pecho insomnio ansiedad somatizacion tag f41.1">
+            <div>
+              <div class="flex items-start justify-between gap-space-sm mb-space-sm">
+                <div class="flex items-center gap-space-sm">
+                  <img class="w-14 h-14 rounded-full object-cover ring-2 ring-surface-container-low shadow-sm" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBeO3vx7_84iBKi5S91oF5QZVeYJOkRjWNsATUAOr-sDpox5O6N3Lc-UifsgKaLhnPx4L5YHkDjOTWQrd-wvib1IeZeAbJS9XmA0QlKe5qyEkCnt_tJ3Ot1r-33k5BtKWyFh4ti8Hamsda7P_yTeyFkymoeSE4aKPNxv8NSzK_e9VxcqGtQWBS_nl8jphl4MMkssqGQ-MEFnUPW1OdSlT-LYrbylZZZ0rP0GVOGihoMbb79yCyD6UQ" alt="Elena Morales"/>
+                  <div>
+                    <div class="flex items-center gap-space-xs">
+                      <h3 class="font-headline-sm text-headline-sm text-primary font-bold">Elena Morales</h3>
+                      <span class="font-body-sm text-body-sm text-on-surface-variant">(32 años)</span>
+                    </div>
+                    <span class="font-label-sm text-[12px] text-on-surface-variant flex items-center gap-1">
+                      <span class="material-symbols-outlined text-[14px] text-secondary">domain</span>
+                      Arquitecta técnica · Derivada por MAP
+                    </span>
+                  </div>
+                </div>
+                <span class="px-space-sm py-0.5 rounded-full font-label-sm text-label-sm bg-surface-container text-primary font-semibold flex items-center gap-1">
+                  <span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>
+                  Intermedio
+                </span>
+              </div>
+
+              <div class="bg-surface-container-low p-space-sm rounded-lg mb-space-sm">
+                <div class="flex items-center justify-between">
+                  <span class="font-label-sm text-[11px] text-on-surface-variant uppercase tracking-wider font-semibold">Sospecha Diagnóstica</span>
+                  <span class="font-label-sm text-label-sm text-secondary font-semibold">CIE-10: F41.1</span>
+                </div>
+                <span class="font-label-lg text-label-lg text-primary block mt-0.5 font-bold">Trastorno de Ansiedad Generalizada (TAG)</span>
+              </div>
+
+              <div class="relative pl-space-md mb-space-sm bg-surface-container-lowest">
+                <div class="absolute left-0 top-0 bottom-0 w-1 bg-secondary rounded-full"></div>
+                <span class="font-label-sm text-[11px] text-on-surface-variant block uppercase tracking-wider">Motivo de consulta:</span>
+                <p class="font-headline-md text-headline-md text-on-surface italic mt-0.5 leading-snug">
+                  «Siento opresión en el pecho y no puedo dormir pensando en que algo malo pasará.»
+                </p>
+              </div>
+
+              <div class="flex flex-wrap gap-1 mb-space-md">
+                <span class="px-space-sm py-0.5 rounded-full bg-surface-container text-on-primary-fixed-variant font-label-sm text-xs">Ansiedad</span>
+                <span class="px-space-sm py-0.5 rounded-full bg-surface-container text-on-primary-fixed-variant font-label-sm text-xs">Somatización</span>
+                <span class="px-space-sm py-0.5 rounded-full bg-surface-container text-on-primary-fixed-variant font-label-sm text-xs">Insomnio</span>
+              </div>
+            </div>
+
+            <div class="pt-space-sm flex items-center justify-between gap-space-sm mt-auto border-t border-surface-container-low">
+              <button class="px-space-md py-space-sm rounded-lg bg-surface-container hover:bg-surface-variant text-primary font-label-md text-label-md transition-colors flex items-center gap-1" onclick="openPatientDossier('Elena Morales', '32', 'Trastorno de Ansiedad Generalizada', 'Arquitecta técnica. Refiere episodios de hiperventilación, tensión muscular cervical y dificultad para delegar. Niega ideación autolítica. Analítica general sin hallazgos orgánicos.', 'elena-morales')" type="button">
+                <span class="material-symbols-outlined text-[16px]">description</span>
+                <span>Ver Ficha</span>
+              </button>
+              <button class="px-space-md py-space-sm rounded-lg bg-primary hover:bg-primary-container text-on-primary font-label-md text-label-md transition-colors flex items-center gap-1 shadow-sm font-semibold" onclick="launchSimulation('elena-morales')" type="button">
+                <span class="material-symbols-outlined text-[16px] text-secondary-container">play_arrow</span>
+                <span>Iniciar Simulación</span>
+              </button>
+            </div>
+          </article>
+
+          <!-- CASO 2: Javier Ortiz (Depresión Mayor) -->
+          <article class="case-card flex flex-col justify-between bg-surface-container-lowest rounded-xl p-space-md shadow-sm hover:shadow-md transition-all duration-200" data-category="animo" data-difficulty="principiante" data-competency="encuadre riesgo" data-text="javier ortiz 45 anos entusiasmo desanimo ahedonia depresion mayor abordaje empatico f32.1">
+            <div>
+              <div class="flex items-start justify-between gap-space-sm mb-space-sm">
+                <div class="flex items-center gap-space-sm">
+                  <img class="w-14 h-14 rounded-full object-cover ring-2 ring-surface-container-low shadow-sm" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCOUGWMsERpan9Rxvnt0kR2U10w4nHKfOiqKj95OYKLNDNd_OUzYEtUth12xA_xMqyNrd8OYfOZ7AFyzbC7cxtxHsch8NnR2vaz4ooEh_UgoY2Q7VSdAbFUtG1Wj6eyvl52DDDhuZfHuvWAhIq_xt_Xd0Zklxe_9oibE7vlb1bD4ATwFJrvQKlPoFzueS5BD0wOJtEZa6n39bV4yq6KEL_IMtydBNBxZEwKh1eEDMSW3aos_cBi8io" alt="Javier Ortiz"/>
+                  <div>
+                    <div class="flex items-center gap-space-xs">
+                      <h3 class="font-headline-sm text-headline-sm text-primary font-bold">Javier Ortiz</h3>
+                      <span class="font-body-sm text-body-sm text-on-surface-variant">(45 años)</span>
+                    </div>
+                    <span class="font-label-sm text-[12px] text-on-surface-variant flex items-center gap-1">
+                      <span class="material-symbols-outlined text-[14px] text-secondary">domain</span>
+                      Profesor · Acude por insistencia familiar
+                    </span>
+                  </div>
+                </div>
+                <span class="px-space-sm py-0.5 rounded-full font-label-sm text-label-sm bg-surface-container-low text-secondary font-semibold flex items-center gap-1">
+                  <span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>
+                  Principiante
+                </span>
+              </div>
+
+              <div class="bg-surface-container-low p-space-sm rounded-lg mb-space-sm">
+                <div class="flex items-center justify-between">
+                  <span class="font-label-sm text-[11px] text-on-surface-variant uppercase tracking-wider font-semibold">Sospecha Diagnóstica</span>
+                  <span class="font-label-sm text-label-sm text-secondary font-semibold">CIE-10: F32.1</span>
+                </div>
+                <span class="font-label-lg text-label-lg text-primary block mt-0.5 font-bold">Episodio Depresivo Mayor (Moderado)</span>
+              </div>
+
+              <div class="relative pl-space-md mb-space-sm bg-surface-container-lowest">
+                <div class="absolute left-0 top-0 bottom-0 w-1 bg-secondary rounded-full"></div>
+                <span class="font-label-sm text-[11px] text-on-surface-variant block uppercase tracking-wider">Motivo de consulta:</span>
+                <p class="font-headline-md text-headline-md text-on-surface italic mt-0.5 leading-snug">
+                  «Ya nada me genera entusiasmo ni ilusión, me cuesta levantarme de la cama cada mañana.»
+                </p>
+              </div>
+
+              <div class="flex flex-wrap gap-1 mb-space-md">
+                <span class="px-space-sm py-0.5 rounded-full bg-surface-container text-on-primary-fixed-variant font-label-sm text-xs">Apatía profunda</span>
+                <span class="px-space-sm py-0.5 rounded-full bg-surface-container text-on-primary-fixed-variant font-label-sm text-xs">Anhedonia</span>
+                <span class="px-space-sm py-0.5 rounded-full bg-surface-container text-on-primary-fixed-variant font-label-sm text-xs">Abordaje Empático</span>
+              </div>
+            </div>
+
+            <div class="pt-space-sm flex items-center justify-between gap-space-sm mt-auto border-t border-surface-container-low">
+              <button class="px-space-md py-space-sm rounded-lg bg-surface-container hover:bg-surface-variant text-primary font-label-md text-label-md transition-colors flex items-center gap-1" onclick="openPatientDossier('Javier Ortiz', '45', 'Episodio Depresivo Mayor (Moderado)', 'Baja médica laboral desde hace 3 semanas. Abandono paulatino de actividades deportivas y sociales. Relato pausado, contacto ocular intermitente.', 'javier-ortiz')" type="button">
+                <span class="material-symbols-outlined text-[16px]">description</span>
+                <span>Ver Ficha</span>
+              </button>
+              <button class="px-space-md py-space-sm rounded-lg bg-primary hover:bg-primary-container text-on-primary font-label-md text-label-md transition-colors flex items-center gap-1 shadow-sm font-semibold" onclick="launchSimulation('javier-ortiz')" type="button">
+                <span class="material-symbols-outlined text-[16px] text-secondary-container">play_arrow</span>
+                <span>Iniciar Simulación</span>
+              </button>
+            </div>
+          </article>
+
+          <!-- CASO 3: Clara Mendoza (TOC) -->
+          <article class="case-card flex flex-col justify-between bg-surface-container-lowest rounded-xl p-space-md shadow-sm hover:shadow-md transition-all duration-200" data-category="toc" data-difficulty="avanzado" data-competency="exploracion silencio" data-text="clara mendoza 24 anos cerradura estufa comprobacion rumiacion compulsivas rasgos toc f42">
+            <div>
+              <div class="flex items-start justify-between gap-space-sm mb-space-sm">
+                <div class="flex items-center gap-space-sm">
+                  <img class="w-14 h-14 rounded-full object-cover ring-2 ring-surface-container-low shadow-sm" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB2IDhJy8mmEAbwjp2YEiHjzEiZmYCk0yebyBKanBEyFcpXB0Ldmp95CWT3YpctVb6Lk-_PKrAf5Vl1vDMX-PXpV4MKwo4YIpHgQGmFsI4d-t8xFBzmL8FsPP8OQbiA7QaSc18GhidVDFhV6IaM9pa7-mKspbACo3zzQWu9VSBkT5dj9i395Qf9XAkvaNjPQONEvDU72dBA1-uxifarjCCQpuhkCJnrVfrMU7z9s6x5sudpHNcm5GI" alt="Clara Mendoza"/>
+                  <div>
+                    <div class="flex items-center gap-space-xs">
+                      <h3 class="font-headline-sm text-headline-sm text-primary font-bold">Clara Mendoza</h3>
+                      <span class="font-body-sm text-body-sm text-on-surface-variant">(24 años)</span>
+                    </div>
+                    <span class="font-label-sm text-[12px] text-on-surface-variant flex items-center gap-1">
+                      <span class="material-symbols-outlined text-[14px] text-secondary">domain</span>
+                      Estudiante Posgrado · Consulta autoderivada
+                    </span>
+                  </div>
+                </div>
+                <span class="px-space-sm py-0.5 rounded-full font-label-sm text-label-sm bg-error-container text-on-error-container font-semibold flex items-center gap-1">
+                  <span class="w-1.5 h-1.5 rounded-full bg-error"></span>
+                  Avanzado
+                </span>
+              </div>
+
+              <div class="bg-surface-container-low p-space-sm rounded-lg mb-space-sm">
+                <div class="flex items-center justify-between">
+                  <span class="font-label-sm text-[11px] text-on-surface-variant uppercase tracking-wider font-semibold">Sospecha Diagnóstica</span>
+                  <span class="font-label-sm text-label-sm text-secondary font-semibold">CIE-10: F42.8</span>
+                </div>
+                <span class="font-label-lg text-label-lg text-primary block mt-0.5 font-bold">Trastorno Obsesivo-Compulsivo (TOC)</span>
+              </div>
+
+              <div class="relative pl-space-md mb-space-sm bg-surface-container-lowest">
+                <div class="absolute left-0 top-0 bottom-0 w-1 bg-secondary rounded-full"></div>
+                <span class="font-label-sm text-[11px] text-on-surface-variant block uppercase tracking-wider">Motivo de consulta:</span>
+                <p class="font-headline-md text-headline-md text-on-surface italic mt-0.5 leading-snug">
+                  «Reviso la cerradura y la estufa más de 10 veces antes de salir, o siento que ocurrirá una catástrofe.»
+                </p>
+              </div>
+
+              <div class="flex flex-wrap gap-1 mb-space-md">
+                <span class="px-space-sm py-0.5 rounded-full bg-surface-container text-on-primary-fixed-variant font-label-sm text-xs">Rumiación intrusiva</span>
+                <span class="px-space-sm py-0.5 rounded-full bg-surface-container text-on-primary-fixed-variant font-label-sm text-xs">Compulsiones</span>
+                <span class="px-space-sm py-0.5 rounded-full bg-surface-container text-on-primary-fixed-variant font-label-sm text-xs">Alta introspección</span>
+              </div>
+            </div>
+
+            <div class="pt-space-sm flex items-center justify-between gap-space-sm mt-auto border-t border-surface-container-low">
+              <button class="px-space-md py-space-sm rounded-lg bg-surface-container hover:bg-surface-variant text-primary font-label-md text-label-md transition-colors flex items-center gap-1" onclick="openPatientDossier('Clara Mendoza', '24', 'Trastorno Obsesivo-Compulsivo', 'Llega con retraso por ritual de salida de 40 minutos. Muestra manos con dermatitis por lavado reiterado. Alerta a la validación sin reforzar las compulsiones.', 'clara-mendoza')" type="button">
+                <span class="material-symbols-outlined text-[16px]">description</span>
+                <span>Ver Ficha</span>
+              </button>
+              <button class="px-space-md py-space-sm rounded-lg bg-primary hover:bg-primary-container text-on-primary font-label-md text-label-md transition-colors flex items-center gap-1 shadow-sm font-semibold" onclick="launchSimulation('clara-mendoza')" type="button">
+                <span class="material-symbols-outlined text-[16px] text-secondary-container">play_arrow</span>
+                <span>Iniciar Simulación</span>
+              </button>
+            </div>
+          </article>
+
+          <!-- CASO 4: Mateo Rivas (Fobia Social) -->
+          <article class="case-card flex flex-col justify-between bg-surface-container-lowest rounded-xl p-space-md shadow-sm hover:shadow-md transition-all duration-200" data-category="fobias" data-difficulty="principiante" data-competency="encuadre exploracion" data-text="mateo rivas 19 anos panico exponer facultad temblor publico fobia social psicoeducacion f40.1">
+            <div>
+              <div class="flex items-start justify-between gap-space-sm mb-space-sm">
+                <div class="flex items-center gap-space-sm">
+                  <img class="w-14 h-14 rounded-full object-cover ring-2 ring-surface-container-low shadow-sm" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC0gftTVcYZ32ryH6sfb670Ep9eI4VO0qzrh1e52XPT5iRArKtMaLf-t_dqKjqwlCW8z_2kMee1SagWZqk4M4MxC7ZUqBeG0Mfh-7xeLZRahOogWdNOhx9Y2fvUBUQM7d7eRVzVS-D1RG9iR-Ya_wgbZ4zN8Qb1Tb-dbUg7JCZiaCZREQkolGglh_wbafODdHDIzBBk9r4YWmC4PKyAiSx28Iz1-FmH8izSpVycHmcgChC63nl4-XU" alt="Mateo Rivas"/>
+                  <div>
+                    <div class="flex items-center gap-space-xs">
+                      <h3 class="font-headline-sm text-headline-sm text-primary font-bold">Mateo Rivas</h3>
+                      <span class="font-body-sm text-body-sm text-on-surface-variant">(19 años)</span>
+                    </div>
+                    <span class="font-label-sm text-[12px] text-on-surface-variant flex items-center gap-1">
+                      <span class="material-symbols-outlined text-[14px] text-secondary">domain</span>
+                      Estudiante 1º de Grado · Servicio Atención Psicológica
+                    </span>
+                  </div>
+                </div>
+                <span class="px-space-sm py-0.5 rounded-full font-label-sm text-label-sm bg-surface-container-low text-secondary font-semibold flex items-center gap-1">
+                  <span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>
+                  Principiante
+                </span>
+              </div>
+
+              <div class="bg-surface-container-low p-space-sm rounded-lg mb-space-sm">
+                <div class="flex items-center justify-between">
+                  <span class="font-label-sm text-[11px] text-on-surface-variant uppercase tracking-wider font-semibold">Sospecha Diagnóstica</span>
+                  <span class="font-label-sm text-label-sm text-secondary font-semibold">CIE-10: F40.1</span>
+                </div>
+                <span class="font-label-lg text-label-lg text-primary block mt-0.5 font-bold">Trastorno de Ansiedad Social (Fobia Social)</span>
+              </div>
+
+              <div class="relative pl-space-md mb-space-sm bg-surface-container-lowest">
+                <div class="absolute left-0 top-0 bottom-0 w-1 bg-secondary rounded-full"></div>
+                <span class="font-label-sm text-[11px] text-on-surface-variant block uppercase tracking-wider">Motivo de consulta:</span>
+                <p class="font-headline-md text-headline-md text-on-surface italic mt-0.5 leading-snug">
+                  «Me da pánico exponer en clase frente a todos; tiemblo, se me quiebra la voz y quiero salir corriendo.»
+                </p>
+              </div>
+
+              <div class="flex flex-wrap gap-1 mb-space-md">
+                <span class="px-space-sm py-0.5 rounded-full bg-surface-container text-on-primary-fixed-variant font-label-sm text-xs">Fobia Social</span>
+                <span class="px-space-sm py-0.5 rounded-full bg-surface-container text-on-primary-fixed-variant font-label-sm text-xs">Neurovegetativo</span>
+                <span class="px-space-sm py-0.5 rounded-full bg-surface-container text-on-primary-fixed-variant font-label-sm text-xs">Encuadre inicial</span>
+              </div>
+            </div>
+
+            <div class="pt-space-sm flex items-center justify-between gap-space-sm mt-auto border-t border-surface-container-low">
+              <button class="px-space-md py-space-sm rounded-lg bg-surface-container hover:bg-surface-variant text-primary font-label-md text-label-md transition-colors flex items-center gap-1" onclick="openPatientDossier('Mateo Rivas', '19', 'Ansiedad Social / Fobia Específica', 'Evitación persistente de seminarios orales. Teme juicio negativo de compañeros. Buen rendimiento en evaluaciones escritas. No antecedentes psiquiátricos.', 'mateo-rivas')" type="button">
+                <span class="material-symbols-outlined text-[16px]">description</span>
+                <span>Ver Ficha</span>
+              </button>
+              <button class="px-space-md py-space-sm rounded-lg bg-primary hover:bg-primary-container text-on-primary font-label-md text-label-md transition-colors flex items-center gap-1 shadow-sm font-semibold" onclick="launchSimulation('mateo-rivas')" type="button">
+                <span class="material-symbols-outlined text-[16px] text-secondary-container">play_arrow</span>
+                <span>Iniciar Simulación</span>
+              </button>
+            </div>
+          </article>
+
+        </div>
+
+        <!-- Empty state fallback -->
+        <div class="hidden flex-col items-center justify-center p-space-xl bg-surface-container-lowest rounded-xl shadow-sm my-space-md text-center" id="noCasesFound">
+          <span class="material-symbols-outlined text-[48px] text-on-surface-variant mb-space-sm">folder_off</span>
+          <h3 class="font-headline-sm text-headline-sm text-primary mb-space-xs">No se encontraron casos con los criterios actuales</h3>
+          <p class="font-body-md text-body-md text-on-surface-variant max-w-md mb-space-md">
+            Prueba relajando los filtros de categoría diagnóstica o restableciendo la barra de búsqueda.
+          </p>
+          <button class="px-space-md py-space-sm rounded-lg bg-primary text-on-primary font-label-md text-label-md" onclick="resetAllFilters()" type="button">
+            Restablecer todos los filtros
+          </button>
+        </div>
+
+      </section>
+
+      <!-- ======================================================== -->
+      <!-- VIEW 2: DESPACHO DE CONSULTA SIMULADA (ENTREVISTA CLÍNICA)-->
+      <!-- ======================================================== -->
+      <section class="hidden flex-col w-full" id="view-consulta">
+        
+        <!-- Live Session Ribbon Bar Header -->
+        <div class="w-full bg-surface-container-lowest rounded-xl p-space-md shadow-sm mb-space-md">
+          <div class="flex flex-col xl:flex-row xl:items-center justify-between gap-space-md">
+            
+            <!-- Patient Meta Info -->
+            <div class="flex flex-wrap items-center gap-space-md">
+              <div class="relative">
+                <img class="w-14 h-14 rounded-full object-cover shadow-sm ring-2 ring-surface-container" id="consultationPatientAvatar" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBeO3vx7_84iBKi5S91oF5QZVeYJOkRjWNsATUAOr-sDpox5O6N3Lc-UifsgKaLhnPx4L5YHkDjOTWQrd-wvib1IeZeAbJS9XmA0QlKe5qyEkCnt_tJ3Ot1r-33k5BtKWyFh4ti8Hamsda7P_yTeyFkymoeSE4aKPNxv8NSzK_e9VxcqGtQWBS_nl8jphl4MMkssqGQ-MEFnUPW1OdSlT-LYrbylZZZ0rP0GVOGihoMbb79yCyD6UQ" alt="Paciente Activo"/>
+                <span class="absolute bottom-0 right-0 w-3.5 h-3.5 rounded-full bg-secondary ring-2 ring-surface-container-lowest"></span>
+              </div>
+              <div class="flex flex-col">
+                <div class="flex items-center gap-space-xs flex-wrap">
+                  <h1 class="font-headline-md text-xl md:text-headline-md text-primary font-bold tracking-tight" id="consultationPatientName">Elena Morales</h1>
+                  <span class="font-label-sm text-label-sm text-on-surface-variant font-medium" id="consultationPatientAge">(32 años)</span>
+                  <span class="px-space-xs py-0.5 rounded-full font-label-sm text-xs bg-error-container text-on-error-container font-semibold ml-space-xs" id="consultationDiagBadge">TAG · F41.1</span>
+                  <span class="px-space-xs py-0.5 rounded-full font-label-sm text-xs bg-surface-container-high text-on-surface-variant font-medium">Primera Anamnesis</span>
+                </div>
+                <div class="flex items-center gap-space-sm mt-1 text-on-surface-variant">
+                  <span class="flex items-center gap-1 font-label-md text-xs md:text-label-md">
+                    <span class="material-symbols-outlined text-[16px] text-outline">mood_bad</span>
+                    <span>Estado: <strong class="text-on-surface font-medium" id="consultationObsState">Ansiosa, colaboradora pero con elevada tensión</strong></span>
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Timer & Conclude Action Control -->
+            <div class="flex items-center gap-space-sm md:gap-space-md self-end xl:self-auto">
+              <div class="flex items-center gap-space-sm px-space-md py-space-xs rounded-xl bg-surface-container-low shadow-sm">
+                <div class="w-2.5 h-2.5 rounded-full bg-error animate-pulse"></div>
+                <div class="flex flex-col">
+                  <div class="flex items-baseline gap-1">
+                    <span class="font-headline-sm text-headline-sm text-primary tracking-tight font-semibold" id="sessionTimer">14:25</span>
+                    <span class="font-label-sm text-[11px] text-on-surface-variant">/ 45 min</span>
+                  </div>
+                  <span class="font-label-sm text-[10px] text-on-surface-variant uppercase tracking-wider">Tiempo de sesión</span>
+                </div>
+              </div>
+
+              <button class="group flex items-center gap-space-xs px-space-md py-space-sm rounded-lg bg-primary-container text-on-primary hover:bg-primary transition-all duration-200 shadow-sm cursor-pointer" onclick="switchView('debriefing')" type="button">
+                <span class="material-symbols-outlined text-[18px] text-secondary-fixed transition-transform group-hover:translate-x-0.5">assignment_turned_in</span>
+                <span class="font-label-lg text-xs md:text-label-lg font-semibold">Concluir y Ver Debriefing</span>
+              </button>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Main Workspace: Avatar Stream & Chat Feed (Left 8 cols) + Notebook & Criteria (Right 4 cols) -->
+        <div class="grid grid-cols-1 xl:grid-cols-12 gap-space-md items-start w-full">
+          
+          <div class="xl:col-span-8 flex flex-col gap-space-md min-w-0">
+            
+            <!-- Virtual Patient Stage Card -->
+            <div class="w-full bg-surface-container-lowest rounded-xl shadow-sm p-space-md overflow-hidden relative">
+              <div class="flex flex-col md:flex-row items-center gap-space-md">
+                
+                <!-- Avatar Visual Stream -->
+                <div class="relative w-full md:w-64 h-48 rounded-lg overflow-hidden bg-primary-container shrink-0 shadow-inner group">
+                  <img class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" id="consultationRoomAvatar" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCdDByhNRODAirlPHjTzEPHRVBGEbjKbdr9WQDIZHmkVBjZIULxOHCGekXCd18M687aEe7vSMmHmF7XGJp5F2p_qpzy8Px2cxhN3wc_-ye7a8LspAy_tUmLQStXWTWFMhaWLCUgc3WfOT8NyKYoX7PJOUmfglx-F3qMjLsr4S9WqVtRSmq1O2v9tnnpVROGmfTH9eHnk-6W1hLs_JdEPsuWMuPgX-R2ENz6HwVpBhVxBx-OtCCn5Jg" alt="Paciente virtual feed"/>
+                  <div class="absolute bottom-0 inset-x-0 p-space-xs bg-primary/75 backdrop-blur-md flex items-center justify-between text-on-primary">
+                    <div class="flex items-center gap-1.5 px-space-xs">
+                      <span class="w-2 h-2 rounded-full bg-secondary-fixed animate-ping"></span>
+                      <span class="font-label-sm text-[11px] text-on-primary font-medium tracking-wider uppercase">Voz Sintética Activa</span>
+                    </div>
+                    <div class="flex items-end gap-0.5 h-4 pr-space-xs">
+                      <span class="w-1 bg-secondary-fixed rounded-full h-2 animate-pulse"></span>
+                      <span class="w-1 bg-secondary-fixed rounded-full h-3.5 animate-pulse" style="animation-delay: 150ms"></span>
+                      <span class="w-1 bg-secondary-fixed rounded-full h-4 animate-pulse" style="animation-delay: 300ms"></span>
+                      <span class="w-1 bg-secondary-fixed rounded-full h-2 animate-pulse" style="animation-delay: 75ms"></span>
+                    </div>
+                  </div>
+                  <div class="absolute top-2 left-2 px-space-xs py-0.5 rounded bg-surface/90 backdrop-blur-sm text-on-surface font-label-sm text-[11px] flex items-center gap-1">
+                    <span class="material-symbols-outlined text-[14px] text-secondary">videocam</span>
+                    <span>Feed Paciente IA</span>
+                  </div>
+                </div>
+
+                <!-- Non-verbal dynamics analysis -->
+                <div class="flex-1 flex flex-col justify-between h-full w-full">
+                  <div>
+                    <div class="flex items-center justify-between mb-space-xs">
+                      <span class="font-label-sm text-[11px] font-semibold uppercase tracking-wider text-on-surface-variant flex items-center gap-1">
+                        <span class="material-symbols-outlined text-[15px] text-secondary">visibility</span>
+                        Lectura de Comunicación No Verbal (En Vivo)
+                      </span>
+                      <span class="font-label-sm text-[10px] text-secondary font-medium px-space-xs py-0.5 rounded bg-surface-container">NLP Activo</span>
+                    </div>
+                    <p class="font-body-md text-sm text-on-surface bg-surface-container-low p-space-sm rounded-lg leading-relaxed" id="consultationRoomSigns">
+                      <span class="font-semibold text-primary">Signos observados:</span> Contacto visual intermitente ante preguntas de autoeficacia; manos inquietas sobre el regazo; respiración torácica acelerada; pausas dubitativas.
+                    </p>
+                  </div>
+
+                  <!-- Micro-indicators -->
+                  <div class="grid grid-cols-3 gap-space-xs mt-space-sm">
+                    <div class="p-space-xs rounded bg-surface-container flex flex-col">
+                      <span class="font-label-sm text-[10px] text-on-surface-variant">Activación Vegetativa</span>
+                      <span class="font-label-md text-xs font-semibold text-primary">Elevada (78%)</span>
+                    </div>
+                    <div class="p-space-xs rounded bg-surface-container flex flex-col">
+                      <span class="font-label-sm text-[10px] text-on-surface-variant">Disposición Diálogo</span>
+                      <span class="font-label-md text-xs font-semibold text-secondary">Receptiva</span>
+                    </div>
+                    <div class="p-space-xs rounded bg-surface-container flex flex-col">
+                      <span class="font-label-sm text-[10px] text-on-surface-variant">Latencia de Respuesta</span>
+                      <span class="font-label-md text-xs font-semibold text-primary">1.4 seg</span>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+
+            <!-- Continuous Dialogal Transcript Feed Card -->
+            <div class="w-full bg-surface-container-lowest rounded-xl shadow-sm p-space-md md:p-space-lg flex flex-col">
+              <div class="flex items-center justify-between pb-space-sm mb-space-md border-b border-surface-container">
+                <div class="flex items-center gap-space-xs">
+                  <span class="material-symbols-outlined text-[20px] text-secondary">forum</span>
+                  <span class="font-headline-sm text-headline-sm text-primary font-bold">Registro Clínico Dialogal</span>
+                </div>
+                <span class="font-label-sm text-xs text-on-surface-variant font-mono">Simulación Activa · Entorno Seguro</span>
+              </div>
+
+              <!-- Messages Stream -->
+              <div class="flex flex-col gap-space-md max-h-[380px] overflow-y-auto pr-space-xs scroll-smooth" id="transcriptFeed">
+                
+                <!-- Turn 1: Trainee (Psychologist) -->
+                <div class="flex flex-col items-end gap-1 pl-space-md md:pl-space-lg">
+                  <div class="flex items-center gap-space-xs">
+                    <span class="font-label-sm text-[11px] text-on-surface-variant">10:01</span>
+                    <span class="font-label-sm text-xs font-semibold text-primary">Paula Cruz (Terapeuta)</span>
+                  </div>
+                  <div class="bg-surface-container-high text-on-surface p-space-md rounded-xl rounded-tr-none shadow-sm max-w-xl text-left">
+                    <p class="font-body-md text-sm md:text-body-md leading-relaxed">
+                      Hola Elena, bienvenida. Tómate el tiempo que necesites. Cuéntame qué te ha motivado a venir a consulta hoy.
+                    </p>
+                    <div class="mt-space-xs pt-space-xs flex items-center justify-between text-on-surface-variant border-t border-surface-variant/40">
+                      <span class="font-label-sm text-[11px] flex items-center gap-1 text-secondary font-medium">
+                        <span class="material-symbols-outlined text-[13px]">psychology</span>
+                        Intervención: Pregunta Abierta de Encuadre
+                      </span>
+                      <span class="font-label-sm text-[11px]">Rapport +4%</span>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Turn 2: Virtual Patient -->
+                <div class="flex flex-col items-start gap-1 pr-space-md md:pr-space-lg">
+                  <div class="flex items-center gap-space-xs">
+                    <span class="font-label-sm text-xs font-semibold text-primary" id="chatPatientLabel">Elena Morales (IA)</span>
+                    <span class="font-label-sm text-[11px] text-on-surface-variant">10:02</span>
+                  </div>
+                  <div class="bg-surface-container-low text-on-surface p-space-md rounded-xl rounded-tl-none shadow-sm max-w-xl border-l-4 border-l-secondary">
+                    <p class="font-body-md text-sm md:text-body-md leading-relaxed">
+                      Gracias doctora... la verdad es que vengo porque ya no doy más. Llevo meses sintiendo un nudo constante en el estómago y una presión en el pecho, como si en cualquier segundo fuera a suceder una catástrofe en mi trabajo o con mi familia.
+                    </p>
+                    <div class="mt-space-xs pt-space-xs flex items-center gap-space-xs flex-wrap">
+                      <span class="px-space-xs py-0.5 rounded font-label-sm text-[10px] bg-error-container text-on-error-container font-semibold">Catastrofismo / F41.1</span>
+                      <span class="px-space-xs py-0.5 rounded font-label-sm text-[10px] bg-surface-container-highest text-on-surface-variant">Somatización torácica</span>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Turn 3: Trainee (Psychologist) -->
+                <div class="flex flex-col items-end gap-1 pl-space-md md:pl-space-lg">
+                  <div class="flex items-center gap-space-xs">
+                    <span class="font-label-sm text-[11px] text-on-surface-variant">10:05</span>
+                    <span class="font-label-sm text-xs font-semibold text-primary">Paula Cruz (Terapeuta)</span>
+                  </div>
+                  <div class="bg-surface-container-high text-on-surface p-space-md rounded-xl rounded-tr-none shadow-sm max-w-xl text-left">
+                    <p class="font-body-md text-sm md:text-body-md leading-relaxed">
+                      Entiendo que esa sensación constante de alerta debe ser agotadora para ti. ¿Recuerdas cuándo empezaron a manifestarse con mayor intensidad estas sensaciones físicas?
+                    </p>
+                    <div class="mt-space-xs pt-space-xs flex items-center justify-between text-on-surface-variant border-t border-surface-variant/40">
+                      <span class="font-label-sm text-[11px] flex items-center gap-1 text-secondary font-medium">
+                        <span class="material-symbols-outlined text-[13px]">volunteer_activism</span>
+                        Validación Emocional + Delimitación Temporal
+                      </span>
+                      <span class="font-label-sm text-[11px]">Eficacia: Alta</span>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Turn 4: Virtual Patient -->
+                <div class="flex flex-col items-start gap-1 pr-space-md md:pr-space-lg">
+                  <div class="flex items-center gap-space-xs">
+                    <span class="font-label-sm text-xs font-semibold text-primary">Elena Morales (IA)</span>
+                    <span class="font-label-sm text-[11px] text-on-surface-variant">10:07</span>
+                  </div>
+                  <div class="bg-surface-container-low text-on-surface p-space-md rounded-xl rounded-tl-none shadow-sm max-w-xl border-l-4 border-l-secondary">
+                    <p class="font-body-md text-sm md:text-body-md leading-relaxed">
+                      Creo que hace unos cuatro meses, cuando me ascendieron a coordinadora de equipo. Al principio pensé que era cansancio normal, pero ahora ni los fines de semana puedo desconectar... Me despierto a las 3:00 am con el corazón latiéndome desbocado pensando en correos y pendientes.
+                    </p>
+                    <div class="mt-space-xs pt-space-xs flex items-center gap-space-xs flex-wrap">
+                      <span class="px-space-xs py-0.5 rounded font-label-sm text-[10px] bg-surface-container-highest text-on-surface">Detonante: Promoción laboral</span>
+                      <span class="px-space-xs py-0.5 rounded font-label-sm text-[10px] bg-error-container text-on-error-container font-semibold">Insomnio de mantenimiento</span>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+
+              <!-- Trainee Intervention Console -->
+              <div class="mt-space-md pt-space-md border-t border-surface-container">
+                <!-- Quick Intervention Techniques Chips -->
+                <div class="flex items-center justify-between flex-wrap gap-space-xs mb-space-xs">
+                  <span class="font-label-sm text-[11px] font-semibold uppercase text-on-surface-variant flex items-center gap-1">
+                    <span class="material-symbols-outlined text-[14px] text-secondary">tips_and_updates</span>
+                    Técnicas de Intervención Rápida:
+                  </span>
+                  <div class="flex items-center gap-1 flex-wrap">
+                    <button class="px-space-sm py-1 rounded-full bg-surface-container hover:bg-surface-variant text-on-surface font-label-sm text-xs transition-colors cursor-pointer" onclick="insertPrompt('¿Podrías describirme con más detalle qué pensamientos exactos te asaltan cuando te despiertas de madrugada?')" type="button">
+                      + Pregunta abierta
+                    </button>
+                    <button class="px-space-sm py-1 rounded-full bg-surface-container hover:bg-surface-variant text-on-surface font-label-sm text-xs transition-colors cursor-pointer" onclick="insertPrompt('Si entiendo bien, desde que asumiste el nuevo cargo sientes una autoexigencia que no te da tregua.')" type="button">
+                      + Paráfrasis
+                    </button>
+                    <button class="px-space-sm py-1 rounded-full bg-surface-container hover:bg-surface-variant text-on-surface font-label-sm text-xs transition-colors cursor-pointer" onclick="insertPrompt('Es completamente comprensible que tu cuerpo reaccione así ante un aumento tan drástico en la responsabilidad.')" type="button">
+                      + Validación emocional
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Input Textarea & Voice Button -->
+                <div class="relative bg-surface-container-low rounded-xl p-space-xs shadow-inner">
+                  <textarea class="w-full bg-transparent px-space-sm py-space-xs text-on-surface font-body-md text-sm md:text-body-md placeholder:text-on-surface-variant/60 focus:outline-none resize-none" id="clinicianInput" placeholder="Formula tu pregunta o intervención terapéutica para el paciente..." rows="3"></textarea>
+                  <div class="flex items-center justify-between pt-space-xs px-space-xs border-t border-surface-container">
+                    <div class="flex items-center gap-space-xs">
+                      <button class="flex items-center gap-1 px-space-sm py-1.5 rounded-lg bg-surface-container hover:bg-surface-variant text-on-surface font-label-md text-xs transition-all cursor-pointer" id="micBtn" type="button" title="Dictado por voz">
+                        <span class="material-symbols-outlined text-[16px] text-error">mic</span>
+                        <span>Dictado</span>
+                      </button>
+                      <span class="font-label-sm text-[11px] text-on-surface-variant hidden sm:inline">Ctrl + Enter para enviar</span>
+                    </div>
+                    <div class="flex items-center gap-space-xs">
+                      <button class="px-space-sm py-1.5 rounded-lg text-on-surface-variant hover:text-on-surface font-label-md text-xs transition-colors cursor-pointer" onclick="clearInput()" type="button">
+                        Borrar
+                      </button>
+                      <button class="flex items-center gap-space-xs px-space-md py-1.5 rounded-lg bg-primary text-on-primary hover:bg-primary-container font-label-lg text-xs md:text-sm font-semibold transition-all shadow-sm cursor-pointer" id="sendBtn" type="button">
+                        <span>Transmitir</span>
+                        <span class="material-symbols-outlined text-[16px]">send</span>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+
+            </div>
+
+          </div>
+
+          <!-- Right Workspace: Rapport Meter, Notebook & DSM-5 Checklist (Right 4 cols) -->
+          <div class="xl:col-span-4 flex flex-col gap-space-md min-w-0">
+            
+            <!-- Rapport Gauge -->
+            <div class="w-full bg-surface-container-lowest rounded-xl shadow-sm p-space-md">
+              <div class="flex items-center justify-between mb-space-xs">
+                <div class="flex items-center gap-space-xs">
+                  <span class="material-symbols-outlined text-[18px] text-secondary">handshake</span>
+                  <span class="font-label-md text-label-md font-semibold text-primary">Alianza Terapéutica &amp; Rapport</span>
+                </div>
+                <span class="font-label-sm text-xs font-semibold text-secondary">86% · Fuerte</span>
+              </div>
+              <div class="w-full h-2 rounded-full bg-surface-container-high overflow-hidden">
+                <div class="h-full bg-secondary rounded-full transition-all duration-500 ease-out" style="width: 86%;"></div>
+              </div>
+              <div class="flex items-center justify-between text-on-surface-variant font-label-sm text-[10px] mt-space-xs">
+                <span>Reserva inicial</span>
+                <span>Sintonía óptima</span>
+              </div>
+            </div>
+
+            <!-- Cuaderno de Campo del Terapeuta Card -->
+            <div class="w-full bg-surface-container-lowest rounded-xl shadow-sm p-space-md flex flex-col flex-1">
+              <div class="flex items-center justify-between pb-space-xs mb-space-sm">
+                <div class="flex items-center gap-space-xs">
+                  <span class="material-symbols-outlined text-[20px] text-primary">edit_note</span>
+                  <span class="font-headline-sm text-headline-sm text-primary font-bold">Cuaderno del Terapeuta</span>
+                </div>
+                <span class="w-2 h-2 rounded-full bg-secondary-fixed ring-4 ring-secondary-fixed/20" title="Autoguardado activo"></span>
+              </div>
+
+              <!-- Notebook Tabs -->
+              <div class="flex items-center bg-surface-container-low rounded-lg p-1 gap-1 mb-space-md">
+                <button class="flex-1 py-1.5 px-space-sm rounded-md font-label-md text-xs font-semibold bg-surface-container-lowest text-primary shadow-xs transition-all cursor-pointer text-center" id="tabBtnNotes" onclick="switchTab('notes')" type="button">
+                  Notas Clínicas
+                </button>
+                <button class="flex-1 py-1.5 px-space-sm rounded-md font-label-md text-xs font-semibold text-on-surface-variant hover:text-on-surface transition-all cursor-pointer text-center" id="tabBtnSymptoms" onclick="switchTab('symptoms')" type="button">
+                  Criterios DSM-5 (3)
+                </button>
+              </div>
+
+              <!-- Tab Content 1: Live Notes -->
+              <div class="flex flex-col gap-space-sm" id="tabContentNotes">
+                <div class="flex items-center justify-between">
+                  <span class="font-label-sm text-[11px] text-on-surface-variant uppercase font-medium">Apuntes en Vivo</span>
+                  <span class="font-label-sm text-[10px] text-secondary font-mono">Borrador activo</span>
+                </div>
+                <textarea class="w-full bg-surface-container-low p-space-sm rounded-lg text-on-surface font-body-sm text-xs md:text-sm focus:outline-none focus:ring-1 focus:ring-primary/20 leading-relaxed resize-none" placeholder="Registra observaciones fenotípicas, hipótesis provisionales..." rows="8">- Paciente orientada en espacio y tiempo.
+- Refiere clara hipervigilancia orientada a desempeño laboral.
+- Ansiedad anticipatoria con correlato somático marcado (presión en el pecho, nudo estomacal).
+- Hipótesis provisional: TAG con predominio de rumiación.
+- Explorar red de apoyo familiar en siguientes turnos.</textarea>
+              </div>
+
+              <!-- Tab Content 2: DSM-5 Checklist -->
+              <div class="hidden flex-col gap-space-sm" id="tabContentSymptoms">
+                <div class="flex items-center justify-between">
+                  <span class="font-label-sm text-[11px] text-on-surface-variant uppercase font-medium">Criterios Cotejados</span>
+                  <span class="font-label-sm text-xs text-primary font-semibold">3 de 6 marcados</span>
+                </div>
+                <div class="flex flex-col gap-space-xs text-left">
+                  <label class="flex items-start gap-space-sm p-space-sm rounded-lg bg-surface-container-low hover:bg-surface-container cursor-pointer transition-colors">
+                    <input checked class="mt-0.5 rounded text-secondary focus:ring-secondary accent-secondary w-4 h-4" type="checkbox"/>
+                    <div class="flex flex-col">
+                      <span class="font-label-md text-xs font-semibold text-primary">Preocupación excesiva</span>
+                      <span class="font-body-sm text-[11px] text-on-surface-variant">Sensación inminente de desastre laboral.</span>
+                    </div>
+                  </label>
+                  <label class="flex items-start gap-space-sm p-space-sm rounded-lg bg-surface-container-low hover:bg-surface-container cursor-pointer transition-colors">
+                    <input checked class="mt-0.5 rounded text-secondary focus:ring-secondary accent-secondary w-4 h-4" type="checkbox"/>
+                    <div class="flex flex-col">
+                      <span class="font-label-md text-xs font-semibold text-primary">Insomnio de mantenimiento</span>
+                      <span class="font-body-sm text-[11px] text-on-surface-variant">Despertares abruptos a las 3:00 am con taquicardia.</span>
+                    </div>
+                  </label>
+                  <label class="flex items-start gap-space-sm p-space-sm rounded-lg bg-surface-container-low hover:bg-surface-container cursor-pointer transition-colors">
+                    <input checked class="mt-0.5 rounded text-secondary focus:ring-secondary accent-secondary w-4 h-4" type="checkbox"/>
+                    <div class="flex flex-col">
+                      <span class="font-label-md text-xs font-semibold text-primary">Tensión somática</span>
+                      <span class="font-body-sm text-[11px] text-on-surface-variant">Presión constante en el pecho.</span>
+                    </div>
+                  </label>
+                </div>
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </section>
+
+      <!-- ======================================================== -->
+      <!-- VIEW 3: DEBRIEFING & FEEDBACK CLÍNICO PEDAGÓGICO         -->
+      <!-- ======================================================== -->
+      <section class="hidden flex-col w-full" id="view-debriefing">
+        
+        <!-- Header Banner -->
+        <div class="w-full bg-surface-container-lowest rounded-xl p-space-lg shadow-sm flex flex-col xl:flex-row xl:items-center justify-between gap-space-lg">
+          <div class="flex flex-col gap-space-xs max-w-2xl">
+            <div class="flex flex-wrap items-center gap-space-xs">
+              <span class="px-space-sm py-0.5 rounded-full font-label-sm text-xs bg-secondary-fixed text-on-secondary-fixed font-semibold tracking-wide uppercase">Sesión Evaluada</span>
+              <span class="px-space-sm py-0.5 rounded-full font-label-sm text-xs bg-surface-container text-on-surface-variant font-medium" id="debriefDiagTag">DSM-5 F41.1 · Trastorno de Ansiedad Generalizada</span>
+              <span class="px-space-sm py-0.5 rounded-full font-label-sm text-xs bg-surface-container-high text-primary font-medium">Primera Consulta Anamnesis</span>
+            </div>
+            <h1 class="font-headline-lg text-2xl md:text-headline-lg text-primary tracking-tight mt-space-xs">
+              Informe de Desempeño Clínico y Debriefing Pedagógico
+            </h1>
+            <p class="font-body-md text-body-md text-on-surface-variant">
+              Paciente simulada: <span class="font-semibold text-on-surface" id="debriefPatientName">Elena Morales (32 años)</span> · Duración: <span class="font-semibold text-on-surface">22 minutos</span> · 18 turnos registrados
+            </p>
+          </div>
+
+          <div class="flex flex-wrap items-center gap-space-sm shrink-0">
+            <button class="inline-flex items-center gap-space-xs px-space-md py-space-sm rounded-lg bg-surface-container text-on-surface hover:bg-surface-variant transition-colors font-label-md text-label-md" onclick="switchView('consulta')" type="button">
+              <span class="material-symbols-outlined text-[18px]">replay</span>
+              <span>Reanudar Consulta</span>
+            </button>
+            <button class="inline-flex items-center gap-space-xs px-space-lg py-space-sm rounded-lg bg-primary text-on-primary hover:bg-primary-container transition-all font-label-md text-label-md shadow-sm font-semibold" onclick="window.print()" type="button">
+              <span class="material-symbols-outlined text-[18px] text-secondary-fixed">download</span>
+              <span>Exportar Informe</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Analytical 4 KPIs Grid -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-space-md mt-space-lg">
+          
+          <!-- KPI 1: Ratio Preguntas -->
+          <div class="bg-surface-container-lowest rounded-xl p-space-md shadow-sm flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between text-on-surface-variant">
+                <span class="font-label-sm text-[11px] uppercase tracking-wider font-semibold">Estilo de Indagación</span>
+                <span class="material-symbols-outlined text-[20px] text-secondary">tune</span>
+              </div>
+              <div class="mt-space-sm">
+                <div class="font-headline-md text-2xl text-primary font-bold">78% <span class="text-on-surface-variant font-label-md text-sm font-normal">Abiertas</span></div>
+                <div class="font-label-sm text-xs text-secondary font-medium mt-0.5">22% Preguntas Cerradas</div>
+              </div>
+            </div>
+            <div class="mt-space-md pt-space-xs">
+              <div class="w-full h-2 rounded-full bg-surface-container flex overflow-hidden">
+                <div class="bg-secondary h-full rounded-l-full" style="width: 78%;"></div>
+                <div class="bg-primary-fixed-dim h-full rounded-r-full" style="width: 22%;"></div>
+              </div>
+              <p class="font-body-sm text-xs text-on-surface-variant mt-space-xs">
+                Equilibrio óptimo para la fase de encuadre exploratorio.
+              </p>
+            </div>
+          </div>
+
+          <!-- KPI 2: Empatía -->
+          <div class="bg-surface-container-lowest rounded-xl p-space-md shadow-sm flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between text-on-surface-variant">
+                <span class="font-label-sm text-[11px] uppercase tracking-wider font-semibold">Sensibilidad Empática</span>
+                <span class="material-symbols-outlined text-[20px] text-secondary">favorite</span>
+              </div>
+              <div class="mt-space-sm flex items-baseline gap-space-xs">
+                <span class="font-headline-md text-2xl text-primary font-bold">92</span>
+                <span class="font-label-sm text-sm text-on-surface-variant">/ 100</span>
+                <span class="ml-auto px-space-xs py-0.5 rounded-full font-label-sm text-[10px] bg-secondary-fixed text-on-secondary-fixed font-semibold">Sobresaliente</span>
+              </div>
+            </div>
+            <div class="mt-space-md pt-space-xs">
+              <div class="w-full h-2 rounded-full bg-surface-container overflow-hidden">
+                <div class="bg-secondary h-full rounded-full transition-all duration-500" style="width: 92%;"></div>
+              </div>
+              <p class="font-body-sm text-xs text-on-surface-variant mt-space-xs">
+                Excelente contención afectiva y reflejo de emociones.
+              </p>
+            </div>
+          </div>
+
+          <!-- KPI 3: Preguntas Sesgadas / Inductivas -->
+          <div class="bg-surface-container-lowest rounded-xl p-space-md shadow-sm flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between text-on-surface-variant">
+                <span class="font-label-sm text-[11px] uppercase tracking-wider font-semibold">Preguntas Sesgadas</span>
+                <span class="material-symbols-outlined text-[20px] text-error">warning</span>
+              </div>
+              <div class="mt-space-sm flex items-baseline gap-space-xs">
+                <span class="font-headline-md text-2xl text-primary font-bold">1</span>
+                <span class="font-label-sm text-sm text-on-surface-variant">incidencia</span>
+                <span class="ml-auto px-space-xs py-0.5 rounded-full font-label-sm text-[10px] bg-surface-container-high text-on-surface-variant font-semibold">Riesgo Bajo</span>
+              </div>
+            </div>
+            <div class="mt-space-md pt-space-xs">
+              <div class="w-full h-2 rounded-full bg-surface-container overflow-hidden">
+                <div class="bg-error h-full rounded-full" style="width: 14%;"></div>
+              </div>
+              <p class="font-body-sm text-xs text-on-surface-variant mt-space-xs">
+                1 formulación sugestiva detectada en turno #11.
+              </p>
+            </div>
+          </div>
+
+          <!-- KPI 4: Alianza -->
+          <div class="bg-surface-container-lowest rounded-xl p-space-md shadow-sm flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between text-on-surface-variant">
+                <span class="font-label-sm text-[11px] uppercase tracking-wider font-semibold">Alianza Terapéutica</span>
+                <span class="material-symbols-outlined text-[20px] text-secondary">handshake</span>
+              </div>
+              <div class="mt-space-sm flex items-baseline gap-space-xs">
+                <span class="font-headline-md text-2xl text-primary font-bold">88</span>
+                <span class="font-label-sm text-sm text-on-surface-variant">/ 100</span>
+                <span class="ml-auto px-space-xs py-0.5 rounded-full font-label-sm text-[10px] bg-secondary-fixed text-on-secondary-fixed font-semibold">Alta Cohesión</span>
+              </div>
+            </div>
+            <div class="mt-space-md pt-space-xs">
+              <div class="w-full h-2 rounded-full bg-surface-container overflow-hidden">
+                <div class="bg-secondary h-full rounded-full transition-all duration-500" style="width: 88%;"></div>
+              </div>
+              <p class="font-body-sm text-xs text-on-surface-variant mt-space-xs">
+                El paciente redujo tensión defensiva en la segunda mitad.
+              </p>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Qualitative Breakdown & Turn-by-Turn Insights -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-space-lg mt-space-lg items-start">
+          
+          <div class="lg:col-span-8 flex flex-col gap-space-md">
+            <div class="bg-surface-container-lowest rounded-xl p-space-md md:p-space-lg shadow-sm">
+              <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-space-md gap-space-sm border-b border-surface-container">
+                <div>
+                  <div class="flex items-center gap-space-xs">
+                    <span class="material-symbols-outlined text-secondary text-[22px]">psychology_alt</span>
+                    <h2 class="font-headline-md text-headline-md text-primary font-bold tracking-tight">Análisis Cualitativo de la Conversación</h2>
+                  </div>
+                  <p class="font-body-sm text-body-sm text-on-surface-variant mt-1">
+                    Desglose formativo de turnos clínicos.
+                  </p>
+                </div>
+              </div>
+
+              <!-- Breakdown Feed -->
+              <div class="flex flex-col gap-space-md mt-space-md">
+                
+                <!-- Turn Positivo -->
+                <div class="p-space-md rounded-xl bg-surface-container-lowest border border-secondary/30 shadow-sm flex flex-col gap-space-sm relative overflow-hidden">
+                  <div class="absolute left-0 top-0 bottom-0 w-1.5 bg-secondary"></div>
+                  <div class="flex flex-wrap items-center justify-between gap-space-xs pl-space-xs">
+                    <span class="font-label-sm text-xs font-bold text-secondary uppercase tracking-wider">Turno #05 · Tu Intervención</span>
+                    <span class="px-space-sm py-0.5 rounded-full font-label-sm text-xs bg-secondary-fixed text-on-secondary-fixed font-semibold flex items-center gap-1">
+                      <span class="material-symbols-outlined text-[13px]">check_circle</span>
+                      Validación Afectiva
+                    </span>
+                  </div>
+                  <p class="font-body-md text-sm md:text-body-md text-on-surface pl-space-xs font-medium">
+                    «Entiendo que esa sensación debe ser agotadora y frustrante para ti, Elena, especialmente al no encontrar tregua ni en los momentos familiares...»
+                  </p>
+                  <div class="mt-space-xs p-space-sm rounded-lg bg-surface-container-low flex items-start gap-space-sm">
+                    <span class="material-symbols-outlined text-secondary text-[20px] shrink-0 mt-0.5">school</span>
+                    <p class="font-body-sm text-xs text-on-surface-variant">
+                      <strong>Fortaleza clínica:</strong> Excelente validación del malestar subjetivo antes de indagar cronología o datos fácticos. Desescaló la tensión simpática del paciente y consolidó la alianza de trabajo.
+                    </p>
+                  </div>
+                </div>
+
+                <!-- Turn con Oportunidad de Mejora (Pregunta Inductiva / Sesgada) -->
+                <div class="p-space-md rounded-xl bg-surface-container-lowest border border-error/30 shadow-sm flex flex-col gap-space-sm relative overflow-hidden">
+                  <div class="absolute left-0 top-0 bottom-0 w-1.5 bg-error"></div>
+                  <div class="flex flex-wrap items-center justify-between gap-space-xs pl-space-xs">
+                    <span class="font-label-sm text-xs font-bold text-error uppercase tracking-wider">Turno #11 · Tu Intervención (A mejorar)</span>
+                    <span class="px-space-sm py-0.5 rounded-full font-label-sm text-xs bg-error-container text-on-error-container font-semibold flex items-center gap-1">
+                      <span class="material-symbols-outlined text-[13px]">report</span>
+                      Pregunta Inductiva (Sesgo)
+                    </span>
+                  </div>
+                  <p class="font-body-md text-sm md:text-body-md text-on-surface pl-space-xs font-medium">
+                    «¿Verdad que sientes que vas a perder el control en el trabajo?»
+                  </p>
+                  <div class="mt-space-xs p-space-sm rounded-lg bg-error-container/30 flex items-start gap-space-sm">
+                    <span class="material-symbols-outlined text-error text-[20px] shrink-0 mt-0.5">tips_and_updates</span>
+                    <div class="flex flex-col gap-1">
+                      <p class="font-body-sm text-xs text-on-surface">
+                        <strong>Oportunidad pedagógica:</strong> La fórmula <em>«¿Verdad que...?»</em> induce la respuesta del paciente e introduce un juicio anticipatorio que limita el relato espontáneo.
+                      </p>
+                      <div class="p-space-xs px-space-sm rounded bg-surface-container-lowest font-body-sm text-xs text-primary flex items-baseline gap-space-xs">
+                        <span class="font-label-sm text-[11px] font-bold text-secondary uppercase shrink-0">Alternativa Sugerida:</span>
+                        <span class="italic">«¿Qué pensamientos concretos pasan por tu cabeza en ese momento cuando estás en el trabajo?»</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+          </div>
+
+          <!-- Supervisor Commentary Card (Right 4 cols) -->
+          <div class="lg:col-span-4 flex flex-col gap-space-md">
+            <div class="bg-surface-container-lowest p-space-md rounded-xl shadow-sm">
+              <div class="flex items-center gap-space-xs mb-space-sm">
+                <span class="material-symbols-outlined text-[20px] text-primary">rate_review</span>
+                <span class="font-headline-sm text-headline-sm text-primary font-bold">Comentario del Docente Supervisor</span>
+              </div>
+              <p class="font-body-sm text-xs md:text-sm text-on-surface-variant leading-relaxed">
+                Buen desempeño general en la técnica de acogida. La estudiante demuestra calidez empática y respeto por los tiempos del paciente. Se sugiere entrenar la formulación de preguntas circulares y evitar el uso de fórmulas afirmativas encubiertas.
+              </p>
+            </div>
+          </div>
+
+        </div>
+
+      </section>
+
+      <!-- ======================================================== -->
+      <!-- VIEW 4: PANEL DE PROGRESO ACADÉMICO                     -->
+      <!-- ======================================================== -->
+      <section class="hidden flex-col w-full gap-space-lg" id="view-progreso">
+        
+        <!-- Header Institucional -->
+        <div class="relative overflow-hidden rounded-xl bg-surface-container-low p-space-lg shadow-sm">
+          <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-space-md relative z-10">
+            <div class="flex flex-col gap-space-xs">
+              <div class="flex items-center gap-space-xs text-on-surface-variant font-label-sm text-xs uppercase tracking-wider">
+                <span class="inline-block w-2 h-2 rounded-full bg-secondary"></span>
+                <span>Expediente Clínico Formativo · Paula Cruz</span>
+                <span class="text-outline">/</span>
+                <span>Semestre 2024-II</span>
+              </div>
+              <h1 class="font-headline-lg text-2xl md:text-headline-lg text-primary tracking-tight font-bold">
+                Evolución de Competencias Clínicas
+              </h1>
+              <p class="font-body-md text-sm md:text-body-md text-on-surface-variant max-w-3xl">
+                Asignatura: <span class="font-semibold text-primary">Evaluación Psicológica y Técnicas de Entrevista Clínica</span>
+              </p>
+            </div>
+            <div class="flex items-center gap-space-xs px-space-md py-space-xs rounded-lg bg-surface-container-lowest shadow-sm self-start lg:self-auto">
+              <span class="material-symbols-outlined text-[18px] text-secondary">verified_user</span>
+              <div class="flex flex-col">
+                <span class="font-label-sm text-[10px] text-on-surface-variant">Nivel Acreditado</span>
+                <span class="font-label-lg text-sm text-primary font-bold leading-tight">Clínico Intermedio B2</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Metric Cards -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-space-md">
+          
+          <div class="rounded-xl bg-surface-container-lowest p-space-md shadow-sm flex flex-col justify-between">
+            <span class="font-label-sm text-[11px] text-on-surface-variant uppercase tracking-wide font-semibold">Casos Simulados</span>
+            <div class="my-space-sm flex items-baseline gap-space-xs">
+              <span class="font-headline-xl text-3xl text-primary font-bold">3</span>
+              <span class="font-label-md text-sm text-on-surface-variant">/ 4 completados</span>
+            </div>
+            <div class="w-full bg-surface-container h-1.5 rounded-full overflow-hidden">
+              <div class="bg-primary h-full rounded-full" style="width: 75%"></div>
+            </div>
+          </div>
+
+          <div class="rounded-xl bg-surface-container-lowest p-space-md shadow-sm flex flex-col justify-between">
+            <span class="font-label-sm text-[11px] text-on-surface-variant uppercase tracking-wide font-semibold">Horas de Consulta</span>
+            <div class="my-space-sm flex items-baseline gap-space-xs">
+              <span class="font-headline-xl text-3xl text-primary font-bold">4.2</span>
+              <span class="font-label-md text-sm text-on-surface-variant">horas acumuladas</span>
+            </div>
+            <span class="font-body-sm text-xs text-secondary flex items-center gap-1">
+              <span class="material-symbols-outlined text-[14px]">trending_up</span> Cumplimiento al 84%
+            </span>
+          </div>
+
+          <div class="rounded-xl bg-surface-container-lowest p-space-md shadow-sm flex flex-col justify-between">
+            <span class="font-label-sm text-[11px] text-on-surface-variant uppercase tracking-wide font-semibold">Rapport Promedio</span>
+            <div class="my-space-sm flex items-baseline gap-space-xs">
+              <span class="font-headline-xl text-3xl text-primary font-bold">88%</span>
+              <span class="font-label-md text-sm text-on-surface-variant">alianza sólida</span>
+            </div>
+            <span class="font-body-sm text-xs text-secondary flex items-center gap-1">
+              <span class="material-symbols-outlined text-[14px]">thumb_up</span> Nivel sobresaliente
+            </span>
+          </div>
+
+          <div class="rounded-xl bg-surface-container-lowest p-space-md shadow-sm flex flex-col justify-between">
+            <span class="font-label-sm text-[11px] text-on-surface-variant uppercase tracking-wide font-semibold">Sesgo Inductivo</span>
+            <div class="my-space-sm flex items-baseline gap-space-xs">
+              <span class="font-headline-xl text-3xl text-primary font-bold">0.8</span>
+              <span class="font-label-md text-sm text-on-surface-variant">promedio / sesión</span>
+            </div>
+            <span class="font-body-sm text-xs text-secondary flex items-center gap-1">
+              <span class="material-symbols-outlined text-[14px]">check</span> En rango seguro (&lt; 2)
+            </span>
+          </div>
+
+        </div>
+
+      </section>
+
+    </main>
+  </div>
+
+  <!-- ======================================================== -->
+  <!-- MODAL: FICHA CLÍNICA DE DERIVACIÓN (DOSSIER)             -->
+  <!-- ======================================================== -->
+  <div class="fixed inset-0 bg-primary/40 backdrop-blur-sm z-50 hidden items-center justify-center p-space-md" id="dossierModal">
+    <div class="bg-surface-container-lowest rounded-xl max-w-2xl w-full p-space-md md:p-space-lg shadow-xl relative animate-in fade-in duration-150">
+      <div class="flex items-start justify-between pb-space-sm mb-space-md border-b border-surface-container">
+        <div class="flex items-center gap-space-sm">
+          <span class="material-symbols-outlined text-secondary text-[28px]">assignment_ind</span>
+          <div>
+            <span class="font-label-sm text-xs text-secondary uppercase tracking-wider font-semibold">Ficha Clínica de Derivación</span>
+            <h2 class="font-headline-md text-xl md:text-headline-md text-primary font-bold leading-tight" id="modalPatientName">Paciente</h2>
+          </div>
+        </div>
+        <button class="w-8 h-8 rounded-full flex items-center justify-center bg-surface-container-low hover:bg-surface-container text-on-surface-variant cursor-pointer" onclick="closeDossierModal()" type="button">
+          <span class="material-symbols-outlined text-[20px]">close</span>
+        </button>
+      </div>
+
+      <div class="space-y-space-md font-body-md text-body-md text-on-surface">
+        <div class="grid grid-cols-2 gap-space-sm bg-surface-container-low p-space-sm rounded-lg">
+          <div>
+            <span class="font-label-sm text-[11px] text-on-surface-variant block uppercase font-semibold">Hipótesis de Trabajo</span>
+            <span class="font-label-lg text-sm md:text-label-lg text-primary font-bold block" id="modalDiagnostic">-</span>
+          </div>
+          <div>
+            <span class="font-label-sm text-[11px] text-on-surface-variant block uppercase font-semibold">Edad</span>
+            <span class="font-label-lg text-sm md:text-label-lg text-primary font-bold block" id="modalAge">-</span>
+          </div>
+        </div>
+
+        <div>
+          <span class="font-label-sm text-[11px] text-on-surface-variant block uppercase tracking-wider mb-1 font-semibold">Resumen de Antecedentes</span>
+          <p class="bg-surface-container-low p-space-sm rounded-lg text-on-surface leading-relaxed text-sm" id="modalNotes">-</p>
+        </div>
+
+        <div class="p-space-sm rounded-lg bg-surface-container-low text-on-surface-variant text-xs flex items-center gap-space-xs">
+          <span class="material-symbols-outlined text-secondary text-[18px]">info</span>
+          <span>Esta ficha contiene datos docentes simulados para el entrenamiento de la anamnesis.</span>
+        </div>
+      </div>
+
+      <div class="mt-space-lg pt-space-sm flex items-center justify-end gap-space-sm">
+        <button class="px-space-md py-space-sm rounded-lg bg-surface-container-low text-on-surface-variant font-label-md text-sm hover:bg-surface-container transition-colors cursor-pointer" onclick="closeDossierModal()" type="button">
+          Cerrar
+        </button>
+        <button class="px-space-md py-space-sm rounded-lg bg-primary hover:bg-primary-container text-on-primary font-label-md text-sm flex items-center gap-1 shadow-sm font-semibold cursor-pointer" id="modalLaunchBtn" type="button">
+          <span class="material-symbols-outlined text-[16px] text-secondary-container">play_arrow</span>
+          <span>Comenzar Simulación Ahora</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================================================== -->
+  <!-- MODAL: GUÍA DE ENTREVISTA CLÍNICA FORMATIVA               -->
+  <!-- ======================================================== -->
+  <div class="fixed inset-0 bg-primary/40 backdrop-blur-sm z-50 hidden items-center justify-center p-space-md" id="guideModal">
+    <div class="bg-surface-container-lowest rounded-xl max-w-2xl w-full max-h-[85vh] overflow-y-auto p-space-md md:p-space-lg shadow-xl relative animate-in fade-in duration-150">
+      <div class="flex items-start justify-between pb-space-sm mb-space-md border-b border-surface-container">
+        <div class="flex items-center gap-space-sm">
+          <span class="material-symbols-outlined text-secondary text-[28px]">menu_book</span>
+          <div>
+            <span class="font-label-sm text-xs text-secondary uppercase tracking-wider font-semibold">Protocolo Docente</span>
+            <h2 class="font-headline-md text-xl md:text-headline-md text-primary font-bold">Guía de Entrevista Clínica</h2>
+          </div>
+        </div>
+        <button class="w-8 h-8 rounded-full flex items-center justify-center bg-surface-container-low hover:bg-surface-container text-on-surface-variant cursor-pointer" onclick="closeInterviewGuideModal()" type="button">
+          <span class="material-symbols-outlined text-[20px]">close</span>
+        </button>
+      </div>
+
+      <div class="space-y-space-md text-sm text-on-surface leading-relaxed">
+        <div class="p-space-sm rounded-lg bg-surface-container-low">
+          <h4 class="font-semibold text-primary mb-1 flex items-center gap-1">
+            <span class="material-symbols-outlined text-[16px] text-secondary">psychology</span>
+            1. Formulación de Preguntas Abiertas
+          </h4>
+          <p class="text-on-surface-variant text-xs">
+            Inicia con preguntas que faciliten la narrativa libre del motivo de consulta: <em>«¿Qué te ha motivado a venir hoy?»</em>, <em>«¿Cómo describirías lo que sientes?»</em>. Evita preguntas con respuesta sí/no al inicio.
+          </p>
+        </div>
+
+        <div class="p-space-sm rounded-lg bg-surface-container-low">
+          <h4 class="font-semibold text-primary mb-1 flex items-center gap-1">
+            <span class="material-symbols-outlined text-[16px] text-secondary">favorite</span>
+            2. Validación Emocional y Empatía
+          </h4>
+          <p class="text-on-surface-variant text-xs">
+            Reconoce y normaliza el malestar subjetivo del paciente antes de profundizar en la técnica: <em>«Es comprensible que te sientas abrumada ante tanta exigencia»</em>.
+          </p>
+        </div>
+
+        <div class="p-space-sm rounded-lg bg-error-container/30 border border-error/20">
+          <h4 class="font-semibold text-error mb-1 flex items-center gap-1">
+            <span class="material-symbols-outlined text-[16px] text-error">warning</span>
+            3. Evitar Preguntas Inductivas o Sesgadas
+          </h4>
+          <p class="text-on-surface text-xs">
+            No utilices estructuras como: <em>«¿Verdad que te sientes mal...?»</em> o <em>«¿Seguro que no tienes miedo a...?»</em>. Estas preguntas inducen la respuesta del paciente y sesgan la evaluación.
+          </p>
+        </div>
+      </div>
+
+      <div class="mt-space-lg pt-space-sm flex justify-end">
+        <button class="px-space-md py-space-sm rounded-lg bg-primary text-on-primary font-label-md text-sm font-semibold cursor-pointer" onclick="closeInterviewGuideModal()" type="button">
+          Entendido
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================================================== -->
+  <!-- MODAL: AJUSTES DE INTELIGENCIA ARTIFICIAL                 -->
+  <!-- ======================================================== -->
+  <div class="fixed inset-0 bg-primary/40 backdrop-blur-sm z-50 hidden items-center justify-center p-space-md" id="aiSettingsModal">
+    <div class="bg-surface-container-lowest rounded-xl max-w-lg w-full p-space-md md:p-space-lg shadow-xl relative animate-in fade-in duration-150">
+      <div class="flex items-start justify-between pb-space-sm mb-space-md border-b border-surface-container">
+        <div class="flex items-center gap-space-sm">
+          <span class="material-symbols-outlined text-secondary text-[28px]">smart_toy</span>
+          <div>
+            <span class="font-label-sm text-xs text-secondary uppercase tracking-wider font-semibold">Configuración</span>
+            <h2 class="font-headline-md text-xl text-primary font-bold">Motor de Inteligencia Artificial</h2>
+          </div>
+        </div>
+        <button class="w-8 h-8 rounded-full flex items-center justify-center bg-surface-container-low hover:bg-surface-container text-on-surface-variant cursor-pointer" onclick="closeAISettingsModal()" type="button">
+          <span class="material-symbols-outlined text-[20px]">close</span>
+        </button>
+      </div>
+
+      <div class="space-y-space-md text-sm text-on-surface">
+        <p class="text-on-surface-variant text-xs">
+          Selecciona cómo responderá el paciente virtual en la simulación:
+        </p>
+
+        <!-- Option 1: Autonomous Intelligent Engine -->
+        <label class="flex items-start gap-space-sm p-space-sm rounded-lg bg-surface-container-low hover:bg-surface-container cursor-pointer transition-colors border border-transparent has-[:checked]:border-secondary">
+          <input checked class="mt-1 accent-secondary" id="radioAutonomous" name="aiModeRadio" type="radio" value="autonomous"/>
+          <div class="flex flex-col">
+            <span class="font-semibold text-primary">Simulador Inteligente Autónomo (Recomendado)</span>
+            <span class="text-xs text-on-surface-variant mt-0.5">Funciona inmediatamente para cualquier persona con el link, sin necesidad de configurar claves ni cuentas externas.</span>
+          </div>
+        </label>
+
+        <!-- Option 2: Live Gemini API -->
+        <label class="flex items-start gap-space-sm p-space-sm rounded-lg bg-surface-container-low hover:bg-surface-container cursor-pointer transition-colors border border-transparent has-[:checked]:border-secondary">
+          <input class="mt-1 accent-secondary" id="radioGemini" name="aiModeRadio" type="radio" value="gemini"/>
+          <div class="flex flex-col flex-1">
+            <span class="font-semibold text-primary">Modo Google Gemini API en Vivo</span>
+            <span class="text-xs text-on-surface-variant mt-0.5">Respuestas generadas 100% en vivo usando tu API Key de Google Gemini.</span>
+            <div class="mt-2">
+              <input class="w-full px-space-sm py-1.5 text-xs bg-surface-container-lowest border border-outline-variant rounded-lg focus:outline-none focus:border-secondary" id="geminiApiKeyInput" placeholder="Pega aquí tu Gemini API Key (opcional)" type="password"/>
+              <span class="text-[10px] text-on-surface-variant block mt-1">Tu clave se guarda únicamente en tu navegador.</span>
+            </div>
+          </div>
+        </label>
+      </div>
+
+      <div class="mt-space-lg pt-space-sm flex items-center justify-end gap-space-sm">
+        <button class="px-space-md py-space-sm rounded-lg bg-surface-container-low text-on-surface-variant font-label-md text-sm hover:bg-surface-container cursor-pointer" onclick="closeAISettingsModal()" type="button">
+          Cancelar
+        </button>
+        <button class="px-space-md py-space-sm rounded-lg bg-primary hover:bg-primary-container text-on-primary font-label-md text-sm font-semibold cursor-pointer" onclick="saveAISettings()" type="button">
+          Guardar Ajustes
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="cases.js"></script>
+  <script src="app.js"></script>
+
+</body>
+</html>

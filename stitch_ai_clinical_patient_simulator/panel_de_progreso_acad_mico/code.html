@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+
+<html lang="es"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><meta content="web_dashboard" name="shell-type"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&amp;family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config={darkMode:"class",theme:{extend:{"colors":{"primary-fixed-dim":"#bcc7de","on-error-container":"#93000a","on-surface":"#0b1c30","surface-container":"#e5eeff","on-tertiary-fixed-variant":"#004395","primary-fixed":"#d8e3fb","inverse-surface":"#213145","surface-variant":"#d3e4fe","surface-container-highest":"#d3e4fe","surface-dim":"#cbdbf5","surface-container-low":"#eff4ff","on-primary-fixed-variant":"#3c475a","secondary-fixed":"#85f8c4","primary":"#091426","tertiary-fixed":"#d8e2ff","background":"#f8f9ff","secondary":"#006c4a","surface":"#f8f9ff","inverse-on-surface":"#eaf1ff","surface-bright":"#f8f9ff","on-background":"#0b1c30","secondary-container":"#82f5c1","on-error":"#ffffff","on-secondary":"#ffffff","error":"#ba1a1a","tertiary-container":"#00275b","surface-container-lowest":"#ffffff","error-container":"#ffdad6","surface-container-high":"#dce9ff","inverse-primary":"#bcc7de","outline-variant":"#c5c6cd","on-tertiary-container":"#4c8dff","on-tertiary-fixed":"#001a42","on-secondary-fixed-variant":"#005137","outline":"#75777d","on-secondary-fixed":"#002114","on-primary":"#ffffff","on-secondary-container":"#00714e","on-primary-fixed":"#111c2d","primary-container":"#1e293b","tertiary-fixed-dim":"#adc6ff","on-tertiary":"#ffffff","tertiary":"#001334","secondary-fixed-dim":"#68dba9","on-surface-variant":"#45474c","on-primary-container":"#8590a6","surface-tint":"#545f73"},"borderRadius":{"DEFAULT":"0.25rem","lg":"0.5rem","xl":"0.75rem","full":"9999px"},"spacing":{"gutter-sm":"1rem","margin-mobile":"1rem","space-xs":"0.25rem","gutter":"1.5rem","space-lg":"1.5rem","margin":"2rem","space-md":"1rem","space-sm":"0.5rem","space-xl":"2.5rem"},"fontFamily":{"headline-lg-mobile":["Newsreader"],"headline-xl":["Newsreader"],"label-lg":["Inter"],"headline-md":["Newsreader"],"headline-xl-mobile":["Newsreader"],"label-md":["Inter"],"headline-sm":["Plus Jakarta Sans"],"code-transcript":["Inter"],"label-sm":["Inter"],"body-sm":["Plus Jakarta Sans"],"body-md":["Plus Jakarta Sans"],"body-lg":["Plus Jakarta Sans"],"headline-lg":["Newsreader"]},"fontSize":{"headline-lg-mobile":["24px",{"lineHeight":"32px","letterSpacing":"-0.01em","fontWeight":"500"}],"headline-xl":["40px",{"lineHeight":"48px","letterSpacing":"-0.02em","fontWeight":"500"}],"label-lg":["14px",{"lineHeight":"20px","letterSpacing":"0.01em","fontWeight":"600"}],"headline-md":["22px",{"lineHeight":"30px","letterSpacing":"-0.01em","fontWeight":"600"}],"headline-xl-mobile":["30px",{"lineHeight":"38px","letterSpacing":"-0.01em","fontWeight":"500"}],"label-md":["12px",{"lineHeight":"16px","letterSpacing":"0.02em","fontWeight":"500"}],"headline-sm":["18px",{"lineHeight":"26px","fontWeight":"600"}],"code-transcript":["13px",{"lineHeight":"20px","fontWeight":"400"}],"label-sm":["11px",{"lineHeight":"14px","letterSpacing":"0.04em","fontWeight":"600"}],"body-sm":["13px",{"lineHeight":"18px","fontWeight":"400"}],"body-md":["14px",{"lineHeight":"22px","fontWeight":"400"}],"body-lg":["16px",{"lineHeight":"26px","fontWeight":"400"}],"headline-lg":["30px",{"lineHeight":"38px","letterSpacing":"-0.01em","fontWeight":"500"}]}}}}</script></head><body class="bg-background font-body-md text-on-surface antialiased"><header class="fixed top-0 w-full h-16 z-50 bg-surface/90 backdrop-blur-md shadow-[0_1px_8px_rgba(0,0,0,0.04)]"><div class="w-full h-16 px-gutter flex items-center justify-between gap-gutter-sm"><div class="flex items-center gap-space-lg"><div class="flex items-center gap-space-sm"><img alt="PsicoSim Logo" class="h-8 w-auto object-contain" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBC3odDBE5GLf4DZ5hB2YaNuc3xYq9tIlEsZpZXDngexS9YZGDUYcXh_VSq-Tln2gsJPZfeZEH8gJOwCxOQ0EIazJa1E3SJyOik5setPadY5EHizpDpzvin-iJJ1g4KhvB9vSXS5BXPFHVGgMd2IIpdHP_GW0VyxZQwAH_-vOc2MKqRac0FbmSve0D9T6BctI_Em7PKXuPrRXTQiDEqTWgQLbOjV6h-DCtEkkqF3qri3SKY847Jlak"/><div class="flex flex-col"><span class="font-headline-sm text-headline-sm text-primary tracking-tight">PsicoSim IA</span><span class="font-label-sm text-label-sm text-on-surface-variant leading-none">Simulador Clínico</span></div></div><div class="hidden xl:flex items-center gap-space-xs px-space-sm py-space-xs rounded-full bg-surface-container-low text-on-primary-fixed-variant"><span class="material-symbols-outlined text-[15px] text-secondary">verified</span><span class="font-label-sm text-label-sm">Facultad de Psicología · Prácticas Supervisadas</span></div></div><nav class="hidden lg:flex items-center p-space-xs bg-surface-container-low rounded-xl gap-space-xs" data-active-classes="bg-surface-container text-primary font-semibold shadow-[0_1px_4px_rgba(0,0,0,0.04)]"><a class="px-space-md py-space-xs rounded-lg font-label-lg text-label-lg text-on-surface-variant hover:text-on-surface transition-all" data-path="catalogo-de-casos" href="#">Catálogo de Casos</a><a class="px-space-md py-space-xs rounded-lg font-label-lg text-label-lg text-on-surface-variant hover:text-on-surface transition-all" data-path="despacho-de-consulta" href="#">Despacho de Consulta</a><a class="px-space-md py-space-xs rounded-lg font-label-lg text-label-lg text-on-surface-variant hover:text-on-surface transition-all" data-path="debriefing-analisis" href="#">Debriefing &amp; Análisis</a><a aria-current="page" class="px-space-md py-space-xs rounded-lg transition-all bg-surface-container text-primary font-semibold shadow-[0_1px_4px_rgba(0,0,0,0.04)]" data-path="mi-progreso" href="#">Mi Progreso</a></nav><div class="flex items-center gap-space-md"><button class="hidden sm:inline-flex items-center gap-space-xs px-space-md py-space-xs rounded-lg bg-surface-container-high text-on-surface hover:bg-surface-variant transition-colors font-label-md text-label-md" type="button"><span class="material-symbols-outlined text-[18px] text-secondary">menu_book</span><span>Guía de Entrevista</span></button><button aria-label="Notificaciones" class="w-9 h-9 rounded-full flex items-center justify-center bg-surface-container-low text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors relative" type="button"><span class="material-symbols-outlined text-[20px]">notifications</span><span class="absolute top-2 right-2 w-2 h-2 rounded-full bg-secondary"></span></button><div class="flex items-center gap-space-sm pl-space-xs"><img alt="Profile" class="w-8 h-8 rounded-full object-cover ring-2 ring-surface-container" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDwbulWN3nxNY_22jYFtNFpSD3unUtwt209KjpHrUPreig2m-WNfGJwzO45FLUJDjP4qEIq123v97moqxIPzziPt6wdc_4Qg5JF-Vr6VLDRcTVqZGFSbFPJG1Ba_YUYAz3f7AbvpcRQ22RUHuJ_nF7Ml4myARexXaKOq-D9mkfTtTTP7KXwqpcGUGvIukvRZwU8RzmyEH4U3r5epCmxv45yiwgaYYxkTSsA472-aGEEGKimi3rvS_U"/><div class="hidden md:flex flex-col text-left"><span class="font-label-md text-label-md text-on-surface leading-tight">Lic. Sarah Jensen</span><span class="font-label-sm text-label-sm text-on-surface-variant">En formación</span></div></div></div></div></header><aside class="fixed left-0 top-16 bottom-0 w-64 bg-surface-container-lowest z-40 hidden md:flex flex-col p-space-md shadow-[0_1px_8px_rgba(0,0,0,0.02)]"><div class="pb-space-sm mb-space-sm"><div class="px-space-sm py-space-xs rounded-lg bg-surface-container-low"><span class="font-label-sm text-label-sm text-on-surface-variant block uppercase tracking-wide">Paciente Activo</span><div class="flex items-center justify-between mt-space-xs"><span class="font-label-lg text-label-lg text-primary">Marta V. (34a)</span><span class="px-space-sm py-0.5 rounded-full font-label-sm text-label-sm bg-error-container text-on-error-container">TAG / F41.1</span></div></div></div><nav class="flex-1 flex flex-col gap-space-xs" data-active-classes="bg-surface-container text-primary font-semibold"><a class="flex items-center gap-space-sm px-space-md py-space-sm rounded-lg font-label-md text-label-md text-on-surface-variant hover:bg-surface-container-low hover:text-on-surface transition-colors" data-path="catalogo-de-casos" href="#"><span class="material-symbols-outlined text-[20px]">folder_shared</span><span>Casos Asignados</span></a><a class="flex items-center gap-space-sm px-space-md py-space-sm rounded-lg font-label-md text-label-md text-on-surface-variant hover:bg-surface-container-low hover:text-on-surface transition-colors" data-path="despacho-de-consulta" href="#"><span class="material-symbols-outlined text-[20px]">record_voice_over</span><span>Sala de Simulación</span></a><a class="flex items-center gap-space-sm px-space-md py-space-sm rounded-lg font-label-md text-label-md text-on-surface-variant hover:bg-surface-container-low hover:text-on-surface transition-colors" data-path="debriefing-analisis" href="#"><span class="material-symbols-outlined text-[20px]">psychology_alt</span><span>Auditoría de Sesión</span></a><a aria-current="page" class="flex items-center gap-space-sm px-space-md py-semi rounded-lg transition-colors bg-surface-container text-primary font-semibold" data-path="mi-progreso" href="#"><span class="material-symbols-outlined text-[20px]">stacked_line_chart</span><span>Métricas &amp; Rapport</span></a><div class="my-space-sm pt-space-xs"><span class="font-label-sm text-label-sm text-on-surface-variant px-space-sm uppercase tracking-wide">Soporte Formativo</span></div><a class="flex items-center gap-space-sm px-space-md py-space-sm rounded-lg font-label-md text-label-md text-on-surface-variant hover:bg-surface-container-low hover:text-on-surface transition-colors" data-path="guia-clinica-dsm" href="#"><span class="material-symbols-outlined text-[20px]">clinical_notes</span><span>Criterios DSM-5</span></a><a class="flex items-center gap-space-sm px-space-md py-space-sm rounded-lg font-label-md text-label-md text-on-surface-variant hover:bg-surface-container-low hover:text-on-surface transition-colors" data-path="tutor-academico" href="#"><span class="material-symbols-outlined text-[20px]">supervisor_account</span><span>Feedback Tutor</span></a></nav><div class="pt-space-sm mt-auto"><div class="p-space-sm rounded-lg bg-surface-container-low text-on-surface-variant flex items-center justify-between"><div class="flex items-center gap-space-xs"><span class="w-2 h-2 rounded-full bg-secondary-container"></span><span class="font-label-sm text-label-sm">Simulador Conectado</span></div><span class="font-label-sm text-label-sm text-secondary font-semibold">v2.4 IA</span></div></div></aside><div class="md:pl-64"><main class="w-full min-h-screen pt-16 bg-surface px-gutter py-space-lg"><div class="flex flex-col w-full gap-space-lg">
+<!-- Header Institucional & Estado Académico -->
+<div class="relative overflow-hidden rounded-xl bg-surface-container-low p-space-lg shadow-sm">
+<div class="flex flex-col lg:flex-row lg:items-center justify-between gap-space-md relative z-10">
+<div class="flex flex-col gap-space-xs">
+<div class="flex items-center gap-space-xs text-on-surface-variant font-label-sm uppercase tracking-wider">
+<span class="inline-block w-2 h-2 rounded-full bg-secondary"></span>
+<span>Expediente Clínico Formativo · ID: SJ-884102</span>
+<span class="text-outline">/</span>
+<span>Semestre 2025-I</span>
+</div>
+<h1 class="font-headline-lg text-headline-lg text-primary tracking-tight">
+          Evolución de Competencias Clínicas <span class="font-normal italic text-on-surface-variant">· Sarah Jensen</span>
+</h1>
+<p class="font-body-md text-body-md text-on-surface-variant max-w-3xl">
+          Cátedra: <span class="font-semibold text-primary">Evaluación Psicológica y Técnicas de Entrevista</span> · Supervisor a cargo: <span class="text-primary underline decoration-dotted">Dra. Valeria Menéndez (Colegiada M-2894)</span>
+</p>
+</div>
+<div class="flex flex-wrap items-center gap-space-sm self-start lg:self-auto">
+<div class="flex items-center gap-space-xs px-space-md py-space-xs rounded-lg bg-surface-container-lowest shadow-sm">
+<span class="material-symbols-outlined text-[18px] text-secondary">verified_user</span>
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Nivel Acreditado</span>
+<span class="font-label-lg text-label-lg text-primary leading-tight">Clínico Intermedio B2</span>
+</div>
+</div>
+<button class="inline-flex items-center gap-space-xs px-space-md py-space-sm rounded-lg bg-primary text-on-primary hover:bg-primary-container transition-colors font-label-lg text-label-lg shadow-sm" type="button">
+<span class="material-symbols-outlined text-[18px]">download</span>
+<span>Descargar Dossier</span>
+</button>
+</div>
+</div>
+<!-- Faint aesthetic graphic accent -->
+<div class="absolute -right-12 -bottom-16 w-64 h-64 rounded-full bg-secondary-fixed/20 blur-3xl pointer-events-none"></div>
+</div>
+<!-- Tarjetas Resumen Métricas Clave -->
+<div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-space-md">
+<!-- Métrica 1 -->
+<div class="rounded-xl bg-surface-container-lowest p-space-md shadow-sm flex flex-col justify-between relative overflow-hidden group hover:shadow-md transition-shadow">
+<div class="flex items-start justify-between">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wide">Casos Simulados</span>
+<span class="p-space-xs rounded-lg bg-surface-container-low text-primary">
+<span class="material-symbols-outlined text-[20px]">person_check</span>
+</span>
+</div>
+<div class="my-space-sm">
+<div class="flex items-baseline gap-space-xs">
+<span class="font-headline-xl text-headline-xl text-primary font-bold">8</span>
+<span class="font-label-md text-label-md text-on-surface-variant">completados</span>
+</div>
+<div class="flex items-center gap-1 mt-space-xs flex-wrap">
+<span class="px-space-xs py-0.5 rounded text-[10px] font-semibold bg-surface-container text-on-tertiary-fixed-variant">3 Ansiedad</span>
+<span class="px-space-xs py-0.5 rounded text-[10px] font-semibold bg-surface-container text-on-tertiary-fixed-variant">2 Depresión</span>
+<span class="px-space-xs py-0.5 rounded text-[10px] font-semibold bg-surface-container-low text-on-surface-variant">2 Adapt.</span>
+<span class="px-space-xs py-0.5 rounded text-[10px] font-semibold bg-error-container text-on-error-container">1 TOC</span>
+</div>
+</div>
+<div class="w-full bg-surface-container h-1.5 rounded-full overflow-hidden">
+<div class="bg-primary h-full rounded-full" style="width: 80%"></div>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant mt-space-xs text-right">Meta de cátedra: 10 casos</span>
+</div>
+<!-- Métrica 2 -->
+<div class="rounded-xl bg-surface-container-lowest p-space-md shadow-sm flex flex-col justify-between group hover:shadow-md transition-shadow">
+<div class="flex items-start justify-between">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wide">Horas de Consulta</span>
+<span class="p-space-xs rounded-lg bg-surface-container-low text-primary">
+<span class="material-symbols-outlined text-[20px]">timer</span>
+</span>
+</div>
+<div class="my-space-sm">
+<div class="flex items-baseline gap-space-xs">
+<span class="font-headline-xl text-headline-xl text-primary font-bold">5.4</span>
+<span class="font-label-md text-label-md text-on-surface-variant">horas acumuladas</span>
+</div>
+<p class="font-body-sm text-body-sm text-secondary flex items-center gap-1 mt-space-xs">
+<span class="material-symbols-outlined text-[14px]">trending_up</span>
+<span>+1.2h respecto al mes anterior</span>
+</p>
+</div>
+<div class="w-full bg-surface-container h-1.5 rounded-full overflow-hidden">
+<div class="bg-secondary h-full rounded-full" style="width: 67%"></div>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant mt-space-xs text-right">Requisito mínimo: 8.0h</span>
+</div>
+<!-- Métrica 3 -->
+<div class="rounded-xl bg-surface-container-lowest p-space-md shadow-sm flex flex-col justify-between group hover:shadow-md transition-shadow">
+<div class="flex items-start justify-between">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wide">Preguntas Abiertas</span>
+<span class="p-space-xs rounded-lg bg-surface-container-low text-primary">
+<span class="material-symbols-outlined text-[20px]">question_answer</span>
+</span>
+</div>
+<div class="my-space-sm">
+<div class="flex items-baseline gap-space-xs">
+<span class="font-headline-xl text-headline-xl text-primary font-bold">81%</span>
+<span class="font-label-md text-label-md text-secondary font-semibold">Óptimo</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-space-xs">
+          19% preguntas de focalización dirigida
+        </p>
+</div>
+<div class="w-full bg-surface-container h-1.5 rounded-full overflow-hidden">
+<div class="bg-secondary h-full rounded-full" style="width: 81%"></div>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant mt-space-xs text-right">Umbral de validación: &gt;70%</span>
+</div>
+<!-- Métrica 4 -->
+<div class="rounded-xl bg-surface-container-lowest p-space-md shadow-sm flex flex-col justify-between group hover:shadow-md transition-shadow">
+<div class="flex items-start justify-between">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wide">Índice Escucha Activa</span>
+<span class="p-space-xs rounded-lg bg-secondary-fixed/40 text-secondary">
+<span class="material-symbols-outlined text-[20px]">hearing</span>
+</span>
+</div>
+<div class="my-space-sm">
+<div class="flex items-baseline gap-space-xs">
+<span class="font-headline-xl text-headline-xl text-primary font-bold">89</span>
+<span class="font-label-md text-label-md text-on-surface-variant">/ 100</span>
+</div>
+<p class="font-body-sm text-body-sm text-secondary flex items-center gap-1 mt-space-xs">
+<span class="material-symbols-outlined text-[14px]">check_circle</span>
+<span>Rapport sostenido en nivel alto</span>
+</p>
+</div>
+<div class="w-full bg-surface-container h-1.5 rounded-full overflow-hidden">
+<div class="bg-secondary h-full rounded-full" style="width: 89%"></div>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant mt-space-xs text-right">Media del curso: 76/100</span>
+</div>
+</div>
+<!-- Sección Central Dividida: Radar de Competencias & Tareas Sugeridas -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-space-lg items-start">
+<!-- Panel Izquierdo/Central: Gráfico Radar de Competencias (7 cols) -->
+<div class="lg:col-span-7 bg-surface-container-lowest rounded-xl p-space-lg shadow-sm flex flex-col gap-space-md">
+<div class="flex flex-col sm:flex-row sm:items-center justify-between pb-space-xs border-b border-surface-container">
+<div>
+<h2 class="font-headline-md text-headline-md text-primary">Matriz de Competencias Evaluadas</h2>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Modelo de supervisión de micro-habilidades clínicas en simulación</p>
+</div>
+<span class="px-space-sm py-1 rounded-full bg-surface-container-high text-on-primary-fixed-variant font-label-sm text-label-sm self-start sm:self-auto mt-2 sm:mt-0">
+          5 Dimensiones DSM
+        </span>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-12 gap-space-md items-center py-space-sm">
+<!-- SVG Polígono Pentagonal Radar -->
+<div class="md:col-span-7 flex flex-col items-center justify-center relative">
+<svg aria-label="Gráfico de radar de competencias clínicas" class="w-full max-w-[280px] h-[280px]" viewbox="0 0 300 300">
+<!-- Background Rings / Grid (Center: 150, 150) -->
+<!-- 20% ring -->
+<polygon class="text-surface-container-high" fill="none" points="150,126 173,142 164,169 136,169 127,142" stroke="currentColor" stroke-width="1"></polygon>
+<!-- 40% ring -->
+<polygon class="text-surface-container-high" fill="none" points="150,102 196,134 178,188 122,188 104,134" stroke="currentColor" stroke-width="1"></polygon>
+<!-- 60% ring -->
+<polygon class="text-surface-container-high" fill="none" points="150,78 219,126 193,207 107,207 81,126" stroke="currentColor" stroke-width="1"></polygon>
+<!-- 80% ring -->
+<polygon class="text-surface-container-high" fill="none" points="150,54 241,118 206,226 94,226 59,118" stroke="currentColor" stroke-width="1"></polygon>
+<!-- 100% outer boundary ring -->
+<polygon class="text-surface-container" fill="none" points="150,30 264,113 221,245 79,245 36,113" stroke="currentColor" stroke-dasharray="2 2" stroke-width="1.5"></polygon>
+<!-- Axis radiating from center -->
+<line class="text-surface-container-high" stroke="currentColor" stroke-width="1" x1="150" x2="150" y1="150" y2="30"></line>
+<line class="text-surface-container-high" stroke="currentColor" stroke-width="1" x1="150" x2="264" y1="150" y2="113"></line>
+<line class="text-surface-container-high" stroke="currentColor" stroke-width="1" x1="150" x2="221" y1="150" y2="245"></line>
+<line class="text-surface-container-high" stroke="currentColor" stroke-width="1" x1="150" x2="79" y1="150" y2="245"></line>
+<line class="text-surface-container-high" stroke="currentColor" stroke-width="1" x1="150" x2="36" y1="150" y2="113"></line>
+<!-- Benchmark Target Student Polygon (Cohort Avg: 75%) -->
+<polygon class="text-surface-variant/40" fill="currentColor" points="150,60 235,122 203,221 97,221 65,122" stroke="currentColor" stroke-dasharray="3 3" stroke-width="1.5"></polygon>
+<!-- Actual Student Data Polygon:
+                 1. Encuadre (95% -> dist 114): x=150, y=36
+                 2. Escucha Activa (91% -> dist 109.2): x=254, y=116
+                 3. Exploración DSM (84% -> dist 100.8): x=210, y=230
+                 4. Silencios/Emociones (72% -> dist 86.4): x=99, y=218
+                 5. Neutralidad (78% -> dist 93.6): x=61, y=121
+            -->
+<polygon class="text-secondary/20" fill="currentColor" points="150,36 254,116 210,230 99,218 61,121" stroke="currentColor" stroke-width="2.5"></polygon>
+<!-- Value Points -->
+<circle class="text-secondary" cx="150" cy="36" fill="currentColor" r="4"></circle>
+<circle class="text-secondary" cx="254" cy="116" fill="currentColor" r="4"></circle>
+<circle class="text-secondary" cx="210" cy="230" fill="currentColor" r="4"></circle>
+<circle class="text-error" cx="99" cy="218" fill="currentColor" r="4"></circle>
+<circle class="text-secondary" cx="61" cy="121" fill="currentColor" r="4"></circle>
+</svg>
+<div class="flex items-center gap-space-md mt-space-xs font-label-sm text-label-sm text-on-surface-variant">
+<span class="flex items-center gap-1"><span class="w-3 h-1 bg-secondary rounded"></span> Desempeño Sarah</span>
+<span class="flex items-center gap-1"><span class="w-3 h-1 bg-surface-container-highest rounded border border-dashed border-outline-variant"></span> Promedio Curso</span>
+</div>
+</div>
+<!-- Barras de desglose detallado con diagnóstico pedagógico -->
+<div class="md:col-span-5 flex flex-col gap-space-sm">
+<!-- Comp 1 -->
+<div class="flex flex-col gap-1">
+<div class="flex justify-between items-center text-xs">
+<span class="font-label-sm text-label-sm text-on-surface font-medium">Encuadre y Consentimiento</span>
+<span class="font-label-sm text-label-sm text-secondary font-bold">95%</span>
+</div>
+<div class="w-full bg-surface-container h-1.5 rounded-full overflow-hidden">
+<div class="bg-secondary h-full rounded-full" style="width: 95%"></div>
+</div>
+</div>
+<!-- Comp 2 -->
+<div class="flex flex-col gap-1">
+<div class="flex justify-between items-center text-xs">
+<span class="font-label-sm text-label-sm text-on-surface font-medium">Escucha Activa y Reflejo Empático</span>
+<span class="font-label-sm text-label-sm text-secondary font-bold">91%</span>
+</div>
+<div class="w-full bg-surface-container h-1.5 rounded-full overflow-hidden">
+<div class="bg-secondary h-full rounded-full" style="width: 91%"></div>
+</div>
+</div>
+<!-- Comp 3 -->
+<div class="flex flex-col gap-1">
+<div class="flex justify-between items-center text-xs">
+<span class="font-label-sm text-label-sm text-on-surface font-medium">Exploración Criterios DSM-5</span>
+<span class="font-label-sm text-label-sm text-primary font-bold">84%</span>
+</div>
+<div class="w-full bg-surface-container h-1.5 rounded-full overflow-hidden">
+<div class="bg-primary h-full rounded-full" style="width: 84%"></div>
+</div>
+</div>
+<!-- Comp 4 -->
+<div class="flex flex-col gap-1">
+<div class="flex justify-between items-center text-xs">
+<span class="font-label-sm text-label-sm text-on-surface font-medium">Neutralidad y Cero Sesgo</span>
+<span class="font-label-sm text-label-sm text-primary font-bold">78%</span>
+</div>
+<div class="w-full bg-surface-container h-1.5 rounded-full overflow-hidden">
+<div class="bg-primary h-full rounded-full" style="width: 78%"></div>
+</div>
+</div>
+<!-- Comp 5 - Área Prioritaria -->
+<div class="flex flex-col gap-1 p-space-xs rounded-lg bg-error-container/40">
+<div class="flex justify-between items-center text-xs">
+<span class="font-label-sm text-label-sm text-on-error-container font-semibold flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">priority_high</span>
+                Manejo de Silencios Complejos
+              </span>
+<span class="font-label-sm text-label-sm text-error font-bold">72%</span>
+</div>
+<div class="w-full bg-surface-container h-1.5 rounded-full overflow-hidden">
+<div class="bg-error h-full rounded-full" style="width: 72%"></div>
+</div>
+<span class="text-[10px] text-on-error-container leading-tight mt-0.5">Área de refuerzo prioritario por la cátedra</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Panel Derecho: Tareas Recomendadas & Feedback Tutor (5 cols) -->
+<div class="lg:col-span-5 flex flex-col gap-space-md">
+<!-- Card Feedback Docente -->
+<div class="bg-surface-container-lowest rounded-xl p-space-md shadow-sm">
+<div class="flex items-center gap-space-sm mb-space-sm">
+<img class="w-10 h-10 rounded-full object-cover" data-alt="Close up photographic portrait of a mature female psychology professor with silver hair and warm professional demeanor wearing spectacles in an academic office surrounded by books" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDsB-DJBUrze0Qc4nAFXn1G-Lk9Imj-Poj6pLC6hx7W5xtG16KWyn6plREe1rV_O4tLwtOHQU_wxICcl8VFjBdHdt1wmccILnmi6AzlQsvSGPgx8PiE1ZtFERBDFyaRFhUs0Zw1El0863fEQBYbabNNVt-VAh_i1c1yBSFh7rXN-HORIVuj7V07CADR98dqdohgYMk5J7KbOw9qYUMANqI-kRUkQNs8z1mBwNc7PBCB9iqzcrVSfuA"/>
+<div class="flex flex-col">
+<span class="font-label-lg text-label-lg text-primary">Nota de Supervisión Semanal</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Dra. Valeria Menéndez · Ayer, 18:30</span>
+</div>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant bg-surface-container-low p-space-sm rounded-lg italic">
+          "Sarah muestra un dominio excelente de la empatía verbal y la formalización del consentimiento informado. No obstante, en la sesión con Marta se observó una precipitación ante silencios de más de 4 segundos para evitar la incomodidad de la paciente. Te recomiendo trabajar la técnica de sostener la pausa."
+        </p>
+</div>
+<!-- Tareas Asignadas para la próxima semana -->
+<div class="bg-surface-container-lowest rounded-xl p-space-md shadow-sm flex flex-col gap-space-sm">
+<div class="flex items-center justify-between">
+<h3 class="font-headline-sm text-headline-sm text-primary">Prescripción de Práctica</h3>
+<span class="font-label-sm text-label-sm text-secondary font-semibold">Semana 9</span>
+</div>
+<!-- Tarea 1 -->
+<div class="p-space-sm rounded-lg bg-surface-container-low flex flex-col gap-space-xs hover:bg-surface-container transition-colors">
+<div class="flex items-start justify-between gap-space-xs">
+<span class="px-space-xs py-0.5 rounded font-label-sm text-[10px] font-semibold bg-error-container text-on-error-container">Caso Asignado · Complejidad Alta</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Entrega: 12 Mayo</span>
+</div>
+<span class="font-label-lg text-label-lg text-primary">Paciente con Resistencia Pasivo-Agresiva</span>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+            Practicar exploración de antecedentes biográficos tolerando silencios prolongados y confrontación sutil sin perder el reflejo no verbal.
+          </p>
+<div class="flex items-center justify-between pt-space-xs">
+<span class="font-label-sm text-label-sm text-secondary flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]">psychology</span> Paciente: Javier C. (42a)
+            </span>
+<button class="px-space-sm py-1 rounded bg-primary text-on-primary font-label-sm text-label-sm hover:bg-primary-container transition-colors" type="button">
+              Iniciar Simulación
+            </button>
+</div>
+</div>
+<!-- Tarea 2 -->
+<div class="p-space-sm rounded-lg bg-surface-container-low flex flex-col gap-space-xs hover:bg-surface-container transition-colors">
+<div class="flex items-start justify-between gap-space-xs">
+<span class="px-space-xs py-0.5 rounded font-label-sm text-[10px] font-semibold bg-surface-container text-on-tertiary-fixed-variant">Lectura Formativa</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">15 min</span>
+</div>
+<span class="font-label-lg text-label-lg text-primary">Módulo: El Silencio como Herramienta Diagnóstica</span>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+            Capítulo 4 del manual DSM-5 sobre la observación paralingüística en trastornos del estado de ánimo.
+          </p>
+<div class="flex items-center justify-end pt-space-xs">
+<a class="font-label-sm text-label-sm text-on-tertiary-fixed-variant font-semibold hover:underline flex items-center gap-1" href="#">
+<span>Abrir Material PDF</span>
+<span class="material-symbols-outlined text-[14px]">arrow_forward</span>
+</a>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Historial de Sesiones Realizadas -->
+<div class="bg-surface-container-lowest rounded-xl p-space-lg shadow-sm flex flex-col gap-space-md">
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-space-sm">
+<div>
+<h2 class="font-headline-md text-headline-md text-primary">Historial de Consultas Realizadas</h2>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Registro cronológico de pacientes simulados, puntuaciones formativas y actas de debriefing</p>
+</div>
+<div class="flex items-center gap-space-xs">
+<div class="relative">
+<input class="pl-8 pr-space-md py-space-xs bg-surface-container-low rounded-lg text-on-surface font-body-sm text-body-sm placeholder:text-outline focus:outline-none focus:ring-1 focus:ring-primary" placeholder="Filtrar por diagnóstico..." type="text"/>
+<span class="material-symbols-outlined text-[18px] text-outline absolute left-2.5 top-2.5">search</span>
+</div>
+<button class="p-space-xs rounded-lg bg-surface-container-low text-on-surface-variant hover:text-primary transition-colors" title="Filtrar" type="button">
+<span class="material-symbols-outlined text-[20px]">tune</span>
+</button>
+</div>
+</div>
+<!-- Tabla Responsive -->
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-surface-container-low text-on-surface-variant font-label-sm text-label-sm uppercase tracking-wider">
+<th class="py-space-sm px-space-md rounded-l-lg">Fecha / Sesión</th>
+<th class="py-space-sm px-space-md">Paciente Virtual</th>
+<th class="py-space-sm px-space-md">Hipótesis Diagnóstica (DSM)</th>
+<th class="py-space-sm px-space-md text-center">Duración</th>
+<th class="py-space-sm px-space-md text-center">Puntaje Clínico</th>
+<th class="py-space-sm px-space-md text-right rounded-r-lg">Informe Pedagógico</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-surface-container font-body-md text-body-md">
+<!-- Sesión 1 -->
+<tr class="hover:bg-surface-container-low/50 transition-colors">
+<td class="py-space-md px-space-md">
+<div class="flex flex-col">
+<span class="font-semibold text-primary">04 May 2025</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">16:15 hrs · Caso #08</span>
+</div>
+</td>
+<td class="py-space-md px-space-md">
+<div class="flex items-center gap-space-sm">
+<img class="w-8 h-8 rounded-full object-cover" data-alt="Photorealistic headshot avatar of a 34-year-old Hispanic female patient looking slightly nervous in a therapeutic setting with natural window illumination" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB1SDyiMoz9tV_AaAODDgTFjcpb-2_dEoLu-KLf84NufVkVbcIpzXdhET1hbsxVhs9aoCXjjrqzDVoIOHMMjv0LZ39rUzAD6d4KQo3sBfBSXpRhPSwrf-7bUE0SABIgifDtwVntRy6rLtcCBWfA8RWtuJqsT1zaCGI6qLoI4cnN51-nPbqQTqXf2JrMMi1IbD6e5aEDHCUgWFL0hP8lo0s4t-PZ4NnXo-K4qApH_6aHM8z2mBNWJ6g"/>
+<div class="flex flex-col">
+<span class="font-label-lg text-label-lg text-primary">Marta V.</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">34 años · Diseñadora</span>
+</div>
+</div>
+</td>
+<td class="py-space-md px-space-md">
+<span class="px-space-sm py-0.5 rounded-full font-label-sm text-label-sm bg-surface-container text-on-tertiary-fixed-variant">
+                Trastorno de Ansiedad Generalizada (F41.1)
+              </span>
+</td>
+<td class="py-space-md px-space-md text-center text-on-surface-variant font-label-md">
+              42 min
+            </td>
+<td class="py-space-md px-space-md text-center">
+<span class="inline-flex items-center gap-1 px-space-sm py-0.5 rounded-full font-label-md text-label-md font-semibold bg-secondary-fixed/50 text-secondary">
+<span class="material-symbols-outlined text-[14px]">stars</span> 92 / 100
+              </span>
+</td>
+<td class="py-space-md px-space-md text-right">
+<a class="inline-flex items-center gap-1 font-label-sm text-label-sm text-primary hover:text-secondary font-semibold group transition-colors" href="#">
+<span>Ver Debriefing</span>
+<span class="material-symbols-outlined text-[16px] group-hover:translate-x-0.5 transition-transform">arrow_forward</span>
+</a>
+</td>
+</tr>
+<!-- Sesión 2 -->
+<tr class="hover:bg-surface-container-low/50 transition-colors">
+<td class="py-space-md px-space-md">
+<div class="flex flex-col">
+<span class="font-semibold text-primary">28 Abr 2025</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">11:00 hrs · Caso #07</span>
+</div>
+</td>
+<td class="py-space-md px-space-md">
+<div class="flex items-center gap-space-sm">
+<img class="w-8 h-8 rounded-full object-cover" data-alt="Headshot of a middle-aged man around 50 years old with melancholic gaze dressed in casual knitwear against a soft muted clinic background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDhf1ZbjEPR39PeO9BPl7vuxM52PJg57hqMwGIQobS72IcgDDEKUgvYT_Cu7ScIBwlr09ZjOkvkXiGD20IqmOep-1XKO9BUt0sW18Dm8kzcIBOZJV-UyY8KiBafMTsUzmFx7kiQ9ZtiOuKIuJsBXssAtySdpE8MOB1ixFrgaYfInVJYgG1Eb0nJv5W0d0pV8mr1elgFVz8A6CkXkFgjMTiT29jCCPyApzwOh54TVdOa0T4X-Nva7Sg"/>
+<div class="flex flex-col">
+<span class="font-label-lg text-label-lg text-primary">Carlos R.</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">51 años · Docente</span>
+</div>
+</div>
+</td>
+<td class="py-space-md px-space-md">
+<span class="px-space-sm py-0.5 rounded-full font-label-sm text-label-sm bg-surface-container text-on-tertiary-fixed-variant">
+                Episodio Depresivo Mayor Leve (F32.0)
+              </span>
+</td>
+<td class="py-space-md px-space-md text-center text-on-surface-variant font-label-md">
+              48 min
+            </td>
+<td class="py-space-md px-space-md text-center">
+<span class="inline-flex items-center gap-1 px-space-sm py-0.5 rounded-full font-label-md text-label-md font-semibold bg-secondary-fixed/50 text-secondary">
+<span class="material-symbols-outlined text-[14px]">stars</span> 88 / 100
+              </span>
+</td>
+<td class="py-space-md px-space-md text-right">
+<a class="inline-flex items-center gap-1 font-label-sm text-label-sm text-primary hover:text-secondary font-semibold group transition-colors" href="#">
+<span>Ver Debriefing</span>
+<span class="material-symbols-outlined text-[16px] group-hover:translate-x-0.5 transition-transform">arrow_forward</span>
+</a>
+</td>
+</tr>
+<!-- Sesión 3 -->
+<tr class="hover:bg-surface-container-low/50 transition-colors">
+<td class="py-space-md px-space-md">
+<div class="flex flex-col">
+<span class="font-semibold text-primary">21 Abr 2025</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">09:30 hrs · Caso #06</span>
+</div>
+</td>
+<td class="py-space-md px-space-md">
+<div class="flex items-center gap-space-sm">
+<img class="w-8 h-8 rounded-full object-cover" data-alt="Portrait of a young university student female aged 21 with tired expression and glasses in front of a neutral therapeutic studio background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD3BKjMiwo4lDwDYiV0VGaXn3a5Ofgeh6PAhniJWUrjGipVIZJ10FDmHt1jV0iaSo86Hj2sDtltcrb3DRFYHj6yWzlPX50_D3RGuUCJGO-AnIMeEegIbvHLcvTceTr-qFgnqXgUY9Rhy6eZ-RJ3lqO8g10a73L3CN3YDNb8uaEnUqEjgxp1zLRDoft8wHSWrzpuQstWCrQJEujQLI71251D0rnonNGfeOaF4kGxOe3Nd6dywtrPhok"/>
+<div class="flex flex-col">
+<span class="font-label-lg text-label-lg text-primary">Elena B.</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">21 años · Estudiante</span>
+</div>
+</div>
+</td>
+<td class="py-space-md px-space-md">
+<span class="px-space-sm py-0.5 rounded-full font-label-sm text-label-sm bg-error-container text-on-error-container">
+                Trastorno Obsesivo-Compulsivo (F42)
+              </span>
+</td>
+<td class="py-space-md px-space-md text-center text-on-surface-variant font-label-md">
+              55 min
+            </td>
+<td class="py-space-md px-space-md text-center">
+<span class="inline-flex items-center gap-1 px-space-sm py-0.5 rounded-full font-label-md text-label-md font-semibold bg-surface-container-high text-primary">
+                79 / 100
+              </span>
+</td>
+<td class="py-space-md px-space-md text-right">
+<a class="inline-flex items-center gap-1 font-label-sm text-label-sm text-primary hover:text-secondary font-semibold group transition-colors" href="#">
+<span>Ver Debriefing</span>
+<span class="material-symbols-outlined text-[16px] group-hover:translate-x-0.5 transition-transform">arrow_forward</span>
+</a>
+</td>
+</tr>
+<!-- Sesión 4 -->
+<tr class="hover:bg-surface-container-low/50 transition-colors">
+<td class="py-space-md px-space-md">
+<div class="flex flex-col">
+<span class="font-semibold text-primary">14 Abr 2025</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">15:00 hrs · Caso #05</span>
+</div>
+</td>
+<td class="py-space-md px-space-md">
+<div class="flex items-center gap-space-sm">
+<img class="w-8 h-8 rounded-full object-cover" data-alt="Close up photographic avatar of a 28-year-old male with thoughtful calm expression in natural soft indoor clinic lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB2yJd0X2LTGQ3gnc2U_mBDg6upF94CXjXZn6vCXJodgaR6ZBuvWqmyPPXb-9FwLceifJwUpHUyvc8vZ0NDL1M2PwlyvTPmzGZOGsXHztZWyl22dYOEdCEo3aFZqopLJ0cT8za_BQH_wRwilupBmZqiqEJ9VMlXndL5EO7OqQvbc_Bjcj3cKX1_zLz-dQtQvqF4gHKCzrSdGtZXcD6dYkBYdcGOsKdeXjmmiTe9KOceuqmMWZHlV8M"/>
+<div class="flex flex-col">
+<span class="font-label-lg text-label-lg text-primary">Andrés M.</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">28 años · Ingeniero</span>
+</div>
+</div>
+</td>
+<td class="py-space-md px-space-md">
+<span class="px-space-sm py-0.5 rounded-full font-label-sm text-label-sm bg-surface-container text-on-tertiary-fixed-variant">
+                Trastorno Adaptativo con Ansiedad (F43.22)
+              </span>
+</td>
+<td class="py-space-md px-space-md text-center text-on-surface-variant font-label-md">
+              39 min
+            </td>
+<td class="py-space-md px-space-md text-center">
+<span class="inline-flex items-center gap-1 px-space-sm py-0.5 rounded-full font-label-md text-label-md font-semibold bg-secondary-fixed/50 text-secondary">
+<span class="material-symbols-outlined text-[14px]">stars</span> 90 / 100
+              </span>
+</td>
+<td class="py-space-md px-space-md text-right">
+<a class="inline-flex items-center gap-1 font-label-sm text-label-sm text-primary hover:text-secondary font-semibold group transition-colors" href="#">
+<span>Ver Debriefing</span>
+<span class="material-symbols-outlined text-[16px] group-hover:translate-x-0.5 transition-transform">arrow_forward</span>
+</a>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Paginación y Resumen Inferior -->
+<div class="flex flex-col sm:flex-row items-center justify-between gap-space-sm pt-space-xs text-on-surface-variant font-label-sm text-label-sm">
+<span>Mostrando 4 de 8 consultas simuladas registradas</span>
+<div class="flex items-center gap-space-xs">
+<button class="px-space-sm py-1 rounded bg-surface-container-low hover:bg-surface-container transition-colors disabled:opacity-40" disabled="" type="button">Anterior</button>
+<span class="px-space-sm py-1 font-semibold text-primary">1</span>
+<button class="px-space-sm py-1 rounded bg-surface-container-low hover:bg-surface-container transition-colors" type="button">2</button>
+<button class="px-space-sm py-1 rounded bg-surface-container-low hover:bg-surface-container transition-colors" type="button">Siguiente</button>
+</div>
+</div>
+</div>
+</div>
+<script>
+  // Micro-interacción: Animación sutil de entrada para barras de progreso
+  document.addEventListener('DOMContentLoaded', () => {
+    const progressBars = document.querySelectorAll('.bg-secondary, .bg-primary, .bg-error');
+    progressBars.forEach(bar => {
+      bar.style.transition = 'width 1s cubic-bezier(0.4, 0, 0.2, 1)';
+    });
+  });
+</script></main></div></body></html>

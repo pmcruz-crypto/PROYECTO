@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+
+<html lang="es"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><meta content="web_dashboard" name="shell-type"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&amp;family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config={darkMode:"class",theme:{extend:{"colors":{"primary-fixed-dim":"#bcc7de","on-error-container":"#93000a","on-surface":"#0b1c30","surface-container":"#e5eeff","on-tertiary-fixed-variant":"#004395","primary-fixed":"#d8e3fb","inverse-surface":"#213145","surface-variant":"#d3e4fe","surface-container-highest":"#d3e4fe","surface-dim":"#cbdbf5","surface-container-low":"#eff4ff","on-primary-fixed-variant":"#3c475a","secondary-fixed":"#85f8c4","primary":"#091426","tertiary-fixed":"#d8e2ff","background":"#f8f9ff","secondary":"#006c4a","surface":"#f8f9ff","inverse-on-surface":"#eaf1ff","surface-bright":"#f8f9ff","on-background":"#0b1c30","secondary-container":"#82f5c1","on-error":"#ffffff","on-secondary":"#ffffff","error":"#ba1a1a","tertiary-container":"#00275b","surface-container-lowest":"#ffffff","error-container":"#ffdad6","surface-container-high":"#dce9ff","inverse-primary":"#bcc7de","outline-variant":"#c5c6cd","on-tertiary-container":"#4c8dff","on-tertiary-fixed":"#001a42","on-secondary-fixed-variant":"#005137","outline":"#75777d","on-secondary-fixed":"#002114","on-primary":"#ffffff","on-secondary-container":"#00714e","on-primary-fixed":"#111c2d","primary-container":"#1e293b","tertiary-fixed-dim":"#adc6ff","on-tertiary":"#ffffff","tertiary":"#001334","secondary-fixed-dim":"#68dba9","on-surface-variant":"#45474c","on-primary-container":"#8590a6","surface-tint":"#545f73"},"borderRadius":{"DEFAULT":"0.25rem","lg":"0.5rem","xl":"0.75rem","full":"9999px"},"spacing":{"gutter-sm":"1rem","margin-mobile":"1rem","space-xs":"0.25rem","gutter":"1.5rem","space-lg":"1.5rem","margin":"2rem","space-md":"1rem","space-sm":"0.5rem","space-xl":"2.5rem"},"fontFamily":{"headline-lg-mobile":["Newsreader"],"headline-xl":["Newsreader"],"label-lg":["Inter"],"headline-md":["Newsreader"],"headline-xl-mobile":["Newsreader"],"label-md":["Inter"],"headline-sm":["Plus Jakarta Sans"],"code-transcript":["Inter"],"label-sm":["Inter"],"body-sm":["Plus Jakarta Sans"],"body-md":["Plus Jakarta Sans"],"body-lg":["Plus Jakarta Sans"],"headline-lg":["Newsreader"]},"fontSize":{"headline-lg-mobile":["24px",{"lineHeight":"32px","letterSpacing":"-0.01em","fontWeight":"500"}],"headline-xl":["40px",{"lineHeight":"48px","letterSpacing":"-0.02em","fontWeight":"500"}],"label-lg":["14px",{"lineHeight":"20px","letterSpacing":"0.01em","fontWeight":"600"}],"headline-md":["22px",{"lineHeight":"30px","letterSpacing":"-0.01em","fontWeight":"600"}],"headline-xl-mobile":["30px",{"lineHeight":"38px","letterSpacing":"-0.01em","fontWeight":"500"}],"label-md":["12px",{"lineHeight":"16px","letterSpacing":"0.02em","fontWeight":"500"}],"headline-sm":["18px",{"lineHeight":"26px","fontWeight":"600"}],"code-transcript":["13px",{"lineHeight":"20px","fontWeight":"400"}],"label-sm":["11px",{"lineHeight":"14px","letterSpacing":"0.04em","fontWeight":"600"}],"body-sm":["13px",{"lineHeight":"18px","fontWeight":"400"}],"body-md":["14px",{"lineHeight":"22px","fontWeight":"400"}],"body-lg":["16px",{"lineHeight":"26px","fontWeight":"400"}],"headline-lg":["30px",{"lineHeight":"38px","letterSpacing":"-0.01em","fontWeight":"500"}]}}}}</script></head><body class="bg-background font-body-md text-on-surface antialiased"><header class="fixed top-0 w-full h-16 z-50 bg-surface/90 backdrop-blur-md shadow-[0_1px_8px_rgba(0,0,0,0.04)]"><div class="w-full h-16 px-gutter flex items-center justify-between gap-gutter-sm"><div class="flex items-center gap-space-lg"><div class="flex items-center gap-space-sm"><img alt="PsicoSim Logo" class="h-8 w-auto object-contain" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDCaUU07STMHUNpQwMpxreMI97L1ULFkB2cw3sG9WyPBV7iDQOOjv9XzAt_JRHXDEt2tYHxx-ffkXfNK7lyD6EnVbxCkuy44lKRifRQE538rlOa1ykn6aunP3ucryHLv6B8ubk3oe1CNj_fYRrsnqVNXCYlWF2ZFh0Bl4LpbhoVyu8VUxaAwquYOeIMRdaPRhPqriu8b-q9rUJ_GyfbKE7COuY1y1VKBc--ZeycHSN2fuyKu2tzG1A"/><div class="flex flex-col"><span class="font-headline-sm text-headline-sm text-primary tracking-tight">PsicoSim IA</span><span class="font-label-sm text-label-sm text-on-surface-variant leading-none">Simulador Clínico</span></div></div><div class="hidden xl:flex items-center gap-space-xs px-space-sm py-space-xs rounded-full bg-surface-container-low text-on-primary-fixed-variant"><span class="material-symbols-outlined text-[15px] text-secondary">verified</span><span class="font-label-sm text-label-sm">Facultad de Psicología · Prácticas Supervisadas</span></div></div><nav class="hidden lg:flex items-center p-space-xs bg-surface-container-low rounded-xl gap-space-xs" data-active-classes="bg-surface-container text-primary font-semibold shadow-[0_1px_4px_rgba(0,0,0,0.04)]"><a class="px-space-md py-space-xs rounded-lg font-label-lg text-label-lg text-on-surface-variant hover:text-on-surface transition-all" data-path="catalogo-de-casos" href="#">Catálogo de Casos</a><a aria-current="page" class="px-space-md py-space-xs rounded-lg transition-all bg-surface-container text-primary font-semibold shadow-[0_1px_4px_rgba(0,0,0,0.04)]" data-path="despacho-de-consulta" href="#">Despacho de Consulta</a><a class="px-space-md py-space-xs rounded-lg font-label-lg text-label-lg text-on-surface-variant hover:text-on-surface transition-all" data-path="debriefing-analisis" href="#">Debriefing &amp; Análisis</a><a class="px-space-md py-space-xs rounded-lg font-label-lg text-label-lg text-on-surface-variant hover:text-on-surface transition-all" data-path="mi-progreso" href="#">Mi Progreso</a></nav><div class="flex items-center gap-space-md"><button class="hidden sm:inline-flex items-center gap-space-xs px-space-md py-space-xs rounded-lg bg-surface-container-high text-on-surface hover:bg-surface-variant transition-colors font-label-md text-label-md" type="button"><span class="material-symbols-outlined text-[18px] text-secondary">menu_book</span><span>Guía de Entrevista</span></button><button aria-label="Notificaciones" class="w-9 h-9 rounded-full flex items-center justify-center bg-surface-container-low text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors relative" type="button"><span class="material-symbols-outlined text-[20px]">notifications</span><span class="absolute top-2 right-2 w-2 h-2 rounded-full bg-secondary"></span></button><div class="flex items-center gap-space-sm pl-space-xs"><img alt="Profile" class="w-8 h-8 rounded-full object-cover ring-2 ring-surface-container" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDLW46yXVznUz20ckpIRm2WBYFnynkITJdiLNzWQr-TvM5IqlJbO3kr0hDGR-RtlohObfEGPFoojIksXg6gONNvDRTWxkaHwreWb9XjcGhR5S0w-c69ZCumvHTWln_7su-b_mGYqFa_GT6odyM5a-p2ukoBBpHgdH6A8MNhiLfI1Bf5JqCY9P33lonnEW_KeZjdzyXIKoUcm4KN3Lq06nCzapsjMfenwENfVTEO-f5FF5p538_ibos"/><div class="hidden md:flex flex-col text-left"><span class="font-label-md text-label-md text-on-surface leading-tight">Lic. Sarah Jensen</span><span class="font-label-sm text-label-sm text-on-surface-variant">En formación</span></div></div></div></div></header><aside class="fixed left-0 top-16 bottom-0 w-64 bg-surface-container-lowest z-40 hidden md:flex flex-col p-space-md shadow-[0_1px_8px_rgba(0,0,0,0.02)]"><div class="pb-space-sm mb-space-sm"><div class="px-space-sm py-space-xs rounded-lg bg-surface-container-low"><span class="font-label-sm text-label-sm text-on-surface-variant block uppercase tracking-wide">Paciente Activo</span><div class="flex items-center justify-between mt-space-xs"><span class="font-label-lg text-label-lg text-primary">Marta V. (34a)</span><span class="px-space-sm py-0.5 rounded-full font-label-sm text-label-sm bg-error-container text-on-error-container">TAG / F41.1</span></div></div></div><nav class="flex-1 flex flex-col gap-space-xs" data-active-classes="bg-surface-container text-primary font-semibold"><a class="flex items-center gap-space-sm px-space-md py-space-sm rounded-lg font-label-md text-label-md text-on-surface-variant hover:bg-surface-container-low hover:text-on-surface transition-colors" data-path="catalogo-de-casos" href="#"><span class="material-symbols-outlined text-[20px]">folder_shared</span><span>Casos Asignados</span></a><a aria-current="page" class="flex items-center gap-space-sm px-space-md py-space-sm rounded-lg transition-colors bg-surface-container text-primary font-semibold" data-path="despacho-de-consulta" href="#"><span class="material-symbols-outlined text-[20px]">record_voice_over</span><span>Sala de Simulación</span></a><a class="flex items-center gap-space-sm px-space-md py-space-sm rounded-lg font-label-md text-label-md text-on-surface-variant hover:bg-surface-container-low hover:text-on-surface transition-colors" data-path="debriefing-analisis" href="#"><span class="material-symbols-outlined text-[20px]">psychology_alt</span><span>Auditoría de Sesión</span></a><a class="flex items-center gap-space-sm px-space-md py-semi rounded-lg font-label-md text-label-md text-on-surface-variant hover:bg-surface-container-low hover:text-on-surface transition-colors" data-path="mi-progreso" href="#"><span class="material-symbols-outlined text-[20px]">stacked_line_chart</span><span>Métricas &amp; Rapport</span></a><div class="my-space-sm pt-space-xs"><span class="font-label-sm text-label-sm text-on-surface-variant px-space-sm uppercase tracking-wide">Soporte Formativo</span></div><a class="flex items-center gap-space-sm px-space-md py-space-sm rounded-lg font-label-md text-label-md text-on-surface-variant hover:bg-surface-container-low hover:text-on-surface transition-colors" data-path="guia-clinica-dsm" href="#"><span class="material-symbols-outlined text-[20px]">clinical_notes</span><span>Criterios DSM-5</span></a><a class="flex items-center gap-space-sm px-space-md py-space-sm rounded-lg font-label-md text-label-md text-on-surface-variant hover:bg-surface-container-low hover:text-on-surface transition-colors" data-path="tutor-academico" href="#"><span class="material-symbols-outlined text-[20px]">supervisor_account</span><span>Feedback Tutor</span></a></nav><div class="pt-space-sm mt-auto"><div class="p-space-sm rounded-lg bg-surface-container-low text-on-surface-variant flex items-center justify-between"><div class="flex items-center gap-space-xs"><span class="w-2 h-2 rounded-full bg-secondary-container"></span><span class="font-label-sm text-label-sm">Simulador Conectado</span></div><span class="font-label-sm text-label-sm text-secondary font-semibold">v2.4 IA</span></div></div></aside><div class="md:pl-64"><main class="w-full min-h-screen pt-16 bg-surface px-gutter py-space-lg"><div class="flex flex-col w-full">
+<!-- Banner / Session Bar Header -->
+<section class="w-full bg-surface-container-lowest rounded-xl p-space-md shadow-sm mb-space-md">
+<div class="flex flex-col xl:flex-row xl:items-center justify-between gap-space-md">
+<!-- Patient Meta Info -->
+<div class="flex flex-wrap items-center gap-space-md">
+<div class="relative">
+<img class="w-14 h-14 rounded-full object-cover shadow-sm ring-2 ring-surface-container" data-alt="Portrait photography of Elena Morales, a 32-year-old Hispanic woman seated in a calm therapy room, subtle anxious gaze, natural daylight, soft slate and deep navy background tones, dignified and empathetic clinical portrait" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC9Uom5ptSuXQ5N2-9U5uxCx1iJvKRhdMSkG0mIm5sdd7ElmYoPojwoF42fIgOGwk5263vCkw_lyuI3ueLPQsenOkC-TjteiCD62Hj056iR2BoBO6tzd26nWsIdNEBkD-EU396ihNFcTJi3LqSfeTm9b_9ryt15meyb6F9jFG31RDQIxn7xPn72SnQMTDykOMAK0_iITg5pOQX7LL8FpdRZD1Fo82nDbw5JudZdTwFaU6EDwMZbuQ4"/>
+<span class="absolute bottom-0 right-0 w-3.5 h-3.5 rounded-full bg-secondary ring-2 ring-surface-container-lowest"></span>
+</div>
+<div class="flex flex-col">
+<div class="flex items-center gap-space-xs flex-wrap">
+<h1 class="font-headline-md text-headline-md text-primary tracking-tight">Elena Morales</h1>
+<span class="font-label-sm text-label-sm text-on-surface-variant font-medium">(32 años)</span>
+<span class="px-space-xs py-0.5 rounded-full font-label-sm text-label-sm bg-error-container text-on-error-container font-semibold ml-space-xs">TAG · F41.1</span>
+<span class="px-space-xs py-0.5 rounded-full font-label-sm text-label-sm bg-surface-container-high text-on-surface-variant font-medium">Primera Consulta Anamnesis</span>
+</div>
+<div class="flex items-center gap-space-sm mt-1 text-on-surface-variant">
+<span class="flex items-center gap-1 font-label-md text-label-md">
+<span class="material-symbols-outlined text-[16px] text-outline">mood_bad</span>
+<span>Estado observacional: <strong class="text-on-surface font-medium">Ansiosa, colaboradora pero tensa</strong></span>
+</span>
+</div>
+</div>
+</div>
+<!-- Live Clinical Timer & Action Control -->
+<div class="flex items-center gap-space-md self-end xl:self-auto">
+<div class="flex items-center gap-space-sm px-space-md py-space-xs rounded-xl bg-surface-container-low shadow-sm">
+<div class="w-2.5 h-2.5 rounded-full bg-error animate-pulse"></div>
+<div class="flex flex-col">
+<div class="flex items-baseline gap-1">
+<span class="font-headline-sm text-headline-sm text-primary tracking-tight font-semibold" id="sessionTimer">14:25</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">/ 45 min</span>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Tiempo de sesión</span>
+</div>
+</div>
+<button class="group flex items-center gap-space-xs px-space-md py-space-sm rounded-lg bg-primary-container text-on-primary hover:bg-primary transition-all duration-200 shadow-sm cursor-pointer" type="button">
+<span class="material-symbols-outlined text-[18px] text-secondary-fixed transition-transform group-hover:translate-x-0.5">assignment_turned_in</span>
+<span class="font-label-lg text-label-lg font-semibold">Concluir Sesión y Ver Debriefing</span>
+</button>
+</div>
+</div>
+</section>
+<!-- Main Clinical Workstation Workspace -->
+<div class="grid grid-cols-1 xl:grid-cols-12 gap-space-md items-start w-full">
+<!-- Center Workspace: Patient Avatar & Continuous Therapeutic Chat Stream (Col 8) -->
+<div class="xl:col-span-8 flex flex-col gap-space-md min-w-0">
+<!-- Patient Virtual Stream Stage Card -->
+<div class="w-full bg-surface-container-lowest rounded-xl shadow-sm p-space-md overflow-hidden relative">
+<div class="flex flex-col md:flex-row items-center gap-space-md">
+<!-- Virtual Avatar Visual Stream -->
+<div class="relative w-full md:w-64 h-48 rounded-lg overflow-hidden bg-primary-container shrink-0 shadow-inner group">
+<img class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" data-alt="High resolution realistic photograph of a 32-year-old woman in therapy sitting on an armchair, looking slightly down and to the side, tense shoulders, clutching hands gently, natural soft diffuse window lighting, calm institutional psychology consultation room" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCdDByhNRODAirlPHjTzEPHRVBGEbjKbdr9WQDIZHmkVBjZIULxOHCGekXCd18M687aEe7vSMmHmF7XGJp5F2p_qpzy8Px2cxhN3wc_-ye7a8LspAy_tUmLQStXWTWFMhaWLCUgc3WfOT8NyKYoX7PJOUmfglx-F3qMjLsr4S9WqVtRSmq1O2v9tnnpVROGmfTH9eHnk-6W1hLs_JdEPsuWMuPgX-R2ENz6HwVpBhVxBx-OtCCn5Jg"/>
+<!-- Live Audio Waveform Glass Overlay -->
+<div class="absolute bottom-0 inset-x-0 p-space-xs bg-primary/75 backdrop-blur-md flex items-center justify-between text-on-primary">
+<div class="flex items-center gap-1.5 px-space-xs">
+<span class="w-2 h-2 rounded-full bg-secondary-fixed animate-ping"></span>
+<span class="font-label-sm text-label-sm text-on-primary font-medium tracking-wider uppercase">Voz Sintética Activa</span>
+</div>
+<!-- Animated Waveform Bars Inline SVG -->
+<div class="flex items-end gap-0.5 h-4 pr-space-xs">
+<span class="w-1 bg-secondary-fixed rounded-full h-2 animate-pulse"></span>
+<span class="w-1 bg-secondary-fixed rounded-full h-3.5 animate-pulse" style="animation-delay: 150ms"></span>
+<span class="w-1 bg-secondary-fixed rounded-full h-4 animate-pulse" style="animation-delay: 300ms"></span>
+<span class="w-1 bg-secondary-fixed rounded-full h-2 animate-pulse" style="animation-delay: 75ms"></span>
+<span class="w-1 bg-secondary-fixed rounded-full h-3 animate-pulse" style="animation-delay: 200ms"></span>
+</div>
+</div>
+<!-- Trainee View Mode Indicator -->
+<div class="absolute top-2 left-2 px-space-xs py-0.5 rounded bg-surface/90 backdrop-blur-sm text-on-surface font-label-sm text-label-sm flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px] text-secondary">videocam</span>
+<span>Feed Paciente IA</span>
+</div>
+</div>
+<!-- Non-verbal Dynamics Analytical Card -->
+<div class="flex-1 flex flex-col justify-between h-full w-full">
+<div>
+<div class="flex items-center justify-between mb-space-xs">
+<span class="font-label-sm text-label-sm font-semibold uppercase tracking-wider text-on-surface-variant flex items-center gap-1">
+<span class="material-symbols-outlined text-[15px] text-secondary">visibility</span>
+                  Lectura de Comunicación No Verbal (En Tiempo Real)
+                </span>
+<span class="font-label-sm text-label-sm text-secondary font-medium px-space-xs py-0.5 rounded bg-surface-container">IA Analítica Activa</span>
+</div>
+<p class="font-body-md text-body-md text-on-surface bg-surface-container-low p-space-sm rounded-lg leading-relaxed">
+<span class="font-semibold text-primary">Signos observados:</span> 
+                Contacto visual intermitente y esquivo ante preguntas laborales; manos inquietas frotándose continuamente sobre el regazo; respiración torácica alta y acelerada; tono de voz vacilante con pausas dubitativas.
+              </p>
+</div>
+<!-- Emotional Micro-Indicators -->
+<div class="grid grid-cols-3 gap-space-xs mt-space-sm">
+<div class="p-space-xs rounded bg-surface-container flex flex-col">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Activación Vegetativa</span>
+<span class="font-label-md text-label-md font-semibold text-primary">Elevada (78%)</span>
+</div>
+<div class="p-space-xs rounded bg-surface-container flex flex-col">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Disposición al Diálogo</span>
+<span class="font-label-md text-label-md font-semibold text-secondary">Receptiva / Abierta</span>
+</div>
+<div class="p-space-xs rounded bg-surface-container flex flex-col">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Latencia de Respuesta</span>
+<span class="font-label-md text-label-md font-semibold text-primary">1.4 segundos</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Clinical Continuous Transcript Stream -->
+<div class="w-full bg-surface-container-lowest rounded-xl shadow-sm p-space-lg flex flex-col">
+<div class="flex items-center justify-between pb-space-sm mb-space-md border-b border-surface-container">
+<div class="flex items-center gap-space-xs">
+<span class="material-symbols-outlined text-[20px] text-secondary">forum</span>
+<span class="font-headline-sm text-headline-sm text-primary">Registro Clínico Dialogal</span>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant font-mono">ID: SES-2025-089A · Encriptado HIPAA</span>
+</div>
+<!-- Chat Continuous Feed -->
+<div class="flex flex-col gap-space-md max-h-[380px] overflow-y-auto pr-space-xs scroll-smooth" id="transcriptFeed">
+<!-- Turn 1: Trainee (Psychologist) -->
+<div class="flex flex-col items-end gap-1 pl-space-lg">
+<div class="flex items-center gap-space-xs">
+<span class="font-label-sm text-label-sm text-on-surface-variant">10:01</span>
+<span class="font-label-sm text-label-sm font-semibold text-primary">Terapeuta (Estudiante)</span>
+</div>
+<div class="bg-surface-container-high text-on-surface p-space-md rounded-xl rounded-tr-none shadow-sm max-w-xl text-left">
+<p class="font-body-md text-body-md leading-relaxed">
+                Hola Elena, bienvenida. Tómate el tiempo que necesites. Cuéntame qué te ha motivado a venir a consulta hoy.
+              </p>
+<div class="mt-space-xs pt-space-xs flex items-center justify-between text-on-surface-variant border-t border-surface-variant/40">
+<span class="font-label-sm text-label-sm flex items-center gap-1 text-secondary font-medium">
+<span class="material-symbols-outlined text-[14px]">psychology</span>
+                  Intervención: Pregunta Abierta de Encuadre
+                </span>
+<span class="font-label-sm text-label-sm">Rapport +4%</span>
+</div>
+</div>
+</div>
+<!-- Turn 2: Virtual Patient (Elena) -->
+<div class="flex flex-col items-start gap-1 pr-space-lg">
+<div class="flex items-center gap-space-xs">
+<span class="font-label-sm text-label-sm font-semibold text-primary">Elena Morales (IA)</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">10:02</span>
+</div>
+<div class="bg-surface-container-low text-on-surface p-space-md rounded-xl rounded-tl-none shadow-sm max-w-xl border-l-4 border-l-secondary">
+<p class="font-body-md text-body-md leading-relaxed">
+                Gracias doctora... la verdad es que vengo porque ya no doy más. Llevo meses sintiendo un nudo constante en el estómago y una presión en el pecho, como si en cualquier segundo fuera a suceder una catástrofe en mi trabajo o con mi familia.
+              </p>
+<div class="mt-space-xs pt-space-xs flex items-center gap-space-xs flex-wrap">
+<span class="px-space-xs py-0.5 rounded font-label-sm text-label-sm bg-error-container text-on-error-container">Catastrofismo / F41.1</span>
+<span class="px-space-xs py-0.5 rounded font-label-sm text-label-sm bg-surface-container-highest text-on-surface-variant">Somatización torácica</span>
+</div>
+</div>
+</div>
+<!-- Turn 3: Trainee (Psychologist) -->
+<div class="flex flex-col items-end gap-1 pl-space-lg">
+<div class="flex items-center gap-space-xs">
+<span class="font-label-sm text-label-sm text-on-surface-variant">10:05</span>
+<span class="font-label-sm text-label-sm font-semibold text-primary">Terapeuta (Estudiante)</span>
+</div>
+<div class="bg-surface-container-high text-on-surface p-space-md rounded-xl rounded-tr-none shadow-sm max-w-xl text-left">
+<p class="font-body-md text-body-md leading-relaxed">
+                Entiendo que esa sensación constante de alerta debe ser agotadora para ti. ¿Recuerdas cuándo empezaron a manifestarse con mayor intensidad estas sensaciones físicas?
+              </p>
+<div class="mt-space-xs pt-space-xs flex items-center justify-between text-on-surface-variant border-t border-surface-variant/40">
+<span class="font-label-sm text-label-sm flex items-center gap-1 text-secondary font-medium">
+<span class="material-symbols-outlined text-[14px]">volunteer_activism</span>
+                  Validación Emocional + Delimitación Temporal
+                </span>
+<span class="font-label-sm text-label-sm">Eficacia Clínica: Alta</span>
+</div>
+</div>
+</div>
+<!-- Turn 4: Virtual Patient (Elena) -->
+<div class="flex flex-col items-start gap-1 pr-space-lg">
+<div class="flex items-center gap-space-xs">
+<span class="font-label-sm text-label-sm font-semibold text-primary">Elena Morales (IA)</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">10:07</span>
+</div>
+<div class="bg-surface-container-low text-on-surface p-space-md rounded-xl rounded-tl-none shadow-sm max-w-xl border-l-4 border-l-secondary">
+<p class="font-body-md text-body-md leading-relaxed">
+                Creo que hace unos cuatro meses, cuando me ascendieron a coordinadora de equipo. Al principio pensé que era cansancio normal, pero ahora ni los fines de semana puedo desconectar... Me despierto a las 3:00 am con el corazón latiéndome desbocado pensando en mails que ni siquiera me han enviado todavía.
+              </p>
+<div class="mt-space-xs pt-space-xs flex items-center gap-space-xs flex-wrap">
+<span class="px-space-xs py-0.5 rounded font-label-sm text-label-sm bg-surface-container-highest text-on-surface">Detonante: Promoción laboral</span>
+<span class="px-space-xs py-0.5 rounded font-label-sm text-label-sm bg-error-container text-on-error-container">Despertar precoz / Insomnio</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Student Therapeutic Dispatch Console -->
+<div class="mt-space-md pt-space-md border-t border-surface-container">
+<!-- Clinical Quick Support Techniques Toolbar -->
+<div class="flex items-center justify-between flex-wrap gap-space-xs mb-space-xs">
+<span class="font-label-sm text-label-sm font-semibold uppercase text-on-surface-variant flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px] text-secondary">tips_and_updates</span>
+              Técnicas de Intervención Rápida:
+            </span>
+<div class="flex items-center gap-space-xs flex-wrap">
+<button class="px-space-sm py-1 rounded-full bg-surface-container hover:bg-surface-variant text-on-surface font-label-sm text-label-sm transition-colors cursor-pointer" onclick="insertPrompt('¿Podrías describirme con más detalle qué pensamientos exactos te asaltan cuando te despiertas de madrugada?')" type="button">
+                + Pregunta abierta
+              </button>
+<button class="px-space-sm py-1 rounded-full bg-surface-container hover:bg-surface-variant text-on-surface font-label-sm text-label-sm transition-colors cursor-pointer" onclick="insertPrompt('Si entiendo bien, desde que asumiste el rol de coordinación sientes una exigencia continua de previsión que te impide relajarte.')" type="button">
+                + Paráfrasis
+              </button>
+<button class="px-space-sm py-1 rounded-full bg-surface-container hover:bg-surface-variant text-on-surface font-label-sm text-label-sm transition-colors cursor-pointer" onclick="insertPrompt('Es absolutamente comprensible que tu cuerpo reaccione así ante un aumento tan drástico en la responsabilidad sin descanso.')" type="button">
+                + Validación emocional
+              </button>
+<button class="px-space-sm py-1 rounded-full bg-surface-container hover:bg-surface-variant text-on-surface font-label-sm text-label-sm transition-colors cursor-pointer" onclick="insertPrompt('¿Cómo perciben tus familiares más cercanos este estado de preocupación constante? ¿Qué te dicen cuando te ven así?')" type="button">
+                + Pregunta circular
+              </button>
+</div>
+</div>
+<!-- Input Textarea & Voice Trigger -->
+<div class="relative bg-surface-container-low rounded-xl p-space-xs shadow-inner">
+<textarea class="w-full bg-transparent px-space-sm py-space-xs text-on-surface font-body-md text-body-md placeholder:text-on-surface-variant/60 focus:outline-none resize-none" id="clinicianInput" placeholder="Formula tu pregunta o intervención terapéutica para Elena..." rows="3"></textarea>
+<div class="flex items-center justify-between pt-space-xs px-space-xs border-t border-surface-container">
+<div class="flex items-center gap-space-xs">
+<button class="flex items-center gap-1.5 px-space-sm py-1.5 rounded-lg bg-surface-container hover:bg-surface-variant text-on-surface font-label-md text-label-md transition-all cursor-pointer" id="micBtn" onclick="toggleMic()" title="Dictado por voz terapéutico" type="button">
+<span class="material-symbols-outlined text-[18px] text-error" id="micIcon">mic</span>
+<span id="micStatus">Dictado de voz</span>
+</button>
+<span class="font-label-sm text-label-sm text-on-surface-variant hidden sm:inline">Presiona Ctrl + Enter para enviar</span>
+</div>
+<div class="flex items-center gap-space-xs">
+<button class="px-space-sm py-1.5 rounded-lg text-on-surface-variant hover:text-on-surface font-label-md text-label-md transition-colors cursor-pointer" onclick="clearInput()" type="button">
+                  Borrar
+                </button>
+<button class="flex items-center gap-space-xs px-space-md py-1.5 rounded-lg bg-primary text-on-primary hover:bg-primary-container font-label-lg text-label-lg transition-all shadow-sm cursor-pointer" onclick="sendIntervention()" type="button">
+<span>Transmitir</span>
+<span class="material-symbols-outlined text-[16px]">send</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Right Workspace: Therapist Field Notebook & Interactive Symptoms Ledger (Col 4) -->
+<div class="xl:col-span-4 flex flex-col gap-space-md min-w-0">
+<!-- Rapport & Alliance Discretion Gauge Card -->
+<div class="w-full bg-surface-container-lowest rounded-xl shadow-sm p-space-md">
+<div class="flex items-center justify-between mb-space-xs">
+<div class="flex items-center gap-space-xs">
+<span class="material-symbols-outlined text-[18px] text-secondary">handshake</span>
+<span class="font-label-md text-label-md font-semibold text-primary">Alianza Terapéutica &amp; Rapport</span>
+</div>
+<span class="font-label-sm text-label-sm font-semibold text-secondary">86% · Fuerte / Receptivo</span>
+</div>
+<!-- Alliance Meter Progress Bar -->
+<div class="w-full h-2 rounded-full bg-surface-container-high overflow-hidden">
+<div class="h-full bg-secondary rounded-full transition-all duration-500 ease-out" style="width: 86%;"></div>
+</div>
+<div class="flex items-center justify-between text-on-surface-variant font-label-sm text-label-sm mt-space-xs">
+<span>Reserva / Desconfianza</span>
+<span>Sintonía Empática Óptima</span>
+</div>
+</div>
+<!-- Cuaderno de Campo del Terapeuta Card -->
+<div class="w-full bg-surface-container-lowest rounded-xl shadow-sm p-space-md flex flex-col flex-1">
+<div class="flex items-center justify-between pb-space-xs mb-space-sm">
+<div class="flex items-center gap-space-xs">
+<span class="material-symbols-outlined text-[20px] text-primary">edit_note</span>
+<span class="font-headline-sm text-headline-sm text-primary">Cuaderno del Terapeuta</span>
+</div>
+<span class="w-2 h-2 rounded-full bg-secondary-fixed ring-4 ring-secondary-fixed/20" title="Autoguardado activo"></span>
+</div>
+<!-- Notebook Tabs Navigation -->
+<div class="flex items-center bg-surface-container-low rounded-lg p-1 gap-1 mb-space-md">
+<button class="flex-1 py-1.5 px-space-sm rounded-md font-label-md text-label-md font-semibold bg-surface-container-lowest text-primary shadow-xs transition-all cursor-pointer text-center" id="tabBtnNotes" onclick="switchTab('notes')" type="button">
+            Notas Clínicas
+          </button>
+<button class="flex-1 py-1.5 px-space-sm rounded-md font-label-md text-label-md font-semibold text-on-surface-variant hover:text-on-surface transition-all cursor-pointer text-center" id="tabBtnSymptoms" onclick="switchTab('symptoms')" type="button">
+            Síntomas Detectados (3)
+          </button>
+</div>
+<!-- Tab Content 1: Live Anamnesis Notes -->
+<div class="flex flex-col gap-space-sm" id="tabContentNotes">
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase font-medium">Apuntes de Sesión en Vivo</span>
+<span class="font-label-sm text-label-sm text-secondary font-mono">Borrador sincronizado</span>
+</div>
+<textarea class="w-full bg-surface-container-low p-space-sm rounded-lg text-on-surface font-body-sm text-body-sm focus:outline-none focus:ring-1 focus:ring-primary/20 leading-relaxed resize-none" placeholder="Registra observaciones fenotípicas, hipótesis de mantenimiento, posibles distorsiones cognitivas..." rows="9">- Paciente orientada en espacio y tiempo.
+- Refiere clara hipervigilancia orientada a desempeño laboral.
+- Ansiedad anticipatoria desadaptativa con correlato autonómico marcado (precordialgia funcional, nudo epigástrico).
+- Hipótesis provisional: TAG con predominio de rumiación obsesivoide sin compulsiones aparentes.
+- Evaluar posible interferencia en vida de pareja y red social en siguientes turnos.</textarea>
+<div class="p-space-sm rounded-lg bg-surface-container-low flex flex-col gap-1">
+<span class="font-label-sm text-label-sm font-semibold text-primary">Recordatorio Pedagógico de Cátedra:</span>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+              Prioriza no saturar con preguntas cerradas directas. Favorece la exploración del afecto antes de profundizar en la técnica de reestructuración.
+            </p>
+</div>
+</div>
+<!-- Tab Content 2: Interactive Diagnostic Symptoms Checklist (Initially Hidden) -->
+<div class="hidden flex-col gap-space-sm" id="tabContentSymptoms">
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase font-medium">Criterios DSM-5 (Trastorno Ansiedad)</span>
+<span class="font-label-sm text-label-sm text-primary font-semibold">3 de 7 cotejados</span>
+</div>
+<div class="flex flex-col gap-space-xs">
+<!-- Item 1 (Checked) -->
+<label class="flex items-start gap-space-sm p-space-sm rounded-lg bg-surface-container-low hover:bg-surface-container cursor-pointer transition-colors">
+<input checked="" class="mt-0.5 rounded text-secondary focus:ring-secondary accent-secondary w-4 h-4" type="checkbox"/>
+<div class="flex flex-col">
+<span class="font-label-md text-label-md font-semibold text-primary">Preocupación / Catastrofismo excesivo</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Verbalizado: Sensación inminente de desastre familiar o laboral.</span>
+</div>
+</label>
+<!-- Item 2 (Checked) -->
+<label class="flex items-start gap-space-sm p-space-sm rounded-lg bg-surface-container-low hover:bg-surface-container cursor-pointer transition-colors">
+<input checked="" class="mt-0.5 rounded text-secondary focus:ring-secondary accent-secondary w-4 h-4" type="checkbox"/>
+<div class="flex flex-col">
+<span class="font-label-md text-label-md font-semibold text-primary">Disrupción del Sueño (Insomnio de mantenimiento)</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Verbalizado: Despertares abruptos a las 3:00 am con taquicardias.</span>
+</div>
+</label>
+<!-- Item 3 (Checked) -->
+<label class="flex items-start gap-space-sm p-space-sm rounded-lg bg-surface-container-low hover:bg-surface-container cursor-pointer transition-colors">
+<input checked="" class="mt-0.5 rounded text-secondary focus:ring-secondary accent-secondary w-4 h-4" type="checkbox"/>
+<div class="flex flex-col">
+<span class="font-label-md text-label-md font-semibold text-primary">Tensión Muscular y Somatizaciones</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Verbalizado: Presión constante en pecho y dolor en epigastrio.</span>
+</div>
+</label>
+<!-- Item 4 (Unchecked) -->
+<label class="flex items-start gap-space-sm p-space-sm rounded-lg bg-surface-container-low hover:bg-surface-container cursor-pointer transition-colors">
+<input class="mt-0.5 rounded text-secondary focus:ring-secondary accent-secondary w-4 h-4" type="checkbox"/>
+<div class="flex flex-col">
+<span class="font-label-md text-label-md font-semibold text-primary">Dificultad de concentración / Mente en blanco</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Pendiente de indagación directa por el terapeuta.</span>
+</div>
+</label>
+<!-- Item 5 (Unchecked) -->
+<label class="flex items-start gap-space-sm p-space-sm rounded-lg bg-surface-container-low hover:bg-surface-container cursor-pointer transition-colors">
+<input class="mt-0.5 rounded text-secondary focus:ring-secondary accent-secondary w-4 h-4" type="checkbox"/>
+<div class="flex flex-col">
+<span class="font-label-md text-label-md font-semibold text-primary">Irritabilidad subjetiva o reactiva</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Pendiente de exploración contextual.</span>
+</div>
+</label>
+<!-- Item 6 (Unchecked) -->
+<label class="flex items-start gap-space-sm p-space-sm rounded-lg bg-surface-container-low hover:bg-surface-container cursor-pointer transition-colors">
+<input class="mt-0.5 rounded text-secondary focus:ring-secondary accent-secondary w-4 h-4" type="checkbox"/>
+<div class="flex flex-col">
+<span class="font-label-md text-label-md font-semibold text-primary">Fatigabilidad precoz</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Mencionada superficialmente como cansancio normal.</span>
+</div>
+</label>
+</div>
+</div>
+<!-- Trainee Quick Resource Accordion -->
+<div class="mt-space-md pt-space-sm border-t border-surface-container">
+<div class="flex items-center justify-between text-on-surface-variant hover:text-on-surface cursor-pointer p-space-xs rounded bg-surface-container-low">
+<span class="font-label-sm text-label-sm font-semibold flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px] text-primary">menu_book</span>
+              Ficha Resumen DSM-5: Criterio B y C
+            </span>
+<span class="material-symbols-outlined text-[16px]">expand_more</span>
+</div>
+</div>
+</div>
+<!-- Quick Session Controls Card -->
+<div class="w-full bg-surface-container-lowest rounded-xl shadow-sm p-space-md flex items-center justify-between">
+<div class="flex items-center gap-space-xs text-on-surface-variant">
+<span class="material-symbols-outlined text-[18px]">volume_up</span>
+<span class="font-label-sm text-label-sm">Audio Síntesis Neural</span>
+</div>
+<div class="flex items-center gap-space-xs">
+<button class="p-space-xs rounded-lg text-on-surface-variant hover:bg-surface-container transition-colors" title="Ajustes de latencia de voz IA" type="button">
+<span class="material-symbols-outlined text-[18px]">tune</span>
+</button>
+<button class="p-space-xs rounded-lg text-on-surface-variant hover:bg-surface-container transition-colors" title="Pausar Simulación" type="button">
+<span class="material-symbols-outlined text-[18px]">pause</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+<script>
+  function switchTab(tab) {
+    const notesTabBtn = document.getElementById('tabBtnNotes');
+    const symptomsTabBtn = document.getElementById('tabBtnSymptoms');
+    const notesContent = document.getElementById('tabContentNotes');
+    const symptomsContent = document.getElementById('tabContentSymptoms');
+
+    if (tab === 'notes') {
+      notesContent.classList.remove('hidden');
+      notesContent.classList.add('flex');
+      symptomsContent.classList.add('hidden');
+      symptomsContent.classList.remove('flex');
+
+      notesTabBtn.className = "flex-1 py-1.5 px-space-sm rounded-md font-label-md text-label-md font-semibold bg-surface-container-lowest text-primary shadow-xs transition-all cursor-pointer text-center";
+      symptomsTabBtn.className = "flex-1 py-1.5 px-space-sm rounded-md font-label-md text-label-md font-semibold text-on-surface-variant hover:text-on-surface transition-all cursor-pointer text-center";
+    } else {
+      symptomsContent.classList.remove('hidden');
+      symptomsContent.classList.add('flex');
+      notesContent.classList.add('hidden');
+      notesContent.classList.remove('flex');
+
+      symptomsTabBtn.className = "flex-1 py-1.5 px-space-sm rounded-md font-label-md text-label-md font-semibold bg-surface-container-lowest text-primary shadow-xs transition-all cursor-pointer text-center";
+      notesTabBtn.className = "flex-1 py-1.5 px-space-sm rounded-md font-label-md text-label-md font-semibold text-on-surface-variant hover:text-on-surface transition-all cursor-pointer text-center";
+    }
+  }
+
+  function insertPrompt(text) {
+    const textarea = document.getElementById('clinicianInput');
+    textarea.value = text;
+    textarea.focus();
+  }
+
+  function clearInput() {
+    const textarea = document.getElementById('clinicianInput');
+    textarea.value = '';
+    textarea.focus();
+  }
+
+  let isRecording = false;
+  function toggleMic() {
+    isRecording = !isRecording;
+    const micStatus = document.getElementById('micStatus');
+    const micIcon = document.getElementById('micIcon');
+    const micBtn = document.getElementById('micBtn');
+
+    if (isRecording) {
+      micStatus.innerText = 'Escuchando...';
+      micIcon.innerText = 'record_voice_over';
+      micBtn.classList.add('bg-error-container', 'text-on-error-container');
+    } else {
+      micStatus.innerText = 'Dictado de voz';
+      micIcon.innerText = 'mic';
+      micBtn.classList.remove('bg-error-container', 'text-on-error-container');
+    }
+  }
+
+  function sendIntervention() {
+    const input = document.getElementById('clinicianInput');
+    const text = input.value.trim();
+    if (!text) return;
+
+    const transcript = document.getElementById('transcriptFeed');
+    
+    // Create student message
+    const studentWrapper = document.createElement('div');
+    studentWrapper.className = "flex flex-col items-end gap-1 pl-space-lg";
+    studentWrapper.innerHTML = `
+      <div class="flex items-center gap-space-xs">
+        <span class="font-label-sm text-label-sm text-on-surface-variant">10:14</span>
+        <span class="font-label-sm text-label-sm font-semibold text-primary">Terapeuta (Estudiante)</span>
+      </div>
+      <div class="bg-surface-container-high text-on-surface p-space-md rounded-xl rounded-tr-none shadow-sm max-w-xl text-left">
+        <p class="font-body-md text-body-md leading-relaxed">${escapeHTML(text)}</p>
+        <div class="mt-space-xs pt-space-xs flex items-center justify-between text-on-surface-variant border-t border-surface-variant/40">
+          <span class="font-label-sm text-label-sm flex items-center gap-1 text-secondary font-medium">
+            <span class="material-symbols-outlined text-[14px]">psychology</span>
+            Intervención del clínico en formación
+          </span>
+          <span class="font-label-sm text-label-sm">Enviado</span>
+        </div>
+      </div>
+    `;
+    transcript.appendChild(studentWrapper);
+    input.value = '';
+    transcript.scrollTop = transcript.scrollHeight;
+
+    // Simulated patient response after 2 seconds
+    setTimeout(() => {
+      const patientWrapper = document.createElement('div');
+      patientWrapper.className = "flex flex-col items-start gap-1 pr-space-lg";
+      patientWrapper.innerHTML = `
+        <div class="flex items-center gap-space-xs">
+          <span class="font-label-sm text-label-sm font-semibold text-primary">Elena Morales (IA)</span>
+          <span class="font-label-sm text-label-sm text-on-surface-variant">10:15</span>
+        </div>
+        <div class="bg-surface-container-low text-on-surface p-space-md rounded-xl rounded-tl-none shadow-sm max-w-xl border-l-4 border-l-secondary">
+          <p class="font-body-md text-body-md leading-relaxed">
+            Me cuesta admitirlo, pero siento que si bajo la guardia aunque sea un momento, todo lo que he construido se va a desmoronar. Es como vivir con una sirena encendida que nadie más escucha.
+          </p>
+          <div class="mt-space-xs pt-space-xs flex items-center gap-space-xs flex-wrap">
+            <span class="px-space-xs py-0.5 rounded font-label-sm text-label-sm bg-error-container text-on-error-container">Creencia desadaptativa de control</span>
+          </div>
+        </div>
+      `;
+      transcript.appendChild(patientWrapper);
+      transcript.scrollTop = transcript.scrollHeight;
+    }, 1800);
+  }
+
+  function escapeHTML(str) {
+    return str.replace(/[&<>'"]/g, 
+      tag => ({
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        "'": '&#39;',
+        '"': '&quot;'
+      }[tag] || tag)
+    );
+  }
+
+  // Keyboard shortcut Ctrl+Enter to send
+  document.getElementById('clinicianInput').addEventListener('keydown', function(e) {
+    if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+      sendIntervention();
+    }
+  });
+</script></main></div></body></html>
