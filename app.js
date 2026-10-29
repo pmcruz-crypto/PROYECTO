@@ -161,6 +161,62 @@ function updateActiveCaseUI(patient) {
   const debriefDiagTag = document.getElementById('debriefDiagTag');
   if (debriefPatientName) debriefPatientName.textContent = `${patient.name} (${patient.age} años)`;
   if (debriefDiagTag) debriefDiagTag.textContent = `${patient.diagnosticCode} · ${patient.diagnosticTitle}`;
+
+  // Actualizar micro-indicadores
+  const indAutonomic = document.getElementById('indAutonomic');
+  const indDisposition = document.getElementById('indDisposition');
+  const indLatency = document.getElementById('indLatency');
+  if (indAutonomic) indAutonomic.textContent = patient.autonomicActivation || 'Media (50%)';
+  if (indDisposition) indDisposition.textContent = patient.dialogueDisposition || 'Receptiva';
+  if (indLatency) indLatency.textContent = patient.responseLatency || '1.5 seg';
+
+  // Renderizar criterios DSM-5 específicos de este paciente
+  renderPatientDsmCriteria(patient);
+}
+
+// Renderizar lista interactiva de criterios DSM-5
+function renderPatientDsmCriteria(patient) {
+  const container = document.getElementById('tabContentSymptoms');
+  if (!container || !patient.dsmCriteria) return;
+
+  const countChecked = patient.dsmCriteria.filter(c => c.checked).length;
+  const total = patient.dsmCriteria.length;
+
+  container.innerHTML = `
+    <div class="flex items-center justify-between">
+      <span class="font-label-sm text-[11px] text-on-surface-variant uppercase font-medium">Criterios Cotejados</span>
+      <span class="font-label-sm text-xs text-primary font-semibold" id="dsmCountBadge">${countChecked} de ${total} marcados</span>
+    </div>
+    <div class="flex flex-col gap-space-xs text-left">
+      ${patient.dsmCriteria.map((crit, idx) => `
+        <label class="flex items-start gap-space-sm p-space-sm rounded-lg bg-surface-container-low hover:bg-surface-container cursor-pointer transition-colors">
+          <input type="checkbox" ${crit.checked ? 'checked' : ''} onchange="toggleCriterion('${patient.id}', ${idx})" class="mt-0.5 rounded text-secondary focus:ring-secondary accent-secondary w-4 h-4"/>
+          <div class="flex flex-col">
+            <span class="font-label-md text-xs font-semibold text-primary">${crit.label}</span>
+            <span class="font-body-sm text-[11px] text-on-surface-variant">${crit.desc}</span>
+          </div>
+        </label>
+      `).join('')}
+    </div>
+  `;
+}
+
+function toggleCriterion(patientId, index) {
+  const p = CLINICAL_CASES.find(c => c.id === patientId);
+  if (p && p.dsmCriteria && p.dsmCriteria[index]) {
+    p.dsmCriteria[index].checked = !p.dsmCriteria[index].checked;
+    const badge = document.getElementById('dsmCountBadge');
+    if (badge) {
+      const count = p.dsmCriteria.filter(c => c.checked).length;
+      badge.textContent = `${count} de ${p.dsmCriteria.length} marcados`;
+    }
+  }
+}
+
+// Abrir ficha clínica por ID de caso o parámetros
+function openPatientDossierById(caseId) {
+  const patient = CLINICAL_CASES.find(c => c.id === caseId) || CLINICAL_CASES[0];
+  openPatientDossier(patient.name, patient.age, patient.diagnosticTitle, patient.summaryNotes, patient.id);
 }
 
 // Abrir ficha clínica de derivación (Dossier Modal)
@@ -208,8 +264,58 @@ function launchSimulation(caseIdentifier) {
   AppState.activeCaseId = targetCase.id;
   updateActiveCaseUI(targetCase);
 
+  // Inicializar o adaptar el chat al paciente seleccionado
+  setupInitialChatForPatient(targetCase);
+
   // Navegar a la sala de consulta
   switchView('consulta');
+}
+
+// Adaptar o iniciar el diálogo con el paciente seleccionado
+function setupInitialChatForPatient(patient) {
+  const feed = document.getElementById('transcriptFeed');
+  if (!feed) return;
+
+  // Si ya tenemos mensajes guardados para este paciente, podemos mantenerlos;
+  // de lo contrario, creamos el diálogo inicial de bienvenida adecuado
+  feed.innerHTML = `
+    <!-- Turno 1: Terapeuta (Paula Cruz) -->
+    <div class="flex flex-col items-end gap-1 pl-space-md md:pl-space-lg">
+      <div class="flex items-center gap-space-xs">
+        <span class="font-label-sm text-[11px] text-on-surface-variant">10:01</span>
+        <span class="font-label-sm text-xs font-semibold text-primary">Paula Cruz (Terapeuta)</span>
+      </div>
+      <div class="bg-surface-container-high text-on-surface p-space-md rounded-xl rounded-tr-none shadow-sm max-w-xl text-left">
+        <p class="font-body-md text-sm md:text-body-md leading-relaxed">
+          Hola ${patient.name.split(' ')[0]}, bienvenido/a. Tómate el tiempo que necesites. Cuéntame qué te ha motivado a venir a consulta hoy.
+        </p>
+        <div class="mt-space-xs pt-space-xs flex items-center justify-between text-on-surface-variant border-t border-surface-variant/40">
+          <span class="font-label-sm text-[11px] flex items-center gap-1 text-secondary font-medium">
+            <span class="material-symbols-outlined text-[13px]">psychology</span>
+            Intervención: Pregunta Abierta de Encuadre
+          </span>
+          <span class="font-label-sm text-[11px]">Rapport +5%</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Turno 2: Paciente Virtual -->
+    <div class="flex flex-col items-start gap-1 pr-space-md md:pr-space-lg">
+      <div class="flex items-center gap-space-xs">
+        <span class="font-label-sm text-xs font-semibold text-primary">${patient.name} (IA)</span>
+        <span class="font-label-sm text-[11px] text-on-surface-variant">10:02</span>
+      </div>
+      <div class="bg-surface-container-low text-on-surface p-space-md rounded-xl rounded-tl-none shadow-sm max-w-xl border-l-4 border-l-secondary">
+        <p class="font-body-md text-sm md:text-body-md leading-relaxed">
+          Gracias... la verdad es que ${patient.quote.replace(/[«»]/g, '')}
+        </p>
+        <div class="mt-space-xs pt-space-xs flex items-center gap-space-xs flex-wrap">
+          <span class="px-space-xs py-0.5 rounded font-label-sm text-[10px] bg-surface-container text-on-surface-variant font-medium">${patient.diagnosticCode.split('·')[0].trim()}</span>
+          <span class="px-space-xs py-0.5 rounded font-label-sm text-[10px] bg-secondary-container text-on-secondary-container font-semibold">Resistencia: ${patient.resistance}</span>
+        </div>
+      </div>
+    </div>
+  `;
 }
 
 // Conmutar pestañas del cuaderno de campo (Notas vs Síntomas)

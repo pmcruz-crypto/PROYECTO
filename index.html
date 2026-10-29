@@ -443,7 +443,7 @@
             </div>
 
             <div class="pt-space-sm flex items-center justify-between gap-space-sm mt-auto border-t border-surface-container-low">
-              <button class="px-space-md py-space-sm rounded-lg bg-surface-container hover:bg-surface-variant text-primary font-label-md text-label-md transition-colors flex items-center gap-1" onclick="openPatientDossier('Elena Morales', '32', 'Trastorno de Ansiedad Generalizada', 'Arquitecta técnica. Refiere episodios de hiperventilación, tensión muscular cervical y dificultad para delegar. Niega ideación autolítica. Analítica general sin hallazgos orgánicos.', 'elena-morales')" type="button">
+              <button class="px-space-md py-space-sm rounded-lg bg-surface-container hover:bg-surface-variant text-primary font-label-md text-label-md transition-colors flex items-center gap-1" onclick="openPatientDossierById('elena-morales')" type="button">
                 <span class="material-symbols-outlined text-[16px]">description</span>
                 <span>Ver Ficha</span>
               </button>
@@ -501,7 +501,7 @@
             </div>
 
             <div class="pt-space-sm flex items-center justify-between gap-space-sm mt-auto border-t border-surface-container-low">
-              <button class="px-space-md py-space-sm rounded-lg bg-surface-container hover:bg-surface-variant text-primary font-label-md text-label-md transition-colors flex items-center gap-1" onclick="openPatientDossier('Javier Ortiz', '45', 'Episodio Depresivo Mayor (Moderado)', 'Baja médica laboral desde hace 3 semanas. Abandono paulatino de actividades deportivas y sociales. Relato pausado, contacto ocular intermitente.', 'javier-ortiz')" type="button">
+              <button class="px-space-md py-space-sm rounded-lg bg-surface-container hover:bg-surface-variant text-primary font-label-md text-label-md transition-colors flex items-center gap-1" onclick="openPatientDossierById('javier-ortiz')" type="button">
                 <span class="material-symbols-outlined text-[16px]">description</span>
                 <span>Ver Ficha</span>
               </button>
@@ -559,7 +559,7 @@
             </div>
 
             <div class="pt-space-sm flex items-center justify-between gap-space-sm mt-auto border-t border-surface-container-low">
-              <button class="px-space-md py-space-sm rounded-lg bg-surface-container hover:bg-surface-variant text-primary font-label-md text-label-md transition-colors flex items-center gap-1" onclick="openPatientDossier('Clara Mendoza', '24', 'Trastorno Obsesivo-Compulsivo', 'Llega con retraso por ritual de salida de 40 minutos. Muestra manos con dermatitis por lavado reiterado. Alerta a la validación sin reforzar las compulsiones.', 'clara-mendoza')" type="button">
+              <button class="px-space-md py-space-sm rounded-lg bg-surface-container hover:bg-surface-variant text-primary font-label-md text-label-md transition-colors flex items-center gap-1" onclick="openPatientDossierById('clara-mendoza')" type="button">
                 <span class="material-symbols-outlined text-[16px]">description</span>
                 <span>Ver Ficha</span>
               </button>
@@ -617,7 +617,7 @@
             </div>
 
             <div class="pt-space-sm flex items-center justify-between gap-space-sm mt-auto border-t border-surface-container-low">
-              <button class="px-space-md py-space-sm rounded-lg bg-surface-container hover:bg-surface-variant text-primary font-label-md text-label-md transition-colors flex items-center gap-1" onclick="openPatientDossier('Mateo Rivas', '19', 'Ansiedad Social / Fobia Específica', 'Evitación persistente de seminarios orales. Teme juicio negativo de compañeros. Buen rendimiento en evaluaciones escritas. No antecedentes psiquiátricos.', 'mateo-rivas')" type="button">
+              <button class="px-space-md py-space-sm rounded-lg bg-surface-container hover:bg-surface-variant text-primary font-label-md text-label-md transition-colors flex items-center gap-1" onclick="openPatientDossierById('mateo-rivas')" type="button">
                 <span class="material-symbols-outlined text-[16px]">description</span>
                 <span>Ver Ficha</span>
               </button>
@@ -746,15 +746,15 @@
                   <div class="grid grid-cols-3 gap-space-xs mt-space-sm">
                     <div class="p-space-xs rounded bg-surface-container flex flex-col">
                       <span class="font-label-sm text-[10px] text-on-surface-variant">Activación Vegetativa</span>
-                      <span class="font-label-md text-xs font-semibold text-primary">Elevada (78%)</span>
+                      <span class="font-label-md text-xs font-semibold text-primary" id="indAutonomic">Elevada (78%)</span>
                     </div>
                     <div class="p-space-xs rounded bg-surface-container flex flex-col">
                       <span class="font-label-sm text-[10px] text-on-surface-variant">Disposición Diálogo</span>
-                      <span class="font-label-md text-xs font-semibold text-secondary">Receptiva</span>
+                      <span class="font-label-md text-xs font-semibold text-secondary" id="indDisposition">Receptiva</span>
                     </div>
                     <div class="p-space-xs rounded bg-surface-container flex flex-col">
                       <span class="font-label-sm text-[10px] text-on-surface-variant">Latencia de Respuesta</span>
-                      <span class="font-label-md text-xs font-semibold text-primary">1.4 seg</span>
+                      <span class="font-label-md text-xs font-semibold text-primary" id="indLatency">1.4 seg</span>
                     </div>
                   </div>
                 </div>
