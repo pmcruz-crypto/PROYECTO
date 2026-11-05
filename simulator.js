@@ -207,19 +207,220 @@ const ClinicalSimulator = {
     };
   },
 
-  // Síntesis de voz del navegador (Lectura de audio del paciente)
-  speak(text) {
+  // ========================================================
+  // MOTOR DE SÍNTESIS DE VOZ ROBUSTO (MULTINAVEGADOR)
+  // ========================================================
+  _voices: [],
+  _isSpeaking: false,
+  _activeUtterance: null,
+  _activeSpeechButton: null,
+
+  initVoices() {
     if (!('speechSynthesis' in window)) return;
+    const loadVoices = () => {
+      this._voices = window.speechSynthesis.getVoices();
+    };
+    loadVoices();
+    if (window.speechSynthesis.onvoiceschanged !== undefined) {
+      window.speechSynthesis.onvoiceschanged = loadVoices;
+    }
+  },
+
+  getBestSpanishVoice(gender = 'female') {
+    if (!('speechSynthesis' in window)) return null;
+    if (!this._voices || this._voices.length === 0) {
+      this._voices = window.speechSynthesis.getVoices();
+    }
+    
+    // Filtrar voces en español disponibles en el sistema operativo
+    const spanishVoices = this._voices.filter(v => 
+      v.lang && (v.lang.toLowerCase().startsWith('es') || v.lang.toLowerCase().includes('spa'))
+    );
+
+    if (spanishVoices.length === 0) {
+      return this._voices[0] || null;
+    }
+
+    // Identificar voces por género
+    const femaleKeywords = ['sabina', 'helena', 'laura', 'monica', 'paulina', 'lucia', 'elena', 'female', 'mujer', 'zira', 'maria'];
+    const maleKeywords = ['raul', 'pablo', 'jorge', 'carlos', 'diego', 'alonso', 'male', 'hombre', 'david'];
+
+    const targetKeywords = gender === 'female' ? femaleKeywords : maleKeywords;
+    const matched = spanishVoices.find(v => {
+      const name = v.name.toLowerCase();
+      return targetKeywords.some(kw => name.includes(kw));
+    });
+
+    return matched || spanishVoices[0];
+  },
+
+  stopSpeaking() {
+    if ('speechSynthesis' in window) {
+      try {
+        window.speechSynthesis.cancel();
+      } catch (e) {
+        console.warn("Error al cancelar locución:", e);
+      }
+      this._isSpeaking = false;
+      this._activeUtterance = null;
+      this._updateVoiceButtonUI(null, false);
+      this._setVisualSpeakingState(false);
+    }
+  },
+
+  speak(text, patient = null, btnElement = null) {
+    if (!('speechSynthesis' in window)) {
+      alert("Tu navegador no tiene activado el soporte de voz. Te recomendamos usar Google Chrome, Microsoft Edge o Safari.");
+      return;
+    }
+
     try {
-      window.speechSynthesis.cancel(); // Cancelar locución previa
-      const utterance = new SpeechSynthesisUtterance(text);
-      utterance.lang = 'es-ES';
-      utterance.rate = 0.95;
-      utterance.pitch = 1.0;
-      window.speechSynthesis.speak(utterance);
+      // Reanudar el motor de audio si el navegador lo suspendió
+      if (window.speechSynthesis.paused) {
+        window.speechSynthesis.resume();
+      }
+
+      // Si se pulsa el mismo botón mientras está hablando, detenerlo
+      if (this._isSpeaking && this._activeSpeechButton === btnElement) {
+        this.stopSpeaking();
+        return;
+      }
+
+      window.speechSynthesis.cancel();
+
+      // Limpiar texto para lectura natural (remover acotaciones entre corchetes o paréntesis)
+      const spokenText = text.replace(/\[.*?\]|\(.*?\)/g, '').replace(/«|»/g, '').trim();
+      const utterance = new SpeechSynthesisUtterance(spokenText);
+      this._activeUtterance = utterance; // Evitar que el recolector de basura de Chrome corte el audio
+
+      // Determinar género, tono y cadencia según el perfil clínico del paciente
+      let gender = 'female';
+      let pitch = 1.0;
+      let rate = 0.95;
+
+      const pId = patient?.id || (typeof AppState !== 'undefined' && AppState.activeCaseId) || '';
+
+      if (pId === 'javier-ortiz') {
+        gender = 'male';
+        pitch = 0.85; // Tono más grave
+        rate = 0.88;  // Cadencia más pausada (anhedonia/depresión)
+      } else if (pId === 'mateo-rivas') {
+        gender = 'male';
+        pitch = 0.98; // Joven
+        rate = 0.94;  // Titubeante
+      } else if (pId === 'clara-mendoza') {
+        gender = 'female';
+        pitch = 1.05; // Agudo
+        rate = 1.02;  // Rápido (ansiedad/TOC)
+      } else {
+        gender = 'female'; // Elena Morales
+        pitch = 1.02;
+        rate = 0.93;
+      }
+
+      const voice = this.getBestSpanishVoice(gender);
+      if (voice) {
+        utterance.voice = voice;
+        utterance.lang = voice.lang || 'es-ES';
+      } else {
+        utterance.lang = 'es-ES';
+      }
+
+      utterance.pitch = pitch;
+      utterance.rate = rate;
+
+      utterance.onstart = () => {
+        this._isSpeaking = true;
+        this._activeSpeechButton = btnElement;
+        this._updateVoiceButtonUI(btnElement, true);
+        this._setVisualSpeakingState(true);
+      };
+
+      utterance.onend = () => {
+        this._isSpeaking = false;
+        this._activeUtterance = null;
+        this._updateVoiceButtonUI(btnElement, false);
+        this._setVisualSpeakingState(false);
+      };
+
+      utterance.onerror = (e) => {
+        console.warn("SpeechSynthesis error:", e);
+        this._isSpeaking = false;
+        this._activeUtterance = null;
+        this._updateVoiceButtonUI(btnElement, false);
+        this._setVisualSpeakingState(false);
+      };
+
+      // Breve retardo para permitir que el sintetizador se prepare tras el cancel()
+      setTimeout(() => {
+        try {
+          if (window.speechSynthesis.paused) {
+            window.speechSynthesis.resume();
+          }
+          window.speechSynthesis.speak(utterance);
+        } catch (err) {
+          console.warn("Fallo en speak():", err);
+          this._isSpeaking = false;
+          this._updateVoiceButtonUI(btnElement, false);
+          this._setVisualSpeakingState(false);
+        }
+      }, 60);
+
     } catch (e) {
-      console.warn("SpeechSynthesis error:", e);
+      console.warn("Error en speak:", e);
+      this._isSpeaking = false;
+      this._updateVoiceButtonUI(btnElement, false);
+      this._setVisualSpeakingState(false);
+    }
+  },
+
+  _updateVoiceButtonUI(btn, isPlaying) {
+    // Si había un botón previo activo, restaurarlo
+    if (this._lastActiveButton && this._lastActiveButton !== btn) {
+      this._lastActiveButton.classList.remove('bg-secondary', 'text-white');
+      this._lastActiveButton.classList.add('text-secondary');
+      this._lastActiveButton.innerHTML = `<span class="material-symbols-outlined text-[15px]">volume_up</span> <span class="text-[11px] font-medium hidden sm:inline">Voz</span>`;
+    }
+
+    if (btn) {
+      this._lastActiveButton = btn;
+      if (isPlaying) {
+        btn.classList.add('bg-secondary', 'text-white', 'shadow-xs');
+        btn.classList.remove('text-secondary');
+        btn.innerHTML = `<span class="material-symbols-outlined text-[15px] animate-pulse">stop_circle</span> <span class="text-[11px] font-bold">Detener</span>`;
+      } else {
+        btn.classList.remove('bg-secondary', 'text-white', 'shadow-xs');
+        btn.classList.add('text-secondary');
+        btn.innerHTML = `<span class="material-symbols-outlined text-[15px]">volume_up</span> <span class="text-[11px] font-medium hidden sm:inline">Voz</span>`;
+      }
+    }
+  },
+
+  _setVisualSpeakingState(isSpeaking) {
+    const waveEl = document.getElementById('consultationSpeakingWave');
+    const badgeEl = document.getElementById('consultationVoiceStatusBadge');
+    if (waveEl) {
+      if (isSpeaking) {
+        waveEl.classList.remove('opacity-0');
+        waveEl.classList.add('opacity-100');
+      } else {
+        waveEl.classList.add('opacity-0');
+        waveEl.classList.remove('opacity-100');
+      }
+    }
+    if (badgeEl) {
+      badgeEl.textContent = isSpeaking ? "Hablando..." : "Voz Lista";
+      if (isSpeaking) {
+        badgeEl.className = "px-space-xs py-0.5 rounded-full font-label-sm text-[10px] bg-secondary text-white font-bold animate-pulse";
+      } else {
+        badgeEl.className = "px-space-xs py-0.5 rounded-full font-label-sm text-[10px] bg-secondary-container text-on-secondary-container font-semibold";
+      }
     }
   }
 
 };
+
+// Inicializar voces al cargar el script
+if (typeof window !== 'undefined') {
+  ClinicalSimulator.initVoices();
+}

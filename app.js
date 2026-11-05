@@ -5,6 +5,7 @@ const AppState = {
   currentView: 'catalogo',
   activeCaseId: 'elena-morales',
   activeCase: null,
+  autoVoice: localStorage.getItem('psicosim_auto_voice') !== 'false', // Activada por defecto
   aiSettings: {
     mode: 'autonomous', // 'autonomous' o 'gemini'
     geminiApiKey: ''
@@ -29,6 +30,12 @@ document.addEventListener('DOMContentLoaded', () => {
   const savedMode = localStorage.getItem('psicosim_ai_mode') || 'autonomous';
   AppState.aiSettings.geminiApiKey = savedKey || '';
   AppState.aiSettings.mode = savedMode;
+
+  // Inicializar motor de voces del navegador
+  if (typeof ClinicalSimulator !== 'undefined') {
+    ClinicalSimulator.initVoices();
+  }
+  updateAutoVoiceUI();
 
   // Inicializar perfil del estudiante (onboarding si es nuevo)
   initStudentProfile();
@@ -140,6 +147,54 @@ function updateStudentProfileUI() {
   if (progAvatar) progAvatar.textContent = initials;
 }
 
+// Alternar voz automática del paciente
+function toggleAutoVoice() {
+  AppState.autoVoice = !AppState.autoVoice;
+  localStorage.setItem('psicosim_auto_voice', AppState.autoVoice ? 'true' : 'false');
+  updateAutoVoiceUI();
+  if (!AppState.autoVoice && typeof ClinicalSimulator !== 'undefined') {
+    ClinicalSimulator.stopSpeaking();
+  }
+}
+
+// Actualizar botones de voz en la interfaz
+function updateAutoVoiceUI() {
+  const isEnabled = AppState.autoVoice;
+  
+  // Botón en la cabecera superior
+  const hBtn = document.getElementById('headerVoiceToggleBtn');
+  const hIcon = document.getElementById('headerVoiceIcon');
+  const hLabel = document.getElementById('headerVoiceLabel');
+
+  if (hBtn) {
+    if (isEnabled) {
+      hBtn.className = "flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-secondary-container/50 text-on-secondary-container hover:bg-secondary-container transition-colors font-label-md text-xs font-semibold cursor-pointer";
+      if (hIcon) hIcon.textContent = "volume_up";
+      if (hLabel) hLabel.textContent = "Voz: ON";
+    } else {
+      hBtn.className = "flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-surface-container text-on-surface-variant hover:bg-surface-variant transition-colors font-label-md text-xs font-medium cursor-pointer";
+      if (hIcon) hIcon.textContent = "volume_off";
+      if (hLabel) hLabel.textContent = "Voz: OFF";
+    }
+  }
+
+  // Botón en la sala de consulta
+  const cBtn = document.getElementById('autoVoiceToggleBtn');
+  const cIcon = document.getElementById('autoVoiceIcon');
+  const cLabel = document.getElementById('autoVoiceLabel');
+  if (cBtn) {
+    if (isEnabled) {
+      cBtn.className = "flex items-center gap-1 px-2.5 py-1 rounded-lg bg-secondary-container text-on-secondary-container text-xs font-semibold cursor-pointer";
+      if (cIcon) cIcon.textContent = "volume_up";
+      if (cLabel) cLabel.textContent = "Voz: Activada";
+    } else {
+      cBtn.className = "flex items-center gap-1 px-2.5 py-1 rounded-lg bg-surface-container text-on-surface-variant text-xs font-medium cursor-pointer";
+      if (cIcon) cIcon.textContent = "volume_off";
+      if (cLabel) cLabel.textContent = "Voz: Silenciada";
+    }
+  }
+}
+
 // Función de navegación entre vistas
 function switchView(viewName) {
   const validViews = ['catalogo', 'consulta', 'debriefing', 'progreso'];
@@ -176,22 +231,10 @@ function switchView(viewName) {
   document.querySelectorAll('header nav a[data-path]').forEach(link => {
     const path = link.getAttribute('data-path');
     if (path === viewName) {
-      link.className = "px-space-md py-space-xs rounded-lg transition-all bg-surface-container text-primary font-semibold shadow-[0_1px_4px_rgba(0,0,0,0.04)]";
+      link.className = "px-3 py-1.5 rounded-lg transition-all bg-surface-container-lowest text-primary font-bold shadow-xs";
       link.setAttribute('aria-current', 'page');
     } else {
-      link.className = "px-space-md py-space-xs rounded-lg font-label-lg text-label-lg text-on-surface-variant hover:text-on-surface transition-all";
-      link.removeAttribute('aria-current');
-    }
-  });
-
-  // Actualizar estilos activos en el menú lateral (Desktop)
-  document.querySelectorAll('aside nav a[data-path]').forEach(link => {
-    const path = link.getAttribute('data-path');
-    if (path === viewName) {
-      link.className = "flex items-center gap-space-sm px-space-md py-space-sm rounded-lg transition-colors bg-surface-container text-primary font-semibold shadow-xs";
-      link.setAttribute('aria-current', 'page');
-    } else {
-      link.className = "flex items-center gap-space-sm px-space-md py-space-sm rounded-lg font-label-md text-label-md text-on-surface-variant hover:bg-surface-container-low hover:text-on-surface transition-colors";
+      link.className = "px-3 py-1.5 rounded-lg font-label-md text-xs text-on-surface-variant hover:text-on-surface transition-all font-medium";
       link.removeAttribute('aria-current');
     }
   });
@@ -750,8 +793,9 @@ async function sendIntervention() {
     <div class="flex items-center gap-space-xs">
       <span class="font-label-sm text-xs font-semibold text-primary">${patient.name} (IA)</span>
       <span class="font-label-sm text-[11px] text-on-surface-variant">${timeStr}</span>
-      <button onclick="playPatientVoice(this)" data-speech="${escapeHtml(responseData.reply)}" class="ml-1 text-secondary hover:text-primary transition-colors cursor-pointer" title="Escuchar respuesta por voz">
+      <button onclick="playPatientVoice(this)" data-speech="${escapeHtml(responseData.reply)}" class="patient-voice-btn flex items-center gap-1 px-2.5 py-0.5 rounded-full text-secondary hover:bg-secondary/10 transition-all cursor-pointer font-label-sm text-xs font-semibold border border-secondary/30 ml-2" title="Escuchar respuesta por voz">
         <span class="material-symbols-outlined text-[15px]">volume_up</span>
+        <span class="text-[11px] font-medium hidden sm:inline">Voz</span>
       </button>
     </div>
     <div class="bg-surface-container-low text-on-surface p-space-md rounded-xl rounded-tl-none shadow-sm max-w-xl border-l-4 border-l-secondary">
@@ -766,6 +810,12 @@ async function sendIntervention() {
   `;
   feed.appendChild(patientBubble);
   feed.scrollTop = feed.scrollHeight;
+
+  // Si la voz del paciente está activada, reproducirla automáticamente
+  const voiceBtn = patientBubble.querySelector('.patient-voice-btn');
+  if (AppState.autoVoice && typeof ClinicalSimulator !== 'undefined') {
+    ClinicalSimulator.speak(responseData.reply, patient, voiceBtn);
+  }
 
   // Actualizar comunicación no verbal en la sala
   if (responseData.signs) {
@@ -825,7 +875,7 @@ function updateRapportScore(delta) {
 function playPatientVoice(btn) {
   const text = btn.getAttribute('data-speech');
   if (text && typeof ClinicalSimulator !== 'undefined') {
-    ClinicalSimulator.speak(text);
+    ClinicalSimulator.speak(text, AppState.activeCase, btn);
   }
 }
 
