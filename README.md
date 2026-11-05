@@ -19,7 +19,7 @@ Estudiantes de Psicología de pregrado que cursen asignaturas de evaluación psi
 2. **Realizar una entrevista simulada:** Chat interactivo para explorar el motivo de consulta, emociones, síntomas y situación del paciente en tiempo real. Soporte para dictado por voz y cuaderno de campo del terapeuta.
 3. **Interactuar con el paciente virtual:** Respuestas generadas por IA coherentes con la patología seleccionada, lectura de comunicación no verbal (expresiones, latencia y signos vegetativos) y síntesis de voz del paciente.
 4. **Consultar retroalimentación (Debriefing):** Al finalizar la sesión, el estudiante recibe un informe pedagógico con métricas sobre preguntas abiertas vs. cerradas, nivel de empatía, alianza terapéutica y detección de preguntas inductivas o sesgadas con sugerencias de reformulación.
-5. **Panel de Progreso Académico:** Registro de casos completados, horas acumuladas y evolución de competencias clínicas.
+5. **Panel de Progreso Académico Individual:** Cada estudiante inicia su avance desde el 0%, con expediente privado por dispositivo, cálculo de horas de consulta acumuladas, registro de casos evaluados y opción de reinicio a cero.
 
 ## 4. Lo que no hace
 La aplicación no atiende a pacientes reales, no realiza diagnósticos clínicos reales ni sustituye la formación universitaria o la supervisión de un profesional. Tampoco asigna calificaciones oficiales, ya que la evaluación corresponde al docente supervisor.

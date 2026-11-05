@@ -11,9 +11,9 @@ const AppState = {
   },
   session: {
     active: true,
-    timerSeconds: 865, // 14 min 25 seg de muestra
+    timerSeconds: 0, // Inicia desde 00:00 para cada usuario
     timerInterval: null,
-    rapport: 86,
+    rapport: 75, // Rapport neutro de encuadre inicial
     messages: [],
     notes: '',
     checkedCriteria: new Set()
@@ -29,6 +29,12 @@ document.addEventListener('DOMContentLoaded', () => {
   const savedMode = localStorage.getItem('psicosim_ai_mode') || 'autonomous';
   AppState.aiSettings.geminiApiKey = savedKey || '';
   AppState.aiSettings.mode = savedMode;
+
+  // Inicializar perfil del estudiante (onboarding si es nuevo)
+  initStudentProfile();
+
+  // Actualizar indicadores y widgets de progreso a estado real del estudiante (desde 0)
+  updateProgressWidgets();
 
   // Cargar caso inicial por defecto
   setInitialCase(AppState.activeCaseId);
@@ -59,6 +65,81 @@ document.addEventListener('DOMContentLoaded', () => {
   initNotesAutosave();
 });
 
+// Obtener nombre del estudiante actual
+function getStudentName() {
+  return localStorage.getItem('psicosim_student_name') || 'Estudiante';
+}
+
+// Inicializar perfil del estudiante al cargar
+function initStudentProfile() {
+  const currentName = localStorage.getItem('psicosim_student_name');
+  if (!currentName) {
+    // Si es su primera vez abriendo la aplicación, mostrar modal de bienvenida para pedir su nombre
+    setTimeout(() => {
+      openStudentModal(true);
+    }, 400);
+  }
+  updateStudentProfileUI();
+}
+
+// Abrir modal de estudiante
+function openStudentModal(isFirstTime = false) {
+  const modal = document.getElementById('studentModal');
+  const input = document.getElementById('studentNameInput');
+  if (input) {
+    const current = localStorage.getItem('psicosim_student_name');
+    input.value = current || '';
+    if (isFirstTime) {
+      input.placeholder = 'Ingresa tu nombre y apellido (Ej: Paula Cruz)';
+    }
+  }
+  if (modal) {
+    modal.classList.remove('hidden');
+    modal.classList.add('flex');
+    if (input) input.focus();
+  }
+}
+
+// Cerrar modal de estudiante
+function closeStudentModal() {
+  const modal = document.getElementById('studentModal');
+  if (modal) {
+    modal.classList.add('hidden');
+    modal.classList.remove('flex');
+  }
+}
+
+// Guardar perfil del estudiante
+function saveStudentProfile() {
+  const input = document.getElementById('studentNameInput');
+  const name = input ? input.value.trim() : '';
+  const finalName = name || 'Estudiante';
+  localStorage.setItem('psicosim_student_name', finalName);
+  updateStudentProfileUI();
+  updateProgressWidgets();
+  closeStudentModal();
+}
+
+// Actualizar elementos visuales del perfil del estudiante en la interfaz
+function updateStudentProfileUI() {
+  const name = getStudentName();
+  const initials = name.split(' ').map(n => n[0]).filter(Boolean).slice(0, 2).join('').toUpperCase() || 'E';
+
+  // Píldora de cabecera
+  const headerName = document.getElementById('headerUserName');
+  const headerInitials = document.getElementById('headerUserInitials');
+  if (headerName) headerName.textContent = name;
+  if (headerInitials) headerInitials.textContent = initials;
+
+  // Vista de Progreso
+  const progHeader = document.getElementById('progressStudentNameHeader');
+  const progName = document.getElementById('progressUserNameDisplay');
+  const progAvatar = document.getElementById('progressUserAvatar');
+  if (progHeader) progHeader.textContent = name;
+  if (progName) progName.textContent = name;
+  if (progAvatar) progAvatar.textContent = initials;
+}
+
 // Función de navegación entre vistas
 function switchView(viewName) {
   const validViews = ['catalogo', 'consulta', 'debriefing', 'progreso'];
@@ -84,6 +165,11 @@ function switchView(viewName) {
   // Si se ingresa al debriefing, computar métricas y retroalimentación clínica
   if (viewName === 'debriefing') {
     updateDebriefingUI();
+  }
+
+  // Si se ingresa al catálogo o progreso, actualizar indicadores
+  if (viewName === 'catalogo' || viewName === 'progreso') {
+    updateProgressWidgets();
   }
 
   // Actualizar estilos activos en la barra de navegación superior (Desktop)
@@ -281,7 +367,21 @@ function launchSimulation(caseIdentifier) {
   AppState.activeCaseId = targetCase.id;
   updateActiveCaseUI(targetCase);
 
-  // Inicializar o adaptar el chat al paciente seleccionado
+  // Reiniciar estado de sesión para el nuevo paciente (iniciar en 0)
+  AppState.session.messages = [];
+  AppState.session.timerSeconds = 0;
+  AppState.session.rapport = 75;
+  updateTimerDisplay();
+  updateRapportScore(0);
+
+  // Cargar notas guardadas previamente para este paciente específico
+  const notesTextarea = document.querySelector('#tabContentNotes textarea');
+  if (notesTextarea) {
+    const saved = localStorage.getItem('psicosim_notes_' + targetCase.id);
+    notesTextarea.value = saved || '';
+  }
+
+  // Inicializar el espacio de diálogo limpio para el paciente seleccionado
   setupInitialChatForPatient(targetCase);
 
   // Navegar a la sala de consulta
@@ -293,44 +393,21 @@ function setupInitialChatForPatient(patient) {
   const feed = document.getElementById('transcriptFeed');
   if (!feed) return;
 
-  // Si ya tenemos mensajes guardados para este paciente, podemos mantenerlos;
-  // de lo contrario, creamos el diálogo inicial de bienvenida adecuado
+  const firstName = patient.name.split(' ')[0];
   feed.innerHTML = `
-    <!-- Turno 1: Terapeuta (Paula Cruz) -->
-    <div class="flex flex-col items-end gap-1 pl-space-md md:pl-space-lg">
-      <div class="flex items-center gap-space-xs">
-        <span class="font-label-sm text-[11px] text-on-surface-variant">10:01</span>
-        <span class="font-label-sm text-xs font-semibold text-primary">Paula Cruz (Terapeuta)</span>
+    <!-- Empty Session State / Prompt de Inicio de Consulta -->
+    <div class="flex flex-col items-center justify-center p-space-lg text-center bg-surface-container-low/60 rounded-xl border border-dashed border-surface-container my-space-sm" id="emptySessionPrompt">
+      <div class="w-12 h-12 rounded-full bg-secondary-container text-secondary flex items-center justify-center mb-space-sm">
+        <span class="material-symbols-outlined text-[26px]">record_voice_over</span>
       </div>
-      <div class="bg-surface-container-high text-on-surface p-space-md rounded-xl rounded-tr-none shadow-sm max-w-xl text-left">
-        <p class="font-body-md text-sm md:text-body-md leading-relaxed">
-          Hola ${patient.name.split(' ')[0]}, bienvenido/a. Tómate el tiempo que necesites. Cuéntame qué te ha motivado a venir a consulta hoy.
-        </p>
-        <div class="mt-space-xs pt-space-xs flex items-center justify-between text-on-surface-variant border-t border-surface-variant/40">
-          <span class="font-label-sm text-[11px] flex items-center gap-1 text-secondary font-medium">
-            <span class="material-symbols-outlined text-[13px]">psychology</span>
-            Intervención: Pregunta Abierta de Encuadre
-          </span>
-          <span class="font-label-sm text-[11px]">Rapport +5%</span>
-        </div>
-      </div>
-    </div>
-
-    <!-- Turno 2: Paciente Virtual -->
-    <div class="flex flex-col items-start gap-1 pr-space-md md:pr-space-lg">
-      <div class="flex items-center gap-space-xs">
-        <span class="font-label-sm text-xs font-semibold text-primary">${patient.name} (IA)</span>
-        <span class="font-label-sm text-[11px] text-on-surface-variant">10:02</span>
-      </div>
-      <div class="bg-surface-container-low text-on-surface p-space-md rounded-xl rounded-tl-none shadow-sm max-w-xl border-l-4 border-l-secondary">
-        <p class="font-body-md text-sm md:text-body-md leading-relaxed">
-          Gracias... la verdad es que ${patient.quote.replace(/[«»]/g, '')}
-        </p>
-        <div class="mt-space-xs pt-space-xs flex items-center gap-space-xs flex-wrap">
-          <span class="px-space-xs py-0.5 rounded font-label-sm text-[10px] bg-surface-container text-on-surface-variant font-medium">${patient.diagnosticCode.split('·')[0].trim()}</span>
-          <span class="px-space-xs py-0.5 rounded font-label-sm text-[10px] bg-secondary-container text-on-secondary-container font-semibold">Resistencia: ${patient.resistance}</span>
-        </div>
-      </div>
+      <h4 class="font-headline-sm text-sm font-bold text-primary mb-1">${patient.name} está en la sala de consulta</h4>
+      <p class="font-body-sm text-xs text-on-surface-variant max-w-md mb-space-sm">
+        ${patient.observationalState}. Establece el encuadre y formula una pregunta abierta para explorar su motivo de consulta.
+      </p>
+      <button type="button" onclick="insertPrompt('Hola ${firstName}, bienvenido/a. Tómate el tiempo que necesites. Cuéntame qué te ha motivado a venir a consulta hoy.')" class="px-space-md py-1.5 rounded-lg bg-surface-container hover:bg-surface-container-high text-primary font-label-sm text-xs font-semibold transition-colors flex items-center gap-1 shadow-xs cursor-pointer">
+        <span class="material-symbols-outlined text-[14px] text-secondary">tips_and_updates</span>
+        <span>Usar apertura sugerida para ${firstName}</span>
+      </button>
     </div>
   `;
 }
@@ -595,13 +672,19 @@ async function sendIntervention() {
   // Analizar intervención del estudiante
   const analysis = ClinicalSimulator.analyzeTraineeQuestion(text);
 
+  // Quitar prompt de bienvenida de sala vacía si aún está presente
+  const emptyPrompt = document.getElementById('emptySessionPrompt');
+  if (emptyPrompt) emptyPrompt.remove();
+
+  const studentName = getStudentName();
+
   // 1. Renderizar turno del terapeuta
   const traineeBubble = document.createElement('div');
   traineeBubble.className = "flex flex-col items-end gap-1 pl-space-md md:pl-space-lg animate-in fade-in duration-200";
   traineeBubble.innerHTML = `
     <div class="flex items-center gap-space-xs">
       <span class="font-label-sm text-[11px] text-on-surface-variant">${timeStr}</span>
-      <span class="font-label-sm text-xs font-semibold text-primary">Paula Cruz (Terapeuta)</span>
+      <span class="font-label-sm text-xs font-semibold text-primary">${escapeHtml(studentName)} (Terapeuta)</span>
     </div>
     <div class="bg-surface-container-high text-on-surface p-space-md rounded-xl rounded-tr-none shadow-sm max-w-xl text-left">
       <p class="font-body-md text-sm md:text-body-md leading-relaxed">${escapeHtml(text)}</p>
@@ -867,6 +950,9 @@ function updateDebriefingUI() {
     empathyScore = Math.min(100, Math.max(35, Math.round((empCount / totalTurns) * 65 + 35)));
 
     leadingCount = traineeMessages.filter(m => m.analysis?.isLeading).length;
+
+    // Registrar sesión completada en el expediente individual del estudiante
+    recordCompletedSession(patient.id, AppState.session.timerSeconds, rapportScore, leadingCount);
   }
 
   // Actualizar KPI 1: Preguntas Abiertas vs Cerradas
@@ -1037,5 +1123,208 @@ function updateDebriefingUI() {
       commentEl.textContent = `Encuadre inicial adecuado con ${patient.name}. Se sugiere profundizar en la validación afectiva previa a la exploración fáctica de síntomas, permitiendo mayor tiempo para que el paciente elabore su discurso.`;
     }
   }
+}
+
+// ========================================================
+// SISTEMA DE PROGRESO INDIVIDUAL DEL ESTUDIANTE (DESDE CERO)
+// ========================================================
+
+// Obtener casos completados del estudiante en este navegador
+function getCompletedCases() {
+  try {
+    const raw = localStorage.getItem('psicosim_completed_cases');
+    return raw ? JSON.parse(raw) : [];
+  } catch (e) {
+    return [];
+  }
+}
+
+// Obtener histórico de puntuaciones de sesiones
+function getSessionScores() {
+  try {
+    const raw = localStorage.getItem('psicosim_session_scores');
+    return raw ? JSON.parse(raw) : [];
+  } catch (e) {
+    return [];
+  }
+}
+
+// Registrar la finalización de un caso en el navegador del estudiante
+function recordCompletedSession(caseId, sessionSeconds, rapport, leadingCount) {
+  const completed = getCompletedCases();
+  if (!completed.includes(caseId)) {
+    completed.push(caseId);
+    localStorage.setItem('psicosim_completed_cases', JSON.stringify(completed));
+  }
+
+  const currentSeconds = parseInt(localStorage.getItem('psicosim_total_seconds') || '0', 10);
+  localStorage.setItem('psicosim_total_seconds', (currentSeconds + sessionSeconds).toString());
+
+  const scores = getSessionScores();
+  scores.push({
+    caseId: caseId,
+    timestamp: Date.now(),
+    rapport: rapport,
+    leading: leadingCount
+  });
+  localStorage.setItem('psicosim_session_scores', JSON.stringify(scores));
+
+  updateProgressWidgets();
+}
+
+// Actualizar todos los widgets e indicadores de progreso
+function updateProgressWidgets() {
+  const completedCases = getCompletedCases();
+  const completedCount = completedCases.length;
+  const totalCases = (typeof CLINICAL_CASES !== 'undefined' && CLINICAL_CASES.length) ? CLINICAL_CASES.length : 4;
+  const percentage = Math.round((completedCount / totalCases) * 100);
+
+  const totalSeconds = parseInt(localStorage.getItem('psicosim_total_seconds') || '0', 10);
+  const totalHours = (totalSeconds / 3600).toFixed(1);
+  const totalMins = Math.round(totalSeconds / 60);
+
+  const scores = getSessionScores();
+  let avgRapportText = "--%";
+  let avgBiasText = "0.0";
+  if (scores.length > 0) {
+    const sumRapport = scores.reduce((acc, s) => acc + (s.rapport || 0), 0);
+    const avgRapport = Math.round(sumRapport / scores.length);
+    avgRapportText = `${avgRapport}%`;
+
+    const sumBias = scores.reduce((acc, s) => acc + (s.leading || 0), 0);
+    const avgBias = (sumBias / scores.length).toFixed(1);
+    avgBiasText = avgBias;
+  }
+
+  // 1. Bento widget del catálogo (#view-catalogo)
+  const catCasesBadge = document.getElementById('catalogCasesCountBadge');
+  const catPercentText = document.getElementById('catalogPercentText');
+  const catProgressBar = document.getElementById('catalogProgressBar');
+  const catEvaluatedCount = document.getElementById('catalogEvaluatedCount');
+  const catRapportAvg = document.getElementById('catalogRapportAvg');
+
+  if (catCasesBadge) catCasesBadge.textContent = `${completedCount} / ${totalCases} Casos`;
+  if (catPercentText) catPercentText.textContent = `${percentage}%`;
+  if (catProgressBar) catProgressBar.style.width = `${percentage}%`;
+  if (catEvaluatedCount) catEvaluatedCount.textContent = `${completedCount} Evaluados`;
+  if (catRapportAvg) catRapportAvg.textContent = `Rapport prom: ${avgRapportText}`;
+
+  // 2. Badges individuales de cada caso en las tarjetas del catálogo
+  if (typeof CLINICAL_CASES !== 'undefined') {
+    CLINICAL_CASES.forEach(c => {
+      const badge = document.getElementById(`caseStatusBadge-${c.id}`);
+      if (badge) {
+        if (completedCases.includes(c.id)) {
+          badge.className = "px-space-xs py-0.5 rounded-full font-label-sm text-[11px] bg-secondary-fixed text-on-secondary-fixed font-semibold flex items-center gap-1";
+          badge.innerHTML = `<span class="material-symbols-outlined text-[13px]">check_circle</span> Evaluado`;
+        } else {
+          badge.className = "px-space-xs py-0.5 rounded-full font-label-sm text-[11px] bg-surface-container text-on-surface-variant font-medium";
+          badge.innerHTML = `Pendiente`;
+        }
+      }
+    });
+  }
+
+  // 3. Tarjetas KPI de la vista de Progreso (#view-progreso)
+  const progCount = document.getElementById('progressCompletedCount');
+  const progTotalText = document.getElementById('progressTotalCasesText');
+  const progBar = document.getElementById('progressCompletedBar');
+  const progHours = document.getElementById('progressHoursCount');
+  const progHoursSub = document.getElementById('progressHoursSubtitle');
+  const progRap = document.getElementById('progressRapportAvg');
+  const progRapSub = document.getElementById('progressRapportSubtitle');
+  const progBias = document.getElementById('progressBiasAvg');
+  const progLevel = document.getElementById('progressLevelBadge');
+
+  if (progCount) progCount.textContent = completedCount;
+  if (progTotalText) progTotalText.textContent = `/ ${totalCases} completados`;
+  if (progBar) progBar.style.width = `${percentage}%`;
+  if (progHours) progHours.textContent = totalHours;
+  if (progHoursSub) {
+    progHoursSub.innerHTML = `<span class="material-symbols-outlined text-[14px]">schedule</span> ${totalMins} minutos de práctica`;
+  }
+  if (progRap) progRap.textContent = avgRapportText;
+  if (progRapSub) {
+    if (scores.length > 0) {
+      progRapSub.innerHTML = `<span class="material-symbols-outlined text-[14px]">thumb_up</span> ${scores.length} sesión(es) registrada(s)`;
+    } else {
+      progRapSub.innerHTML = `<span class="material-symbols-outlined text-[14px]">thumb_up</span> Sin sesiones finalizadas`;
+    }
+  }
+  if (progBias) progBias.textContent = avgBiasText;
+
+  // Actualizar nivel acreditado según progreso
+  if (progLevel) {
+    if (completedCount === 0) progLevel.textContent = "Principiante Inicial A1";
+    else if (completedCount === 1) progLevel.textContent = "Clínico en Formación A2";
+    else if (completedCount === 2) progLevel.textContent = "Clínico Intermedio B1";
+    else if (completedCount === 3) progLevel.textContent = "Clínico Intermedio B2";
+    else progLevel.textContent = "Acreditado / Práctica Lista C1";
+  }
+
+  // 4. Renderizar matriz individual de casos en la vista de progreso
+  renderProgressCasesList(completedCases);
+}
+
+// Renderizar matriz individual de casos en el panel de progreso
+function renderProgressCasesList(completedCases) {
+  const container = document.getElementById('progressCasesList');
+  if (!container || typeof CLINICAL_CASES === 'undefined') return;
+
+  container.innerHTML = CLINICAL_CASES.map(c => {
+    const isDone = completedCases.includes(c.id);
+    return `
+      <div class="flex items-center justify-between p-space-md rounded-xl bg-surface-container-low border ${isDone ? 'border-secondary/40' : 'border-surface-container'}">
+        <div class="flex items-center gap-space-sm">
+          <img src="${c.avatar}" alt="${c.name}" class="w-12 h-12 rounded-full object-cover ring-2 ${isDone ? 'ring-secondary' : 'ring-surface-container'}" />
+          <div>
+            <div class="flex items-center gap-space-xs">
+              <h4 class="font-headline-sm text-sm font-bold text-primary">${c.name}</h4>
+              <span class="font-body-sm text-xs text-on-surface-variant">(${c.age}a)</span>
+            </div>
+            <span class="font-label-sm text-[11px] text-on-surface-variant block">${c.diagnosticCode}</span>
+          </div>
+        </div>
+        <div class="flex flex-col items-end gap-1">
+          ${isDone 
+            ? `<span class="px-space-xs py-0.5 rounded-full font-label-sm text-[11px] bg-secondary-fixed text-on-secondary-fixed font-semibold flex items-center gap-1"><span class="material-symbols-outlined text-[13px]">check_circle</span> Evaluado</span>
+               <button onclick="launchSimulation('${c.id}')" class="font-label-sm text-xs text-secondary hover:underline cursor-pointer font-semibold">Repetir Sesión</button>`
+            : `<span class="px-space-xs py-0.5 rounded-full font-label-sm text-[11px] bg-surface-container text-on-surface-variant font-medium">Pendiente</span>
+               <button onclick="launchSimulation('${c.id}')" class="px-space-sm py-1 rounded bg-primary text-on-primary font-label-sm text-xs font-semibold hover:bg-primary-container cursor-pointer transition-colors shadow-xs">Iniciar</button>`
+          }
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+// Reiniciar el progreso del estudiante a 0%
+function resetStudentProgress() {
+  const confirmed = confirm("¿Deseas reiniciar tu progreso a 0%?\\n\\nEsto restablecerá los casos evaluados y las horas acumuladas en este navegador, permitiéndote volver a practicar todos los casos clínicos desde cero.");
+  if (!confirmed) return;
+
+  localStorage.removeItem('psicosim_completed_cases');
+  localStorage.removeItem('psicosim_total_seconds');
+  localStorage.removeItem('psicosim_session_scores');
+
+  // Limpiar notas clínicas locales
+  if (typeof CLINICAL_CASES !== 'undefined') {
+    CLINICAL_CASES.forEach(c => {
+      localStorage.removeItem('psicosim_notes_' + c.id);
+    });
+  }
+
+  // Reiniciar sesión en memoria
+  AppState.session.messages = [];
+  AppState.session.timerSeconds = 0;
+  AppState.session.rapport = 75;
+
+  const notesTextarea = document.querySelector('#tabContentNotes textarea');
+  if (notesTextarea) notesTextarea.value = '';
+
+  updateTimerDisplay();
+  updateProgressWidgets();
+
+  alert("Tu progreso ha sido restablecido con éxito a 0%.");
 }
 

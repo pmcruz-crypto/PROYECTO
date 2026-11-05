@@ -155,12 +155,12 @@
         </button>
 
         <!-- User Profile Pill -->
-        <div class="flex items-center gap-space-xs md:gap-space-sm pl-1 border-l border-surface-container">
-          <div class="w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center font-bold text-xs ring-2 ring-surface-container">
-            PC
+        <div class="flex items-center gap-space-xs md:gap-space-sm pl-1 border-l border-surface-container cursor-pointer hover:opacity-85 transition-opacity" onclick="openStudentModal()" title="Configurar perfil de estudiante">
+          <div class="w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center font-bold text-xs ring-2 ring-surface-container" id="headerUserInitials">
+            E
           </div>
           <div class="hidden md:flex flex-col text-left">
-            <span class="font-label-md text-label-md text-on-surface leading-tight font-semibold">Paula Cruz</span>
+            <span class="font-label-md text-label-md text-on-surface leading-tight font-semibold" id="headerUserName">Estudiante</span>
             <span class="font-label-sm text-[11px] text-on-surface-variant">En formación</span>
           </div>
         </div>
@@ -312,20 +312,20 @@
             <div class="bg-surface-container-lowest p-space-md rounded-xl shadow-sm flex flex-col justify-between flex-1">
               <div class="flex items-center justify-between mb-space-xs">
                 <span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Tu Cumplimiento Clínico</span>
-                <span class="px-space-sm py-0.5 rounded-full bg-surface-container font-label-sm text-label-sm text-primary font-semibold">3 / 4 Casos</span>
+                <span class="px-space-sm py-0.5 rounded-full bg-surface-container font-label-sm text-label-sm text-primary font-semibold" id="catalogCasesCountBadge">0 / 4 Casos</span>
               </div>
               <div class="flex items-baseline gap-space-xs mb-space-xs">
-                <span class="font-headline-md text-2xl text-primary font-bold">75%</span>
+                <span class="font-headline-md text-2xl text-primary font-bold" id="catalogPercentText">0%</span>
                 <span class="font-label-sm text-label-sm text-on-surface-variant">completado este ciclo</span>
               </div>
               <div class="w-full bg-surface-container-low h-2 rounded-full overflow-hidden mb-space-sm">
-                <div class="bg-secondary h-full rounded-full transition-all duration-500" style="width: 75%"></div>
+                <div class="bg-secondary h-full rounded-full transition-all duration-500" id="catalogProgressBar" style="width: 0%"></div>
               </div>
               <div class="flex items-center justify-between text-on-surface-variant font-label-sm text-label-sm pt-space-xs">
                 <span class="flex items-center gap-1">
-                  <span class="w-2 h-2 rounded-full bg-secondary"></span> 3 Evaluados
+                  <span class="w-2 h-2 rounded-full bg-secondary"></span> <span id="catalogEvaluatedCount">0 Evaluados</span>
                 </span>
-                <span class="text-secondary font-semibold">Rapport prom: 88%</span>
+                <span class="text-secondary font-semibold" id="catalogRapportAvg">Rapport prom: --%</span>
               </div>
             </div>
             
@@ -413,10 +413,13 @@
                     </span>
                   </div>
                 </div>
-                <span class="px-space-sm py-0.5 rounded-full font-label-sm text-label-sm bg-surface-container text-primary font-semibold flex items-center gap-1">
-                  <span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>
-                  Intermedio
-                </span>
+                <div class="flex flex-col items-end gap-1">
+                  <span class="px-space-xs py-0.5 rounded-full font-label-sm text-[11px] bg-surface-container text-on-surface-variant font-medium" id="caseStatusBadge-elena-morales">Pendiente</span>
+                  <span class="px-space-sm py-0.5 rounded-full font-label-sm text-label-sm bg-surface-container text-primary font-semibold flex items-center gap-1">
+                    <span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>
+                    Intermedio
+                  </span>
+                </div>
               </div>
 
               <div class="bg-surface-container-low p-space-sm rounded-lg mb-space-sm">
@@ -471,10 +474,13 @@
                     </span>
                   </div>
                 </div>
-                <span class="px-space-sm py-0.5 rounded-full font-label-sm text-label-sm bg-surface-container-low text-secondary font-semibold flex items-center gap-1">
-                  <span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>
-                  Principiante
-                </span>
+                <div class="flex flex-col items-end gap-1">
+                  <span class="px-space-xs py-0.5 rounded-full font-label-sm text-[11px] bg-surface-container text-on-surface-variant font-medium" id="caseStatusBadge-javier-ortiz">Pendiente</span>
+                  <span class="px-space-sm py-0.5 rounded-full font-label-sm text-label-sm bg-surface-container-low text-secondary font-semibold flex items-center gap-1">
+                    <span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>
+                    Principiante
+                  </span>
+                </div>
               </div>
 
               <div class="bg-surface-container-low p-space-sm rounded-lg mb-space-sm">
@@ -529,10 +535,13 @@
                     </span>
                   </div>
                 </div>
-                <span class="px-space-sm py-0.5 rounded-full font-label-sm text-label-sm bg-error-container text-on-error-container font-semibold flex items-center gap-1">
-                  <span class="w-1.5 h-1.5 rounded-full bg-error"></span>
-                  Avanzado
-                </span>
+                <div class="flex flex-col items-end gap-1">
+                  <span class="px-space-xs py-0.5 rounded-full font-label-sm text-[11px] bg-surface-container text-on-surface-variant font-medium" id="caseStatusBadge-clara-mendoza">Pendiente</span>
+                  <span class="px-space-sm py-0.5 rounded-full font-label-sm text-label-sm bg-error-container text-on-error-container font-semibold flex items-center gap-1">
+                    <span class="w-1.5 h-1.5 rounded-full bg-error"></span>
+                    Avanzado
+                  </span>
+                </div>
               </div>
 
               <div class="bg-surface-container-low p-space-sm rounded-lg mb-space-sm">
@@ -587,10 +596,13 @@
                     </span>
                   </div>
                 </div>
-                <span class="px-space-sm py-0.5 rounded-full font-label-sm text-label-sm bg-surface-container-low text-secondary font-semibold flex items-center gap-1">
-                  <span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>
-                  Principiante
-                </span>
+                <div class="flex flex-col items-end gap-1">
+                  <span class="px-space-xs py-0.5 rounded-full font-label-sm text-[11px] bg-surface-container text-on-surface-variant font-medium" id="caseStatusBadge-mateo-rivas">Pendiente</span>
+                  <span class="px-space-sm py-0.5 rounded-full font-label-sm text-label-sm bg-surface-container-low text-secondary font-semibold flex items-center gap-1">
+                    <span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>
+                    Principiante
+                  </span>
+                </div>
               </div>
 
               <div class="bg-surface-container-low p-space-sm rounded-lg mb-space-sm">
@@ -775,78 +787,19 @@
               <!-- Messages Stream -->
               <div class="flex flex-col gap-space-md max-h-[380px] overflow-y-auto pr-space-xs scroll-smooth" id="transcriptFeed">
                 
-                <!-- Turn 1: Trainee (Psychologist) -->
-                <div class="flex flex-col items-end gap-1 pl-space-md md:pl-space-lg">
-                  <div class="flex items-center gap-space-xs">
-                    <span class="font-label-sm text-[11px] text-on-surface-variant">10:01</span>
-                    <span class="font-label-sm text-xs font-semibold text-primary">Paula Cruz (Terapeuta)</span>
+                <!-- Empty Session State / Prompt de Inicio de Consulta -->
+                <div class="flex flex-col items-center justify-center p-space-lg text-center bg-surface-container-low/60 rounded-xl border border-dashed border-surface-container my-space-sm" id="emptySessionPrompt">
+                  <div class="w-12 h-12 rounded-full bg-secondary-container text-secondary flex items-center justify-center mb-space-sm">
+                    <span class="material-symbols-outlined text-[26px]">record_voice_over</span>
                   </div>
-                  <div class="bg-surface-container-high text-on-surface p-space-md rounded-xl rounded-tr-none shadow-sm max-w-xl text-left">
-                    <p class="font-body-md text-sm md:text-body-md leading-relaxed">
-                      Hola Elena, bienvenida. Tómate el tiempo que necesites. Cuéntame qué te ha motivado a venir a consulta hoy.
-                    </p>
-                    <div class="mt-space-xs pt-space-xs flex items-center justify-between text-on-surface-variant border-t border-surface-variant/40">
-                      <span class="font-label-sm text-[11px] flex items-center gap-1 text-secondary font-medium">
-                        <span class="material-symbols-outlined text-[13px]">psychology</span>
-                        Intervención: Pregunta Abierta de Encuadre
-                      </span>
-                      <span class="font-label-sm text-[11px]">Rapport +4%</span>
-                    </div>
-                  </div>
-                </div>
-
-                <!-- Turn 2: Virtual Patient -->
-                <div class="flex flex-col items-start gap-1 pr-space-md md:pr-space-lg">
-                  <div class="flex items-center gap-space-xs">
-                    <span class="font-label-sm text-xs font-semibold text-primary" id="chatPatientLabel">Elena Morales (IA)</span>
-                    <span class="font-label-sm text-[11px] text-on-surface-variant">10:02</span>
-                  </div>
-                  <div class="bg-surface-container-low text-on-surface p-space-md rounded-xl rounded-tl-none shadow-sm max-w-xl border-l-4 border-l-secondary">
-                    <p class="font-body-md text-sm md:text-body-md leading-relaxed">
-                      Gracias doctora... la verdad es que vengo porque ya no doy más. Llevo meses sintiendo un nudo constante en el estómago y una presión en el pecho, como si en cualquier segundo fuera a suceder una catástrofe en mi trabajo o con mi familia.
-                    </p>
-                    <div class="mt-space-xs pt-space-xs flex items-center gap-space-xs flex-wrap">
-                      <span class="px-space-xs py-0.5 rounded font-label-sm text-[10px] bg-error-container text-on-error-container font-semibold">Catastrofismo / F41.1</span>
-                      <span class="px-space-xs py-0.5 rounded font-label-sm text-[10px] bg-surface-container-highest text-on-surface-variant">Somatización torácica</span>
-                    </div>
-                  </div>
-                </div>
-
-                <!-- Turn 3: Trainee (Psychologist) -->
-                <div class="flex flex-col items-end gap-1 pl-space-md md:pl-space-lg">
-                  <div class="flex items-center gap-space-xs">
-                    <span class="font-label-sm text-[11px] text-on-surface-variant">10:05</span>
-                    <span class="font-label-sm text-xs font-semibold text-primary">Paula Cruz (Terapeuta)</span>
-                  </div>
-                  <div class="bg-surface-container-high text-on-surface p-space-md rounded-xl rounded-tr-none shadow-sm max-w-xl text-left">
-                    <p class="font-body-md text-sm md:text-body-md leading-relaxed">
-                      Entiendo que esa sensación constante de alerta debe ser agotadora para ti. ¿Recuerdas cuándo empezaron a manifestarse con mayor intensidad estas sensaciones físicas?
-                    </p>
-                    <div class="mt-space-xs pt-space-xs flex items-center justify-between text-on-surface-variant border-t border-surface-variant/40">
-                      <span class="font-label-sm text-[11px] flex items-center gap-1 text-secondary font-medium">
-                        <span class="material-symbols-outlined text-[13px]">volunteer_activism</span>
-                        Validación Emocional + Delimitación Temporal
-                      </span>
-                      <span class="font-label-sm text-[11px]">Eficacia: Alta</span>
-                    </div>
-                  </div>
-                </div>
-
-                <!-- Turn 4: Virtual Patient -->
-                <div class="flex flex-col items-start gap-1 pr-space-md md:pr-space-lg">
-                  <div class="flex items-center gap-space-xs">
-                    <span class="font-label-sm text-xs font-semibold text-primary">Elena Morales (IA)</span>
-                    <span class="font-label-sm text-[11px] text-on-surface-variant">10:07</span>
-                  </div>
-                  <div class="bg-surface-container-low text-on-surface p-space-md rounded-xl rounded-tl-none shadow-sm max-w-xl border-l-4 border-l-secondary">
-                    <p class="font-body-md text-sm md:text-body-md leading-relaxed">
-                      Creo que hace unos cuatro meses, cuando me ascendieron a coordinadora de equipo. Al principio pensé que era cansancio normal, pero ahora ni los fines de semana puedo desconectar... Me despierto a las 3:00 am con el corazón latiéndome desbocado pensando en correos y pendientes.
-                    </p>
-                    <div class="mt-space-xs pt-space-xs flex items-center gap-space-xs flex-wrap">
-                      <span class="px-space-xs py-0.5 rounded font-label-sm text-[10px] bg-surface-container-highest text-on-surface">Detonante: Promoción laboral</span>
-                      <span class="px-space-xs py-0.5 rounded font-label-sm text-[10px] bg-error-container text-on-error-container font-semibold">Insomnio de mantenimiento</span>
-                    </div>
-                  </div>
+                  <h4 class="font-headline-sm text-sm font-bold text-primary mb-1" id="emptyRoomTitle">La consulta está lista para iniciar</h4>
+                  <p class="font-body-sm text-xs text-on-surface-variant max-w-md mb-space-sm" id="emptyRoomDesc">
+                    El paciente virtual está en la sala esperando tu saludo o pregunta inicial. Establece el encuadre y formula una pregunta abierta para explorar su motivo de consulta.
+                  </p>
+                  <button type="button" onclick="insertPrompt('Hola, bienvenido/a. Tómate el tiempo que necesites. Cuéntame qué te ha motivado a venir a consulta hoy.')" class="px-space-md py-1.5 rounded-lg bg-surface-container hover:bg-surface-container-high text-primary font-label-sm text-xs font-semibold transition-colors flex items-center gap-1 shadow-xs cursor-pointer">
+                    <span class="material-symbols-outlined text-[14px] text-secondary">tips_and_updates</span>
+                    <span>Usar saludo de apertura sugerido</span>
+                  </button>
                 </div>
 
               </div>
@@ -1176,7 +1129,7 @@
             <div class="flex flex-col gap-space-xs">
               <div class="flex items-center gap-space-xs text-on-surface-variant font-label-sm text-xs uppercase tracking-wider">
                 <span class="inline-block w-2 h-2 rounded-full bg-secondary"></span>
-                <span>Expediente Clínico Formativo · Paula Cruz</span>
+                <span>Expediente Clínico Formativo · <span id="progressStudentNameHeader" class="font-semibold text-primary">Estudiante</span></span>
                 <span class="text-outline">/</span>
                 <span>Semestre 2024-II</span>
               </div>
@@ -1191,7 +1144,7 @@
               <span class="material-symbols-outlined text-[18px] text-secondary">verified_user</span>
               <div class="flex flex-col">
                 <span class="font-label-sm text-[10px] text-on-surface-variant">Nivel Acreditado</span>
-                <span class="font-label-lg text-sm text-primary font-bold leading-tight">Clínico Intermedio B2</span>
+                <span class="font-label-lg text-sm text-primary font-bold leading-tight" id="progressLevelBadge">Principiante Inicial A1</span>
               </div>
             </div>
           </div>
@@ -1203,47 +1156,87 @@
           <div class="rounded-xl bg-surface-container-lowest p-space-md shadow-sm flex flex-col justify-between">
             <span class="font-label-sm text-[11px] text-on-surface-variant uppercase tracking-wide font-semibold">Casos Simulados</span>
             <div class="my-space-sm flex items-baseline gap-space-xs">
-              <span class="font-headline-xl text-3xl text-primary font-bold">3</span>
-              <span class="font-label-md text-sm text-on-surface-variant">/ 4 completados</span>
+              <span class="font-headline-xl text-3xl text-primary font-bold" id="progressCompletedCount">0</span>
+              <span class="font-label-md text-sm text-on-surface-variant" id="progressTotalCasesText">/ 4 completados</span>
             </div>
             <div class="w-full bg-surface-container h-1.5 rounded-full overflow-hidden">
-              <div class="bg-primary h-full rounded-full" style="width: 75%"></div>
+              <div class="bg-primary h-full rounded-full transition-all duration-500" id="progressCompletedBar" style="width: 0%"></div>
             </div>
           </div>
 
           <div class="rounded-xl bg-surface-container-lowest p-space-md shadow-sm flex flex-col justify-between">
             <span class="font-label-sm text-[11px] text-on-surface-variant uppercase tracking-wide font-semibold">Horas de Consulta</span>
             <div class="my-space-sm flex items-baseline gap-space-xs">
-              <span class="font-headline-xl text-3xl text-primary font-bold">4.2</span>
+              <span class="font-headline-xl text-3xl text-primary font-bold" id="progressHoursCount">0.0</span>
               <span class="font-label-md text-sm text-on-surface-variant">horas acumuladas</span>
             </div>
-            <span class="font-body-sm text-xs text-secondary flex items-center gap-1">
-              <span class="material-symbols-outlined text-[14px]">trending_up</span> Cumplimiento al 84%
+            <span class="font-body-sm text-xs text-secondary flex items-center gap-1" id="progressHoursSubtitle">
+              <span class="material-symbols-outlined text-[14px]">schedule</span> 0 minutos de práctica
             </span>
           </div>
 
           <div class="rounded-xl bg-surface-container-lowest p-space-md shadow-sm flex flex-col justify-between">
             <span class="font-label-sm text-[11px] text-on-surface-variant uppercase tracking-wide font-semibold">Rapport Promedio</span>
             <div class="my-space-sm flex items-baseline gap-space-xs">
-              <span class="font-headline-xl text-3xl text-primary font-bold">88%</span>
-              <span class="font-label-md text-sm text-on-surface-variant">alianza sólida</span>
+              <span class="font-headline-xl text-3xl text-primary font-bold" id="progressRapportAvg">--%</span>
+              <span class="font-label-md text-sm text-on-surface-variant">alianza terapéutica</span>
             </div>
-            <span class="font-body-sm text-xs text-secondary flex items-center gap-1">
-              <span class="material-symbols-outlined text-[14px]">thumb_up</span> Nivel sobresaliente
+            <span class="font-body-sm text-xs text-secondary flex items-center gap-1" id="progressRapportSubtitle">
+              <span class="material-symbols-outlined text-[14px]">thumb_up</span> Sin sesiones finalizadas
             </span>
           </div>
 
           <div class="rounded-xl bg-surface-container-lowest p-space-md shadow-sm flex flex-col justify-between">
             <span class="font-label-sm text-[11px] text-on-surface-variant uppercase tracking-wide font-semibold">Sesgo Inductivo</span>
             <div class="my-space-sm flex items-baseline gap-space-xs">
-              <span class="font-headline-xl text-3xl text-primary font-bold">0.8</span>
+              <span class="font-headline-xl text-3xl text-primary font-bold" id="progressBiasAvg">0.0</span>
               <span class="font-label-md text-sm text-on-surface-variant">promedio / sesión</span>
             </div>
-            <span class="font-body-sm text-xs text-secondary flex items-center gap-1">
+            <span class="font-body-sm text-xs text-secondary flex items-center gap-1" id="progressBiasSubtitle">
               <span class="material-symbols-outlined text-[14px]">check</span> En rango seguro (&lt; 2)
             </span>
           </div>
 
+        </div>
+
+        <!-- Matriz de Casos Clínicos del Plan Formativo -->
+        <div class="bg-surface-container-lowest rounded-xl p-space-md md:p-space-lg shadow-sm flex flex-col gap-space-md">
+          <div class="flex items-center justify-between pb-space-sm border-b border-surface-container">
+            <div class="flex items-center gap-space-xs">
+              <span class="material-symbols-outlined text-[22px] text-secondary">checklist</span>
+              <h3 class="font-headline-sm text-lg text-primary font-bold">Estado Individual de Casos Clínicos</h3>
+            </div>
+            <span class="font-label-sm text-xs text-on-surface-variant">Simulaciones requeridas para acreditar ciclo</span>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-space-md" id="progressCasesList">
+            <!-- Las tarjetas de estado de cada caso se renderizan dinámicamente -->
+          </div>
+        </div>
+
+        <!-- Gestión de Perfil y Reinicio de Progreso -->
+        <div class="bg-surface-container-lowest rounded-xl p-space-md md:p-space-lg shadow-sm flex flex-col md:flex-row items-center justify-between gap-space-md">
+          <div class="flex items-center gap-space-md">
+            <div class="w-12 h-12 rounded-full bg-primary text-white flex items-center justify-center font-bold text-base shadow-sm shrink-0" id="progressUserAvatar">
+              E
+            </div>
+            <div class="flex flex-col">
+              <span class="font-label-sm text-xs text-on-surface-variant">Estudiante activo en este navegador:</span>
+              <span class="font-headline-sm text-base text-primary font-bold" id="progressUserNameDisplay">Estudiante</span>
+              <span class="font-body-sm text-[11px] text-on-surface-variant">Tus datos y notas se guardan de forma privada en tu dispositivo.</span>
+            </div>
+          </div>
+
+          <div class="flex items-center gap-space-sm w-full md:w-auto justify-end">
+            <button type="button" onclick="openStudentModal()" class="px-space-md py-space-sm rounded-lg bg-surface-container hover:bg-surface-container-high text-primary font-label-md text-sm font-semibold transition-colors flex items-center gap-1 cursor-pointer">
+              <span class="material-symbols-outlined text-[16px]">edit</span>
+              <span>Cambiar Nombre</span>
+            </button>
+            <button type="button" onclick="resetStudentProgress()" class="px-space-md py-space-sm rounded-lg bg-error-container hover:bg-error/20 text-on-error-container font-label-md text-sm font-semibold transition-colors flex items-center gap-1 cursor-pointer" title="Reiniciar historial y porcentaje de avance a 0%">
+              <span class="material-symbols-outlined text-[16px]">restart_alt</span>
+              <span>Reiniciar a 0%</span>
+            </button>
+          </div>
         </div>
 
       </section>
@@ -1414,6 +1407,53 @@
         </button>
         <button class="px-space-md py-space-sm rounded-lg bg-primary hover:bg-primary-container text-on-primary font-label-md text-sm font-semibold cursor-pointer" onclick="saveAISettings()" type="button">
           Guardar Ajustes
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================================================== -->
+  <!-- MODAL: PERFIL DEL ESTUDIANTE                             -->
+  <!-- ======================================================== -->
+  <div class="fixed inset-0 bg-primary/40 backdrop-blur-sm z-50 hidden items-center justify-center p-space-md" id="studentModal">
+    <div class="bg-surface-container-lowest rounded-xl max-w-md w-full p-space-md md:p-space-lg shadow-xl relative animate-in fade-in duration-150">
+      <div class="flex items-start justify-between pb-space-sm mb-space-md border-b border-surface-container">
+        <div class="flex items-center gap-space-sm">
+          <span class="material-symbols-outlined text-secondary text-[28px]">account_circle</span>
+          <div>
+            <span class="font-label-sm text-xs text-secondary uppercase tracking-wider font-semibold">Perfil Formativo</span>
+            <h2 class="font-headline-md text-xl text-primary font-bold leading-tight">Estudiante en Práctica</h2>
+          </div>
+        </div>
+        <button class="w-8 h-8 rounded-full flex items-center justify-center bg-surface-container-low hover:bg-surface-container text-on-surface-variant cursor-pointer" onclick="closeStudentModal()" type="button">
+          <span class="material-symbols-outlined text-[20px]">close</span>
+        </button>
+      </div>
+
+      <div class="flex flex-col gap-space-md">
+        <p class="font-body-md text-sm text-on-surface-variant">
+          Ingresa tu nombre para personalizar tus expedientes clínicos, debriefings y registro de competencias. Tu avance iniciará desde el <strong>0%</strong> en este dispositivo.
+        </p>
+
+        <div>
+          <label class="font-label-sm text-xs font-semibold text-primary block mb-1" for="studentNameInput">Nombre y Apellido:</label>
+          <input class="w-full px-space-md py-space-sm rounded-lg bg-surface-container-low text-on-surface font-body-md text-sm border border-outline-variant focus:outline-none focus:border-secondary transition-all" id="studentNameInput" placeholder="Ej: Paula Cruz" type="text" />
+        </div>
+
+        <div class="p-space-sm rounded-lg bg-surface-container-low flex items-start gap-space-sm">
+          <span class="material-symbols-outlined text-secondary text-[18px] shrink-0 mt-0.5">lock</span>
+          <span class="font-body-sm text-xs text-on-surface-variant">
+            <strong>Privacidad garantizada:</strong> Tus simulaciones, notas y resultados se guardan exclusivamente en el navegador de tu dispositivo. No se comparten con otros usuarios.
+          </span>
+        </div>
+      </div>
+
+      <div class="mt-space-lg pt-space-sm flex items-center justify-end gap-space-sm">
+        <button class="px-space-md py-space-sm rounded-lg bg-surface-container-low text-on-surface-variant font-label-md text-sm hover:bg-surface-container cursor-pointer" onclick="closeStudentModal()" type="button">
+          Cancelar
+        </button>
+        <button class="px-space-md py-space-sm rounded-lg bg-primary hover:bg-primary-container text-on-primary font-label-md text-sm font-semibold cursor-pointer" onclick="saveStudentProfile()" type="button">
+          Guardar y Continuar
         </button>
       </div>
     </div>
