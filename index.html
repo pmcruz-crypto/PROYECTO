@@ -1196,10 +1196,19 @@
           <input class="mt-1 accent-secondary" id="radioGemini" name="aiModeRadio" type="radio" value="gemini"/>
           <div class="flex flex-col flex-1">
             <span class="font-semibold text-primary">Modo Google Gemini API en Vivo</span>
-            <span class="text-xs text-on-surface-variant mt-0.5">Respuestas generadas 100% en vivo usando tu API Key de Google Gemini.</span>
+            <span class="text-xs text-on-surface-variant mt-0.5">Respuestas generadas 100% en vivo usando tu propia API Key de Google Gemini.</span>
             <div class="mt-2">
-              <input class="w-full px-space-sm py-1.5 text-xs bg-surface-container-lowest border border-outline-variant rounded-lg focus:outline-none focus:border-secondary" id="geminiApiKeyInput" placeholder="Pega aquí tu Gemini API Key (opcional)" type="password"/>
-              <span class="text-[10px] text-on-surface-variant block mt-1">Tu clave se guarda únicamente en tu navegador.</span>
+              <div class="flex items-center gap-2">
+                <input class="flex-1 px-space-sm py-1.5 text-xs bg-surface-container-lowest border border-outline-variant rounded-lg focus:outline-none focus:border-secondary" id="geminiApiKeyInput" placeholder="Pega aquí tu Gemini API Key (ej: AIzaSy...)" type="password"/>
+                <button class="px-3 py-1.5 rounded-lg bg-surface-container hover:bg-surface-container-high text-primary font-semibold text-xs border border-outline-variant cursor-pointer transition-all shrink-0" id="btnTestGeminiKey" onclick="testGeminiConnection()" type="button">
+                  Probar Clave
+                </button>
+              </div>
+              <div class="flex items-center justify-between mt-1 text-[10px] text-on-surface-variant">
+                <span>Tu clave se guarda únicamente en tu navegador.</span>
+                <a class="text-secondary hover:underline font-medium" href="https://aistudio.google.com/app/apikey" rel="noopener noreferrer" target="_blank">Obtener clave gratuita ↗</a>
+              </div>
+              <div class="hidden mt-2 p-2 rounded-lg text-xs" id="geminiKeyStatus"></div>
             </div>
           </div>
         </label>

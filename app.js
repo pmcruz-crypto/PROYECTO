@@ -200,6 +200,11 @@ function switchView(viewName) {
   const validViews = ['catalogo', 'consulta', 'debriefing', 'progreso'];
   if (!validViews.includes(viewName)) viewName = 'catalogo';
 
+  // Detener locución si el paciente estaba hablando
+  if (typeof ClinicalSimulator !== 'undefined') {
+    ClinicalSimulator.stopSpeaking();
+  }
+
   AppState.currentView = viewName;
   window.location.hash = viewName;
 
@@ -414,8 +419,17 @@ function launchSimulation(caseIdentifier) {
   AppState.session.messages = [];
   AppState.session.timerSeconds = 0;
   AppState.session.rapport = 75;
+  AppState.session.checkedCriteria = new Set();
+  AppState.session.hasRecorded = false;
+  AppState.session.id = Date.now();
   updateTimerDisplay();
   updateRapportScore(0);
+
+  // Reiniciar contexto conversacional del motor clínico
+  if (typeof ClinicalSimulator !== 'undefined') {
+    ClinicalSimulator.stopSpeaking();
+    ClinicalSimulator.resetSessionContext(targetCase.id);
+  }
 
   // Cargar notas guardadas previamente para este paciente específico
   const notesTextarea = document.querySelector('#tabContentNotes textarea');
@@ -545,10 +559,48 @@ function saveAISettings() {
   // Actualizar badge de estado
   const engineBadge = document.getElementById('aiEngineBadge');
   if (engineBadge) {
-    engineBadge.textContent = mode === 'gemini' ? 'Gemini 1.5' : 'v2.4 IA';
+    engineBadge.textContent = mode === 'gemini' ? 'Gemini Live' : 'Motor Autónomo';
   }
 
   closeAISettingsModal();
+}
+
+// Probar conexión y cuota de clave de Gemini en vivo
+async function testGeminiConnection() {
+  const inputKey = document.getElementById('geminiApiKeyInput');
+  const statusEl = document.getElementById('geminiKeyStatus');
+  const testBtn = document.getElementById('btnTestGeminiKey');
+
+  if (!inputKey || !statusEl) return;
+  const key = inputKey.value.trim();
+  if (!key) {
+    statusEl.className = "mt-2 p-2 rounded-lg bg-error-container text-on-error-container text-xs block";
+    statusEl.textContent = "Por favor ingresa una API Key antes de probar.";
+    return;
+  }
+
+  if (testBtn) testBtn.disabled = true;
+  statusEl.className = "mt-2 p-2 rounded-lg bg-surface-container text-on-surface text-xs block animate-pulse";
+  statusEl.textContent = "Verificando conexión y cuota con Google Gemini...";
+
+  try {
+    const res = await ClinicalSimulator.testGeminiKey(key);
+    if (res.ok) {
+      statusEl.className = "mt-2 p-2 rounded-lg bg-secondary-fixed text-on-secondary-fixed text-xs block font-semibold";
+      statusEl.textContent = res.message || "✅ Clave verificada con éxito. Cuota disponible.";
+    } else if (res.isQuota) {
+      statusEl.className = "mt-2 p-2 rounded-lg bg-amber-500/20 text-amber-900 dark:text-amber-200 text-xs block font-semibold";
+      statusEl.textContent = res.error || "⚠️ Cuota agotada en esta clave. Te recomendamos usar el Motor Autónomo.";
+    } else {
+      statusEl.className = "mt-2 p-2 rounded-lg bg-error-container text-on-error-container text-xs block";
+      statusEl.textContent = res.error || "Error de validación.";
+    }
+  } catch (err) {
+    statusEl.className = "mt-2 p-2 rounded-lg bg-error-container text-on-error-container text-xs block";
+    statusEl.textContent = "Fallo de conexión: " + (err.message || "Error desconocido");
+  } finally {
+    if (testBtn) testBtn.disabled = false;
+  }
 }
 
 // Filtros y búsqueda en catálogo
@@ -773,12 +825,15 @@ async function sendIntervention() {
       responseData = await ClinicalSimulator.generateGeminiResponse(patient, text, AppState.session.messages, AppState.aiSettings.geminiApiKey);
     } else {
       // Breve pausa para realismo de respuesta clínica
-      await new Promise(r => setTimeout(r, 700));
+      await new Promise(r => setTimeout(r, 600));
       responseData = ClinicalSimulator.generateAutonomousResponse(patient, text, AppState.session.messages.length);
     }
   } catch (err) {
     console.warn("Fallo en Gemini, recurriendo a simulación autónoma:", err);
-    await new Promise(r => setTimeout(r, 500));
+    if (err.isQuota || (err.message && err.message.toLowerCase().includes('cuota'))) {
+      showAiQuotaAlert();
+    }
+    await new Promise(r => setTimeout(r, 400));
     responseData = ClinicalSimulator.generateAutonomousResponse(patient, text, AppState.session.messages.length);
   }
 
@@ -846,6 +901,28 @@ async function sendIntervention() {
   input.disabled = false;
   if (sendBtn) sendBtn.disabled = false;
   input.focus();
+}
+
+// Alerta de cuota de Gemini amigable para el estudiante
+function showAiQuotaAlert() {
+  const feed = document.getElementById('transcriptFeed');
+  if (!feed) return;
+  const alertId = 'geminiQuotaAlertBanner';
+  if (document.getElementById(alertId)) return;
+
+  const banner = document.createElement('div');
+  banner.id = alertId;
+  banner.className = "p-3 rounded-xl bg-amber-500/15 border border-amber-500/40 text-amber-950 text-xs flex items-start gap-2 animate-in fade-in duration-200 my-2 shadow-xs";
+  banner.innerHTML = `
+    <span class="material-symbols-outlined text-amber-600 text-[18px] shrink-0 mt-0.5">warning</span>
+    <div class="flex-1 leading-relaxed">
+      <strong class="font-semibold block text-amber-900 mb-0.5">Cuota de Gemini alcanzada:</strong>
+      <span>Se ha agotado el límite de tu clave de API en Google AI Studio. PsicoSim ha cambiado automáticamente al <strong>Motor Autónomo Inteligente</strong> para que tu entrevista continúe con total coherencia y sin cortes.</span>
+    </div>
+    <button type="button" onclick="this.parentElement.remove()" class="text-amber-700 hover:text-amber-950 font-bold ml-1 text-sm cursor-pointer" title="Cerrar aviso">✕</button>
+  `;
+  feed.appendChild(banner);
+  feed.scrollTop = feed.scrollHeight;
 }
 
 // Actualizar porcentaje y barra de Rapport
@@ -982,14 +1059,14 @@ function updateDebriefingUI() {
   // Filtrar intervenciones del estudiante
   const traineeMessages = AppState.session.messages.filter(m => m.sender === 'trainee');
   const totalTurns = traineeMessages.length;
-  if (turnsCountEl) turnsCountEl.textContent = `${totalTurns > 0 ? totalTurns * 2 : 4} turnos registrados`;
+  if (turnsCountEl) turnsCountEl.textContent = `${totalTurns * 2} turnos registrados`;
 
   // Métricas
-  let openRatio = 78;
-  let closedRatio = 22;
-  let empathyScore = 92;
-  let leadingCount = 1;
-  let rapportScore = AppState.session.rapport || 88;
+  let openRatio = 0;
+  let closedRatio = 0;
+  let empathyScore = 0;
+  let leadingCount = 0;
+  let rapportScore = AppState.session.rapport || 75;
 
   if (totalTurns > 0) {
     const openCount = traineeMessages.filter(m => m.analysis?.isOpen).length;
@@ -1001,8 +1078,11 @@ function updateDebriefingUI() {
 
     leadingCount = traineeMessages.filter(m => m.analysis?.isLeading).length;
 
-    // Registrar sesión completada en el expediente individual del estudiante
-    recordCompletedSession(patient.id, AppState.session.timerSeconds, rapportScore, leadingCount);
+    // Registrar sesión completada en el expediente individual del estudiante SOLO UNA VEZ
+    if (!AppState.session.hasRecorded) {
+      recordCompletedSession(patient.id, AppState.session.timerSeconds, rapportScore, leadingCount);
+      AppState.session.hasRecorded = true;
+    }
   }
 
   // Actualizar KPI 1: Preguntas Abiertas vs Cerradas
@@ -1010,21 +1090,34 @@ function updateDebriefingUI() {
   const closedText = document.getElementById('debriefClosedRatioText');
   const openBar = document.getElementById('debriefOpenBar');
   const closedBar = document.getElementById('debriefClosedBar');
-  if (openText) openText.innerHTML = `${openRatio}% <span class="text-on-surface-variant font-label-md text-sm font-normal">Abiertas</span>`;
-  if (closedText) closedText.textContent = `${closedRatio}% Preguntas Cerradas`;
-  if (openBar) openBar.style.width = `${openRatio}%`;
-  if (closedBar) closedBar.style.width = `${closedRatio}%`;
+  if (totalTurns === 0) {
+    if (openText) openText.innerHTML = `-- <span class="text-on-surface-variant font-label-md text-sm font-normal">Abiertas</span>`;
+    if (closedText) closedText.textContent = `Sin preguntas formuladas aún`;
+    if (openBar) openBar.style.width = `0%`;
+    if (closedBar) closedBar.style.width = `0%`;
+  } else {
+    if (openText) openText.innerHTML = `${openRatio}% <span class="text-on-surface-variant font-label-md text-sm font-normal">Abiertas</span>`;
+    if (closedText) closedText.textContent = `${closedRatio}% Preguntas Cerradas`;
+    if (openBar) openBar.style.width = `${openRatio}%`;
+    if (closedBar) closedBar.style.width = `${closedRatio}%`;
+  }
 
   // Actualizar KPI 2: Empatía
   const empScoreEl = document.getElementById('debriefEmpathyScore');
   const empBarEl = document.getElementById('debriefEmpathyBar');
   const empBadgeEl = document.getElementById('debriefEmpathyBadge');
-  if (empScoreEl) empScoreEl.textContent = empathyScore;
-  if (empBarEl) empBarEl.style.width = `${empathyScore}%`;
-  if (empBadgeEl) {
-    if (empathyScore >= 80) empBadgeEl.textContent = "Sobresaliente";
-    else if (empathyScore >= 60) empBadgeEl.textContent = "Adecuado";
-    else empBadgeEl.textContent = "A Desarrollar";
+  if (totalTurns === 0) {
+    if (empScoreEl) empScoreEl.textContent = "--";
+    if (empBarEl) empBarEl.style.width = `0%`;
+    if (empBadgeEl) empBadgeEl.textContent = "Sin datos";
+  } else {
+    if (empScoreEl) empScoreEl.textContent = empathyScore;
+    if (empBarEl) empBarEl.style.width = `${empathyScore}%`;
+    if (empBadgeEl) {
+      if (empathyScore >= 80) empBadgeEl.textContent = "Sobresaliente";
+      else if (empathyScore >= 60) empBadgeEl.textContent = "Adecuado";
+      else empBadgeEl.textContent = "A Desarrollar";
+    }
   }
 
   // Actualizar KPI 3: Preguntas Sesgadas / Inductivas
@@ -1032,16 +1125,26 @@ function updateDebriefingUI() {
   const leadBarEl = document.getElementById('debriefLeadingBar');
   const leadBadgeEl = document.getElementById('debriefLeadingBadge');
   const leadDescEl = document.getElementById('debriefLeadingDesc');
-  if (leadCountEl) leadCountEl.textContent = leadingCount;
-  if (leadBarEl) leadBarEl.style.width = `${Math.min(100, leadingCount * 25)}%`;
-  if (leadBadgeEl) {
-    leadBadgeEl.textContent = leadingCount === 0 ? "Riesgo Nulo" : (leadingCount === 1 ? "Riesgo Bajo" : "Atención Pedagógica");
-    leadBadgeEl.className = leadingCount === 0 ? "ml-auto px-space-xs py-0.5 rounded-full font-label-sm text-[10px] bg-secondary-fixed text-on-secondary-fixed font-semibold" : "ml-auto px-space-xs py-0.5 rounded-full font-label-sm text-[10px] bg-surface-container-high text-on-surface-variant font-semibold";
-  }
-  if (leadDescEl) {
-    leadDescEl.textContent = leadingCount === 0 
-      ? "Excelente formulación neutral sin preguntas dirigidas."
-      : `${leadingCount} formulación(es) sugestiva(s) detectada(s).`;
+  if (totalTurns === 0) {
+    if (leadCountEl) leadCountEl.textContent = "0";
+    if (leadBarEl) leadBarEl.style.width = `0%`;
+    if (leadBadgeEl) {
+      leadBadgeEl.textContent = "Sin preguntas";
+      leadBadgeEl.className = "ml-auto px-space-xs py-0.5 rounded-full font-label-sm text-[10px] bg-surface-container text-on-surface-variant font-semibold";
+    }
+    if (leadDescEl) leadDescEl.textContent = "Formula preguntas en la consulta para auditar sesgos.";
+  } else {
+    if (leadCountEl) leadCountEl.textContent = leadingCount;
+    if (leadBarEl) leadBarEl.style.width = `${Math.min(100, leadingCount * 25)}%`;
+    if (leadBadgeEl) {
+      leadBadgeEl.textContent = leadingCount === 0 ? "Riesgo Nulo" : (leadingCount === 1 ? "Riesgo Bajo" : "Atención Pedagógica");
+      leadBadgeEl.className = leadingCount === 0 ? "ml-auto px-space-xs py-0.5 rounded-full font-label-sm text-[10px] bg-secondary-fixed text-on-secondary-fixed font-semibold" : "ml-auto px-space-xs py-0.5 rounded-full font-label-sm text-[10px] bg-surface-container-high text-on-surface-variant font-semibold";
+    }
+    if (leadDescEl) {
+      leadDescEl.textContent = leadingCount === 0 
+        ? "Excelente formulación neutral sin preguntas dirigidas."
+        : `${leadingCount} formulación(es) sugestiva(s) detectada(s).`;
+    }
   }
 
   // Actualizar KPI 4: Alianza / Rapport
